@@ -1,0 +1,14 @@
+plateService:
+  db:
+    #url: jdbc:h2:C:/Dev/Projects/phaedra/local.env/db
+    url: jdbc:postgresql://localhost:5432/phaedra
+    username: phaedra
+    password: phaedra
+logging:
+  file:
+    plateservice.log
+    
+spring:
+  jackson:
+    serialization:
+      indent_output: true
