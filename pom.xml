@@ -35,6 +35,13 @@
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 
+		<!-- Swagger dependenties -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
 		<!-- Phaedra dependencies -->
 		<dependency>
 			<groupId>eu.openanalytics.phaedra</groupId>
