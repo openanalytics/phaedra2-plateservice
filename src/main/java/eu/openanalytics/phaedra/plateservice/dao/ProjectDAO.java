@@ -1,6 +1,8 @@
 package eu.openanalytics.phaedra.plateservice.dao;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -15,6 +17,30 @@ public class ProjectDAO extends BaseCachingDAO<Project> {
 	@Override
 	protected ICache<Project> initializeCache() {
 		return CacheFactory.createCache("project");
+	}
+	
+	public List<Project> getProjects() {
+		// Query all current project IDs.
+		long[] projectIds = getJdbcTemplate().query("select proj.project_id from phaedra.hca_project proj", rs -> {
+			List<Long> ids = new ArrayList<>();
+			while (rs.next()) ids.add(rs.getLong(1));
+			return ids;
+		}).stream().mapToLong(i -> i).toArray();
+		
+		String sql = "select proj.project_id, proj.name as project_name, proj.description as project_description,"
+				+ " proj.owner as project_owner, proj.team_code as project_team, proj.access_scope"
+				+ " from phaedra.hca_project proj where proj.project_id in (%s)";
+		
+		return findValuesByIds(projectIds, sql, (rs, rownum) -> {
+			Project proj = new Project();
+			proj.setId(rs.getLong("project_id"));
+			proj.setName(rs.getString("project_name"));
+			proj.setDescription(rs.getString("project_description"));
+			proj.setOwner(rs.getString("project_owner"));
+			proj.setTeam(rs.getString("project_team"));
+			proj.setAccessScope(rs.getString("access_scope"));
+			return proj;
+		});
 	}
 	
 	public Optional<Project> getProject(long id) {

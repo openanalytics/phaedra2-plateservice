@@ -27,6 +27,11 @@ public class ProjectController {
 	@Autowired
 	private ExperimentDAO experimentDAO;
 	
+	@RequestMapping(value="/projects", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public List<Project> getProjects() {
+		return projectDAO.getProjects();
+	}
+	
 	@RequestMapping(value="/project/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Project> getProject(@PathVariable long id) {
 		Optional<Project> project = projectDAO.getProject(id);

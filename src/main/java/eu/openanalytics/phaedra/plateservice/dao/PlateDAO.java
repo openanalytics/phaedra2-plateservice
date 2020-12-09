@@ -185,7 +185,23 @@ public class PlateDAO extends BaseCachingDAO<Plate> {
 		updateValue(plateId, plate, sql, ps -> {
 			ps.setString(1, plate.getBarcode());
 			ps.setString(2, plate.getDescription());
-			//TODO
+			ps.setString(3, plate.getLinkInfo());
+			ps.setInt(4, plate.getSequence());
+			ps.setInt(5, plate.getLinkStatus());
+			ps.setString(6, plate.getLinkUser());
+			ps.setTimestamp(7, JDBCUtils.toTimestamp(plate.getLinkDate()));
+			ps.setInt(8, plate.getCalculationStatus());
+			ps.setString(9, plate.getCalculationError());
+			ps.setTimestamp(10, JDBCUtils.toTimestamp(plate.getCalculationDate()));
+			ps.setInt(11, plate.getValidationStatus());
+			ps.setString(12, plate.getValidationUser());
+			ps.setTimestamp(13, JDBCUtils.toTimestamp(plate.getValidationDate()));
+			ps.setInt(14, plate.getApprovalStatus());
+			ps.setString(15, plate.getApprovalUser());
+			ps.setTimestamp(16, JDBCUtils.toTimestamp(plate.getApprovalDate()));
+			ps.setInt(17, plate.getUploadStatus());
+			ps.setString(18, plate.getUploadUser());
+			ps.setTimestamp(19, JDBCUtils.toTimestamp(plate.getUploadDate()));
 			ps.setLong(20, plateId);
 		});
 	}
