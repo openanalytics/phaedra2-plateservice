@@ -13,19 +13,19 @@ public class Well implements IValueObject {
 	
 	@Id
 	@Column("well_id")
-	private long id;
+	private Long id;
 	
-	private long plateId;
+	private Long plateId;
 	
 	@Column("row_nr")
-	private int row;
+	private Integer row;
 	@Column("col_nr")
-	private int column;
+	private Integer column;
 
 	private String description;
 	
 	@Column("is_valid")
-	private int status;
+	private Integer status;
 	
 	@Column("welltype_code")
 	private String wellType;
@@ -33,32 +33,32 @@ public class Well implements IValueObject {
 	private String compoundType;
 	private String compoundName;
 	@Column("concentration")
-	private double compoundConcentration;
+	private Double compoundConcentration;
 	
 	@Override
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	@Override
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
-	public long getPlateId() {
+	public Long getPlateId() {
 		return plateId;
 	}
-	public void setPlateId(long plateId) {
+	public void setPlateId(Long plateId) {
 		this.plateId = plateId;
 	}
-	public int getRow() {
+	public Integer getRow() {
 		return row;
 	}
-	public void setRow(int row) {
+	public void setRow(Integer row) {
 		this.row = row;
 	}
-	public int getColumn() {
+	public Integer getColumn() {
 		return column;
 	}
-	public void setColumn(int column) {
+	public void setColumn(Integer column) {
 		this.column = column;
 	}
 	public String getDescription() {
@@ -67,10 +67,10 @@ public class Well implements IValueObject {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 	public String getWellType() {
@@ -91,10 +91,10 @@ public class Well implements IValueObject {
 	public void setCompoundName(String compoundName) {
 		this.compoundName = compoundName;
 	}
-	public double getCompoundConcentration() {
+	public Double getCompoundConcentration() {
 		return compoundConcentration;
 	}
-	public void setCompoundConcentration(double compoundConcentration) {
+	public void setCompoundConcentration(Double compoundConcentration) {
 		this.compoundConcentration = compoundConcentration;
 	}
 }

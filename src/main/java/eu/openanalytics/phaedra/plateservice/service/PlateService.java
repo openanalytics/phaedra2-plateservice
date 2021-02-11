@@ -3,6 +3,7 @@ package eu.openanalytics.phaedra.plateservice.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,9 @@ import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
+import eu.openanalytics.phaedra.plateservice.util.PlateUtils;
+import eu.openanalytics.phaedra.plateservice.util.WellUtils;
+import eu.openanalytics.phaedra.util.ObjectCopyUtils;
 
 @Service
 public class PlateService {
@@ -55,26 +59,31 @@ public class PlateService {
 	}
 	
 	public List<Plate> getPlatesByExperimentId(long experimentId) {
-		return plateRepo.findByExperimentId(experimentId);
+		return plateRepo.findByExperimentId(experimentId).stream().sorted(PlateUtils.PLATE_SEQUENCE_SORTER).collect(Collectors.toList());
 	}
 	
 	public List<Well> getWellsByPlateId(long plateId) {
-		return wellRepo.findByPlateId(plateId);
+		return wellRepo.findByPlateId(plateId).stream().sorted(WellUtils.WELL_POSITION_SORTER).collect(Collectors.toList());
 	}
 	
-	public void updatePlate(Plate plate) {
+	public void updatePlate(Plate updatedPlate) {
+		Plate plate = getPlateById(updatedPlate.getId()).get();
+		//TODO Make sure dimensions are not changed.
+		ObjectCopyUtils.copyNonNullValues(updatedPlate, plate);
 		plateRepo.save(plate);
 	}
 	
-	public void updateWells(long plateId, List<Well> wells) {
-		if (wells == null || wells.isEmpty()) throw new IllegalArgumentException("Cannot update wells: no well information specified");
-		List<Well> plateWells = getWellsByPlateId(plateId);
-		for (Well well: wells) {
-			well.setPlateId(plateId);
-			Well plateWell = findWell(plateWells, well.getRow(), well.getColumn());
-			well.setId(plateWell.getId());
+	public void updateWells(long plateId, List<Well> updatedWells) {
+		if (updatedWells == null || updatedWells.isEmpty()) throw new IllegalArgumentException("Cannot update wells: no well information specified");
+		List<Well> wells = getWellsByPlateId(plateId);
+		List<Well> wellsToSave = new ArrayList<>();
+		for (Well updatedWell: updatedWells) {
+			Well well = WellUtils.findWell(wells, updatedWell.getRow(), updatedWell.getColumn()).orElse(null);
+			if (well == null) throw new IllegalArgumentException(String.format("Invalid well coordinates: %d, %d", updatedWell.getRow(), updatedWell.getColumn()));
+			ObjectCopyUtils.copyNonNullValues(updatedWell, well);
+			wellsToSave.add(well);
 		}
-		wellRepo.saveAll(wells);
+		wellRepo.saveAll(wellsToSave);
 	}
 	
 	public void deletePlate(long plateId) {
@@ -91,8 +100,5 @@ public class PlateService {
 		wellRepo.deleteByProjectId(projectId);
 		plateRepo.deleteByProjectId(projectId);
 	}
-	
-	private Well findWell(List<Well> wells, int row, int column) {
-		return wells.stream().filter(w -> w.getRow() == row && w.getColumn() == column).findAny().orElse(null);
-	}
+
 }

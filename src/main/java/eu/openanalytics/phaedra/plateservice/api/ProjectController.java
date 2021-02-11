@@ -54,15 +54,15 @@ public class ProjectController {
 	
 	@RequestMapping(value="/project/{projectId}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteProject(@PathVariable long projectId) {
-		if (projectId <= 0) return ResponseEntity.notFound().build();
+		if (!projectService.projectExists(projectId)) return ResponseEntity.notFound().build();
 		projectService.deleteProject(projectId);
 		return ResponseEntity.noContent().build();
 	}
 
 	@RequestMapping(value="/project/{projectId}/experiments", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Experiment>> getExperiments(@PathVariable long projectId) {
+		if (!projectService.projectExists(projectId)) return ResponseEntity.notFound().build();
 		List<Experiment> experiments = experimentService.getExperimentByProjectId(projectId);
-		if (experiments.isEmpty()) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(experiments);
 	}
 	

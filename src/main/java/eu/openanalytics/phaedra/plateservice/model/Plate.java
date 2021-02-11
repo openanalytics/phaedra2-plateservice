@@ -15,9 +15,9 @@ public class Plate implements IValueObject {
 
 	@Id
 	@Column("plate_id")
-	private long id;
+	private Long id;
 	
-	private long experimentId;
+	private Long experimentId;
 	
 	private String barcode;
 	private String description;
@@ -26,60 +26,60 @@ public class Plate implements IValueObject {
 	private String info;
 	
 	@Column("plate_rows")
-	private int rows;
+	private Integer rows;
 	@Column("plate_columns")
-	private int columns;
+	private Integer columns;
 	
 	@Column("sequence_in_run")
-	private int sequence;
+	private Integer sequence;
 	
 	@Column("link_status")
-	private int linkStatus;
+	private Integer linkStatus;
 	@Column("link_user")
 	private String linkUser;
 	@Column("link_dt")
 	private Date linkDate;
 	
 	@Column("calc_status")
-	private int calculationStatus;
+	private Integer calculationStatus;
 	@Column("calc_error")
 	private String calculationError;
 	@Column("calc_dt")
 	private Date calculationDate;
 
 	@Column("validate_status")
-	private int validationStatus;
+	private Integer validationStatus;
 	@Column("validate_user")
 	private String validationUser;
 	@Column("validate_dt")
 	private Date validationDate;
 
 	@Column("approve_status")
-	private int approvalStatus;
+	private Integer approvalStatus;
 	@Column("approve_user")
 	private String approvalUser;
 	@Column("approve_dt")
 	private Date approvalDate;
 
 	@Column("upload_status")
-	private int uploadStatus;
+	private Integer uploadStatus;
 	@Column("upload_user")
 	private String uploadUser;
 	@Column("upload_dt")
 	private Date uploadDate;
 
 	@Override
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	@Override
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
-	public long getExperimentId() {
+	public Long getExperimentId() {
 		return experimentId;
 	}
-	public void setExperimentId(long experimentId) {
+	public void setExperimentId(Long experimentId) {
 		this.experimentId = experimentId;
 	}
 	public String getBarcode() {
@@ -100,28 +100,28 @@ public class Plate implements IValueObject {
 	public void setInfo(String info) {
 		this.info = info;
 	}
-	public int getRows() {
+	public Integer getRows() {
 		return rows;
 	}
-	public void setRows(int rows) {
+	public void setRows(Integer rows) {
 		this.rows = rows;
 	}
-	public int getColumns() {
+	public Integer getColumns() {
 		return columns;
 	}
-	public void setColumns(int columns) {
+	public void setColumns(Integer columns) {
 		this.columns = columns;
 	}
-	public int getSequence() {
+	public Integer getSequence() {
 		return sequence;
 	}
-	public void setSequence(int sequence) {
+	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
 	}
-	public int getLinkStatus() {
+	public Integer getLinkStatus() {
 		return linkStatus;
 	}
-	public void setLinkStatus(int linkStatus) {
+	public void setLinkStatus(Integer linkStatus) {
 		this.linkStatus = linkStatus;
 	}
 	public String getLinkUser() {
@@ -136,10 +136,10 @@ public class Plate implements IValueObject {
 	public void setLinkDate(Date linkDate) {
 		this.linkDate = linkDate;
 	}
-	public int getCalculationStatus() {
+	public Integer getCalculationStatus() {
 		return calculationStatus;
 	}
-	public void setCalculationStatus(int calculationStatus) {
+	public void setCalculationStatus(Integer calculationStatus) {
 		this.calculationStatus = calculationStatus;
 	}
 	public String getCalculationError() {
@@ -154,10 +154,10 @@ public class Plate implements IValueObject {
 	public void setCalculationDate(Date calculationDate) {
 		this.calculationDate = calculationDate;
 	}
-	public int getValidationStatus() {
+	public Integer getValidationStatus() {
 		return validationStatus;
 	}
-	public void setValidationStatus(int validationStatus) {
+	public void setValidationStatus(Integer validationStatus) {
 		this.validationStatus = validationStatus;
 	}
 	public String getValidationUser() {
@@ -172,10 +172,10 @@ public class Plate implements IValueObject {
 	public void setValidationDate(Date validationDate) {
 		this.validationDate = validationDate;
 	}
-	public int getApprovalStatus() {
+	public Integer getApprovalStatus() {
 		return approvalStatus;
 	}
-	public void setApprovalStatus(int approvalStatus) {
+	public void setApprovalStatus(Integer approvalStatus) {
 		this.approvalStatus = approvalStatus;
 	}
 	public String getApprovalUser() {
@@ -190,10 +190,10 @@ public class Plate implements IValueObject {
 	public void setApprovalDate(Date approvalDate) {
 		this.approvalDate = approvalDate;
 	}
-	public int getUploadStatus() {
+	public Integer getUploadStatus() {
 		return uploadStatus;
 	}
-	public void setUploadStatus(int uploadStatus) {
+	public void setUploadStatus(Integer uploadStatus) {
 		this.uploadStatus = uploadStatus;
 	}
 	public String getUploadUser() {

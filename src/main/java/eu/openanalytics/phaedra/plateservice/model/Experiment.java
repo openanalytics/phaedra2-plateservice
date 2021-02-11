@@ -15,9 +15,9 @@ public class Experiment implements IValueObject {
 
 	@Id
     @Column("experiment_id")
-	private long id;
+	private Long id;
 	
-	private long projectId;
+	private Long projectId;
 	
 	@Column("experiment_name")
 	private String name;
@@ -29,23 +29,23 @@ public class Experiment implements IValueObject {
 	@Column("experiment_dt")
 	private Date createdOn;
 	
-	private boolean closed;
+	private Boolean closed;
 	
 	private String multiploMethod;
 	private String multiploParameter;
 	
 	@Override
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	@Override
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
-	public long getProjectId() {
+	public Long getProjectId() {
 		return projectId;
 	}
-	public void setProjectId(long projectId) {
+	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
 	}
 	public String getName() {
@@ -78,10 +78,10 @@ public class Experiment implements IValueObject {
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
 	}
-	public boolean isClosed() {
+	public Boolean isClosed() {
 		return closed;
 	}
-	public void setClosed(boolean closed) {
+	public void setClosed(Boolean closed) {
 		this.closed = closed;
 	}
 	public String getMultiploMethod() {

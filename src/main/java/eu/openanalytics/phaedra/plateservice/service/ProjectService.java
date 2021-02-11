@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.Project;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectRepository;
+import eu.openanalytics.phaedra.util.ObjectCopyUtils;
 
 @Service
 public class ProjectService {
@@ -36,7 +37,9 @@ public class ProjectService {
 		return projectRepo.findById(projectId);
 	}
 	
-	public void updateProject(Project project) {
+	public void updateProject(Project updatedProject) {
+		Project project = getProjectById(updatedProject.getId()).get();
+		ObjectCopyUtils.copyNonNullValues(updatedProject, project);
 		projectRepo.save(project);
 	}
 	
@@ -44,5 +47,4 @@ public class ProjectService {
 		experimentService.deleteExperimentsByProjectId(projectId);
 		projectRepo.deleteById(projectId);
 	}
-
 }

@@ -50,7 +50,7 @@ public class PlateController {
 	
 	@RequestMapping(value="/plate/{plateId}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> deletePlate(@PathVariable long plateId) {
-		if (plateId <= 0) return ResponseEntity.notFound().build();
+		if (!plateService.plateExists(plateId)) return ResponseEntity.notFound().build();
 		plateService.deletePlate(plateId);
 		return ResponseEntity.noContent().build();
 	}

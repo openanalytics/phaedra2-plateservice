@@ -41,15 +41,15 @@ public class ExperimentController {
 	
 	@RequestMapping(value="/experiment/{experimentId}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteExperiment(@PathVariable long experimentId) {
-		if (experimentId <= 0) return ResponseEntity.notFound().build();
+		if (!experimentService.experimentExists(experimentId)) return ResponseEntity.notFound().build();
 		experimentService.deleteExperiment(experimentId);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value="/experiment/{experimentId}/plates", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Plate>> getPlates(@PathVariable long experimentId) {
+		if (!experimentService.experimentExists(experimentId)) return ResponseEntity.notFound().build();
 		List<Plate> plates = plateService.getPlatesByExperimentId(experimentId);
-		if (plates.isEmpty()) return ResponseEntity.notFound().build();
 		return ResponseEntity.ok(plates);
 	}
 

@@ -2,7 +2,7 @@ package eu.openanalytics.phaedra.plateservice.model;
 
 public interface IValueObject {
 
-	public long getId();
-	public void setId(long id);
+	public Long getId();
+	public void setId(Long id);
 
 }
