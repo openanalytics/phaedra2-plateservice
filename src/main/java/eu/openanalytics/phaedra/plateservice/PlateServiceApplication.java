@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
 
 @SpringBootApplication
-public class PlateService {
+public class PlateServiceApplication {
 
 	private static final String PROP_DB_URL = "plateService.db.url";
 	private static final String PROP_DB_USERNAME = "plateService.db.username";
@@ -23,7 +23,7 @@ public class PlateService {
 	private Environment environment;
 	
 	public static void main(String[] args) {
-		SpringApplication app = new SpringApplication(PlateService.class);
+		SpringApplication app = new SpringApplication(PlateServiceApplication.class);
 		app.run(args);
 	}
 

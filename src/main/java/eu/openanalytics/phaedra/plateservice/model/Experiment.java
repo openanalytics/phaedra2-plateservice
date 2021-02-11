@@ -2,19 +2,31 @@ package eu.openanalytics.phaedra.plateservice.model;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@Table("hca_experiment")
 @JsonInclude(Include.NON_NULL)
 public class Experiment implements IValueObject {
 
+	@Id
+    @Column("experiment_id")
 	private long id;
 	
+	private long projectId;
+	
+	@Column("experiment_name")
 	private String name;
 	private String description;
 	private String comments;
 	
+	@Column("experiment_user")
 	private String createdBy;
+	@Column("experiment_dt")
 	private Date createdOn;
 	
 	private boolean closed;
@@ -29,6 +41,12 @@ public class Experiment implements IValueObject {
 	@Override
 	public void setId(long id) {
 		this.id = id;
+	}
+	public long getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(long projectId) {
+		this.projectId = projectId;
 	}
 	public String getName() {
 		return name;

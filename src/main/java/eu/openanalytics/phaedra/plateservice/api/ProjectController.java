@@ -13,57 +13,64 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.openanalytics.phaedra.plateservice.dao.ExperimentDAO;
-import eu.openanalytics.phaedra.plateservice.dao.ProjectDAO;
 import eu.openanalytics.phaedra.plateservice.model.Experiment;
 import eu.openanalytics.phaedra.plateservice.model.Project;
+import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
+import eu.openanalytics.phaedra.plateservice.service.ProjectService;
 
 @RestController
 public class ProjectController {
 
 	@Autowired
-	private ProjectDAO projectDAO;
+	private ProjectService projectService;
 	
 	@Autowired
-	private ExperimentDAO experimentDAO;
+	private ExperimentService experimentService;
 	
 	@RequestMapping(value="/projects", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public List<Project> getProjects() {
-		return projectDAO.getProjects();
+		return projectService.getAllProjects();
 	}
 	
-	@RequestMapping(value="/project/{id}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Project> getProject(@PathVariable long id) {
-		Optional<Project> project = projectDAO.getProject(id);
+	@RequestMapping(value="/project/{projectId}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Project> getProject(@PathVariable long projectId) {
+		Optional<Project> project = projectService.getProjectById(projectId);
 		return ResponseEntity.of(project);
 	}
 	
 	@RequestMapping(value="/project", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Project> createProject(@RequestBody Project project) {
-		projectDAO.createProject(project);
-		return new ResponseEntity<>(project, HttpStatus.CREATED);
+	public ResponseEntity<?> createProject(@RequestBody Project project) {
+		Project newProject = projectService.createProject(project);
+		return new ResponseEntity<>(newProject, HttpStatus.CREATED);
 	}
 
-	@RequestMapping(value="/project/{id}", method=RequestMethod.PUT, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Project> updateProject(@PathVariable long id, @RequestBody Project project) {
-		projectDAO.updateProject(id, project);
-		return ResponseEntity.ok(project);
+	@RequestMapping(value="/project/{projectId}", method=RequestMethod.PUT, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> updateProject(@PathVariable long projectId, @RequestBody Project project) {
+		if (!projectService.projectExists(projectId)) return ResponseEntity.notFound().build();
+		project.setId(projectId);
+		projectService.updateProject(project);
+		return ResponseEntity.ok().build();
 	}
 	
-	@RequestMapping(value="/project/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Void> deleteProject(@PathVariable long id) {
-		projectDAO.deleteProject(id);
+	@RequestMapping(value="/project/{projectId}", method=RequestMethod.DELETE)
+	public ResponseEntity<Void> deleteProject(@PathVariable long projectId) {
+		if (projectId <= 0) return ResponseEntity.notFound().build();
+		projectService.deleteProject(projectId);
 		return ResponseEntity.noContent().build();
 	}
-	
-	@RequestMapping(value="/project/{id}/experiments", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public List<Experiment> getExperiments(@PathVariable long id) {
-		return experimentDAO.getExperimentsForProject(id);
+
+	@RequestMapping(value="/project/{projectId}/experiments", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Experiment>> getExperiments(@PathVariable long projectId) {
+		List<Experiment> experiments = experimentService.getExperimentByProjectId(projectId);
+		if (experiments.isEmpty()) return ResponseEntity.notFound().build();
+		return ResponseEntity.ok(experiments);
 	}
 	
-	@RequestMapping(value="/project/{id}/experiment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Experiment> createExperiment(@PathVariable long id, @RequestBody Experiment experiment) {
-		experimentDAO.createExperiment(experiment, id);
-		return new ResponseEntity<>(experiment, HttpStatus.CREATED);
+	@RequestMapping(value="/project/{projectId}/experiment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> createExperiment(@PathVariable long projectId, @RequestBody Experiment experiment) {
+		if (!experimentService.experimentExists(projectId)) return ResponseEntity.notFound().build();
+		experiment.setProjectId(projectId);
+		Experiment newExperiment = experimentService.createExperiment(experiment);
+		return new ResponseEntity<>(newExperiment, HttpStatus.CREATED);
 	}
 }
