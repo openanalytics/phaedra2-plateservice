@@ -15,9 +15,9 @@ import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
 @SpringBootApplication
 public class PlateServiceApplication {
 
-	private static final String PROP_DB_URL = "plateService.db.url";
-	private static final String PROP_DB_USERNAME = "plateService.db.username";
-	private static final String PROP_DB_PASSWORD = "plateService.db.password";
+	private static final String PROP_DB_URL = "db.url";
+	private static final String PROP_DB_USERNAME = "db.username";
+	private static final String PROP_DB_PASSWORD = "db.password";
 		  	
 	@Autowired
 	private Environment environment;
