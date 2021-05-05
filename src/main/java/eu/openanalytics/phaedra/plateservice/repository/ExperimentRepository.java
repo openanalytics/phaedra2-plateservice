@@ -14,7 +14,7 @@ public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
 
 	List<Experiment> findByProjectId(long projectId);
 	
-	@Query("delete from phaedra.hca_experiment e where e.project_id = :projectId")
+	@Query("delete from hca_experiment e where e.project_id = :projectId")
 	void deleteByProjectId(@Param("projectId") long projectId);
 
 }

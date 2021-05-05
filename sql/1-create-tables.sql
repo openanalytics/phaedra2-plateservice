@@ -1,6 +1,6 @@
-create schema phaedra;
+create schema plateservice;
 
-create table phaedra.hca_project (
+create table plateservice.hca_project (
 	project_id			bigserial primary key,
 	name				text not null,
 	description			text,
@@ -9,7 +9,7 @@ create table phaedra.hca_project (
 	access_scope		text
 );
 
-create table phaedra.hca_experiment (
+create table plateservice.hca_experiment (
 	experiment_id		bigserial primary key, 
 	experiment_name		text,
 	experiment_dt		timestamp, 
@@ -21,9 +21,9 @@ create table phaedra.hca_experiment (
 	multiplo_parameter	text
 );
 
-create table phaedra.hca_plate (
+create table plateservice.hca_plate (
 	plate_id			bigserial primary key,
-	experiment_id		bigint not null references phaedra.hca_experiment (experiment_id) on delete cascade,
+	experiment_id		bigint not null references plateservice.hca_experiment (experiment_id) on delete cascade,
 	sequence_in_run		integer not null,
 	barcode 			text,
 	description			text,
@@ -47,11 +47,11 @@ create table phaedra.hca_plate (
 	plate_columns 		integer
 );
 
-create index hca_plate_ix_barcode on phaedra.hca_plate (barcode);
+create index hca_plate_ix_barcode on plateservice.hca_plate (barcode);
 
-create table phaedra.hca_plate_well (
+create table plateservice.hca_plate_well (
 	well_id					bigserial primary key,
-	plate_id				bigint not null references phaedra.hca_plate (plate_id) on delete cascade,
+	plate_id				bigint not null references plateservice.hca_plate (plate_id) on delete cascade,
 	row_nr					integer not null,
 	col_nr					integer not null,
 	welltype_code			text,
@@ -61,4 +61,4 @@ create table phaedra.hca_plate_well (
 	description				text
 );
 
-create index hca_plate_well_ix_plate_id on phaedra.hca_plate_well (plate_id);
+create index hca_plate_well_ix_plate_id on plateservice.hca_plate_well (plate_id);

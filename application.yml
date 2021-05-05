@@ -1,18 +1,18 @@
 # DB properties are to be provided via environment variables by Docker Compose
 #db:
-#  url: jdbc:postgresql://localhost:5432/phaedra
-#  username: phaedra
-#  password: phaedra
+#  url: jdbc:postgresql://localhost:5432/plateservice
+#  username: plateservice
+#  password: plateservice
 
 logging:
   file:
-    plateservice.log
+    /var/log/plateservice.log
     
 spring:
   jackson:
     serialization:
       indent_output: true
 
-server:
-  servlet:
-    context-path: /phaedra/plate-service
+#server:
+#  servlet:
+#    context-path: /phaedra/plate-service

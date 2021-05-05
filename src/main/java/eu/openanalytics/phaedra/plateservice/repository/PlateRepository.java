@@ -14,10 +14,10 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 
 	List<Plate> findByExperimentId(long experimentId);
 	
-	@Query("delete from phaedra.hca_plate p where p.experiment_id = :experimentId")
+	@Query("delete from hca_plate p where p.experiment_id = :experimentId")
 	void deleteByExperimentId(@Param("experimentId") long experimentId);
 
-	@Query("delete from phaedra.hca_plate p where p.experiment_id in"
-			+ " (select experiment_id from phaedra.hca_experiment where project_id = :projectId)")
+	@Query("delete from hca_plate p where p.experiment_id in"
+			+ " (select experiment_id from hca_experiment where project_id = :projectId)")
 	void deleteByProjectId(@Param("projectId") long projectId);
 }
