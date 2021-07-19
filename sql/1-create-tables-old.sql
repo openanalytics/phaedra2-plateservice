@@ -1,29 +1,24 @@
 create schema plateservice;
 
-create table plateservice.hca_project
-(
-    id          bigserial primary key,
-    name        text not null,
-    description text,
-    created_on  timestamp,
-    created_by  text,
-    updated_on  timestamp,
-    updated_by  text
+create table plateservice.hca_project (
+	project_id			bigserial primary key,
+	name				text not null,
+	description			text,
+	owner				text,
+	team_code			text default 'NONE',
+	access_scope		text
 );
 
-create table plateservice.hca_experiment
-(
-    id                 bigserial primary key,
-    name               text,
-    description        text,
-    status             text,
-    multiplo_method    text,
-    multiplo_parameter text,
-    created_on         timestamp,
-    created_by         text,
-    updated_on         timestamp,
-    updated_by         text,
-    project_id         bigint not null references plateservice.hca_project (id) on delete cascade
+create table plateservice.hca_experiment (
+	experiment_id		bigserial primary key, 
+	experiment_name		text,
+	experiment_dt		timestamp, 
+	experiment_user		text,
+	description			text,
+	closed				boolean default false,
+	comments			text,
+	multiplo_method		text,
+	multiplo_parameter	text
 );
 
 create table plateservice.hca_plate (
@@ -33,21 +28,21 @@ create table plateservice.hca_plate (
 	barcode 			text,
 	description			text,
 	plate_info 			text,
-	link_status 		integer default 0,
+	link_status 		integer default 0, 
 	link_user			text,
 	link_dt				timestamp,
 	calc_status			integer default 0,
 	calc_error			text,
-	calc_dt				timestamp,
-	validate_status		integer default 0,
+	calc_dt				timestamp, 
+	validate_status		integer default 0, 
 	validate_user		text,
-	validate_dt			timestamp,
-	approve_status		integer default 0,
+	validate_dt			timestamp, 
+	approve_status		integer default 0, 
 	approve_user		text,
-	approve_dt			timestamp,
-	upload_status		integer default 0,
+	approve_dt			timestamp, 
+	upload_status		integer default 0, 
 	upload_user			text,
-	upload_dt			timestamp,
+	upload_dt			timestamp, 
 	plate_rows			integer,
 	plate_columns 		integer
 );
@@ -60,7 +55,7 @@ create table plateservice.hca_plate_well (
 	row_nr					integer not null,
 	col_nr					integer not null,
 	welltype_code			text,
-	concentration			double precision,
+	concentration			double precision, 
 	is_valid				integer default 0,
 	platecompound_id		bigint,
 	description				text
