@@ -1,76 +1,83 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import eu.openanalytics.phaedra.plateservice.model.Experiment;
 import eu.openanalytics.phaedra.plateservice.model.Project;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import eu.openanalytics.phaedra.plateservice.service.ProjectService;
 
+@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
 @RestController
 public class ProjectController {
 
-	@Autowired
-	private ProjectService projectService;
+	private final ProjectService projectService;
 	
-	@Autowired
-	private ExperimentService experimentService;
-	
-	@RequestMapping(value="/projects", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public List<Project> getProjects() {
-		return projectService.getAllProjects();
-	}
-	
-	@RequestMapping(value="/project/{projectId}", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Project> getProject(@PathVariable long projectId) {
-		Optional<Project> project = projectService.getProjectById(projectId);
-		return ResponseEntity.of(project);
-	}
-	
-	@RequestMapping(value="/project", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> createProject(@RequestBody Project project) {
-		Project newProject = projectService.createProject(project);
-		return new ResponseEntity<>(newProject, HttpStatus.CREATED);
+	private final ExperimentService experimentService;
+
+	public ProjectController(ProjectService projectService, ExperimentService experimentService) {
+		this.projectService = projectService;
+		this.experimentService = experimentService;
 	}
 
-	@RequestMapping(value="/project/{projectId}", method=RequestMethod.PUT, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> updateProject(@PathVariable long projectId, @RequestBody Project project) {
-		if (!projectService.projectExists(projectId)) return ResponseEntity.notFound().build();
-		project.setId(projectId);
-		projectService.updateProject(project);
+	@PostMapping(value="/project", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> createProject(@RequestBody ProjectDTO projectDTO) {
+		ProjectDTO response = projectService.createProject(projectDTO);
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	}
+
+	@PutMapping(value="/project", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> updateProject(@RequestBody ProjectDTO projectDTO) {
+		projectService.updateProject(projectDTO);
 		return ResponseEntity.ok().build();
 	}
-	
-	@RequestMapping(value="/project/{projectId}", method=RequestMethod.DELETE)
+
+	@GetMapping(value="/projects", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ProjectDTO>> getProjects() {
+		List<ProjectDTO> response = projectService.getAllProjects();
+		if (CollectionUtils.isNotEmpty(response))
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		else
+			return new ResponseEntity<>(Collections.EMPTY_LIST, HttpStatus.NOT_FOUND);
+	}
+
+	@DeleteMapping(value="/project/{projectId}")
 	public ResponseEntity<Void> deleteProject(@PathVariable long projectId) {
-		if (!projectService.projectExists(projectId)) return ResponseEntity.notFound().build();
 		projectService.deleteProject(projectId);
 		return ResponseEntity.noContent().build();
 	}
 
-	@RequestMapping(value="/project/{projectId}/experiments", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Experiment>> getExperiments(@PathVariable long projectId) {
-		if (!projectService.projectExists(projectId)) return ResponseEntity.notFound().build();
-		List<Experiment> experiments = experimentService.getExperimentByProjectId(projectId);
+	@GetMapping(value="/project/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ProjectDTO> getProject(@PathVariable long projectId) {
+		ProjectDTO response = projectService.getProjectById(projectId);
+		if (response != null)
+			return new ResponseEntity<>(response, HttpStatus.FOUND);
+		else
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+
+	@GetMapping(value="/project/{projectId}/experiments", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ExperimentDTO>> getExperiments(@PathVariable long projectId) {
+		List<ExperimentDTO> experiments = experimentService.getExperimentByProjectId(projectId);
 		return ResponseEntity.ok(experiments);
 	}
 	
-	@RequestMapping(value="/project/{projectId}/experiment", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> createExperiment(@PathVariable long projectId, @RequestBody Experiment experiment) {
-		if (!experimentService.experimentExists(projectId)) return ResponseEntity.notFound().build();
-		experiment.setProjectId(projectId);
-		Experiment newExperiment = experimentService.createExperiment(experiment);
-		return new ResponseEntity<>(newExperiment, HttpStatus.CREATED);
-	}
+//	@PostMapping(value="/project/{projectId}/experiment", produces=MediaType.APPLICATION_JSON_VALUE)
+//	public ResponseEntity<ExperimentDTO> createExperiment(@PathVariable Long projectId, @RequestBody ExperimentDTO newExperiment) {
+////		if (!experimentService.experimentExists(projectId)) return ResponseEntity.notFound().build();
+////		experiment.setProjectId(projectId);
+//		Experiment newExperiment = experimentService.createExperiment(experiment);
+//		return new ResponseEntity<>(newExperiment, HttpStatus.CREATED);
+//	}
 }

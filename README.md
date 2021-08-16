@@ -1,3 +1,5 @@
 # phaedra2-plateservice
 
-Phaedra II plate service 
+To start the application execute following command:
+1. `mvn clean install -DskipTests`
+2. `docker-compose up`

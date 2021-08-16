@@ -1,104 +1,131 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
-import java.util.ArrayList;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.model.Well;
-import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
-import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
-import eu.openanalytics.phaedra.plateservice.util.PlateUtils;
-import eu.openanalytics.phaedra.plateservice.util.WellUtils;
-import eu.openanalytics.phaedra.util.ObjectCopyUtils;
-
 @Service
 public class PlateService {
+	private static final ModelMapper modelMapper = new ModelMapper();
 
-	public static final String DEFAULT_WELLTYPE_CODE = "EMPTY";
-	public static final int DEFAULT_WELL_STATUS = 0;
-	
-	@Autowired
-	private PlateRepository plateRepo;
-	@Autowired
-	private WellRepository wellRepo;
-	
-	public Plate createPlate(Plate plate) {
-		Plate newPlate = plateRepo.save(plate);
-		createWells(newPlate);
-		return newPlate;
-	}
-	
-	private List<Well> createWells(Plate plate) {
-		List<Well> wells = new ArrayList<>(plate.getRows() * plate.getColumns());
-		for (int r = 1; r <= plate.getRows(); r++) {
-			for (int c = 1; c <= plate.getColumns(); c++) {
-				Well well = new Well();
-				well.setPlateId(plate.getId());
-				well.setRow(r);
-				well.setColumn(c);
-				well.setWellType(DEFAULT_WELLTYPE_CODE);
-				well.setStatus(DEFAULT_WELL_STATUS);
-				wells.add(well);
-			}
-		}
-		wellRepo.saveAll(wells);
-		return wells;
+	private final PlateRepository plateRepository;
+	private final WellService wellService;
+
+	public PlateService(PlateRepository plateRepository, WellService wellService) {
+		this.plateRepository = plateRepository;
+		this.wellService = wellService;
 	}
 
-	public boolean plateExists(long plateId) {
-		return plateRepo.existsById(plateId);
+	public PlateDTO createPlate(PlateDTO plateDTO) {
+		Plate plate = new Plate();
+		modelMapper.typeMap(PlateDTO.class, Plate.class)
+				.map(plateDTO, plate);
+		plate = plateRepository.save(plate);
+
+		// Automatically create the corresponding wells
+		wellService.createWells(plate);
+
+		return mapToPlateDTO(plate);
 	}
-	
-	public Optional<Plate> getPlateById(long plateId) {
-		return plateRepo.findById(plateId);
+
+	public PlateDTO updatePlate(PlateDTO plateDTO) {
+		Optional<Plate> plate = plateRepository.findById(plateDTO.getId());
+		plate.ifPresent(p -> {
+			modelMapper.typeMap(PlateDTO.class, Plate.class)
+					.setPropertyCondition(Conditions.isNotNull())
+					.map(plateDTO, p);
+			plateRepository.save(p);
+		});
+		return plateDTO;
 	}
-	
-	public List<Plate> getPlatesByExperimentId(long experimentId) {
-		return plateRepo.findByExperimentId(experimentId).stream().sorted(PlateUtils.PLATE_SEQUENCE_SORTER).collect(Collectors.toList());
-	}
-	
-	public List<Well> getWellsByPlateId(long plateId) {
-		return wellRepo.findByPlateId(plateId).stream().sorted(WellUtils.WELL_POSITION_SORTER).collect(Collectors.toList());
-	}
-	
-	public void updatePlate(Plate updatedPlate) {
-		Plate plate = getPlateById(updatedPlate.getId()).get();
-		//TODO Make sure dimensions are not changed.
-		ObjectCopyUtils.copyNonNullValues(updatedPlate, plate);
-		plateRepo.save(plate);
-	}
-	
-	public void updateWells(long plateId, List<Well> updatedWells) {
-		if (updatedWells == null || updatedWells.isEmpty()) throw new IllegalArgumentException("Cannot update wells: no well information specified");
-		List<Well> wells = getWellsByPlateId(plateId);
-		List<Well> wellsToSave = new ArrayList<>();
-		for (Well updatedWell: updatedWells) {
-			Well well = WellUtils.findWell(wells, updatedWell.getRow(), updatedWell.getColumn()).orElse(null);
-			if (well == null) throw new IllegalArgumentException(String.format("Invalid well coordinates: %d, %d", updatedWell.getRow(), updatedWell.getColumn()));
-			ObjectCopyUtils.copyNonNullValues(updatedWell, well);
-			wellsToSave.add(well);
-		}
-		wellRepo.saveAll(wellsToSave);
-	}
-	
+
 	public void deletePlate(long plateId) {
-		wellRepo.deleteByPlateId(plateId);
-		plateRepo.deleteById(plateId);
-	}
-	
-	public void deletePlatesByExperimentId(long experimentId) {
-		wellRepo.deleteByExperimentId(experimentId);
-		plateRepo.deleteByExperimentId(experimentId);
-	}
-	
-	public void deletePlatesByProjectId(long projectId) {
-		wellRepo.deleteByProjectId(projectId);
-		plateRepo.deleteByProjectId(projectId);
+		plateRepository.deleteById(plateId);
 	}
 
+	public List<PlateDTO> getAllPlates() {
+		List<Plate> result = (List<Plate>) plateRepository.findAll();
+		return result.stream().map(this::mapToPlateDTO).collect(Collectors.toList());
+	}
+
+	public List<PlateDTO> getPlatesByExperimentId(long experimentId) {
+		List<Plate> result = plateRepository.findByExperimentId(experimentId);
+		return result.stream().map(this::mapToPlateDTO).collect(Collectors.toList());
+	}
+
+	public List<PlateDTO> getPlatesByBarcode(String barcode) {
+		List<Plate> result = plateRepository.findByBarcode(barcode);
+		return result.stream().map(this::mapToPlateDTO).collect(Collectors.toList());
+	}
+
+	public PlateDTO getPlateById(long plateId) {
+		Optional<Plate> result = plateRepository.findById(plateId);
+		return result.map(this::mapToPlateDTO).orElse(null);
+	}
+	
+//	private List<Well> createWells(Plate plate) {
+//		List<Well> wells = new ArrayList<>(plate.getRows() * plate.getColumns());
+//		for (int r = 1; r <= plate.getRows(); r++) {
+//			for (int c = 1; c <= plate.getColumns(); c++) {
+//				Well well = new Well();
+//				well.setPlateId(plate.getId());
+//				well.setRow(r);
+//				well.setColumn(c);
+//				well.setWellType(DEFAULT_WELLTYPE_CODE);
+//				well.setStatus(DEFAULT_WELL_STATUS);
+//				wells.add(well);
+//			}
+//		}
+//		wellRepository.saveAll(wells);
+//		return wells;
+//	}
+
+//	public boolean plateExists(long plateId) {
+//		return plateRepository.existsById(plateId);
+//	}
+	
+//	public List<PlateDTO> getPlatesByExperimentId(long experimentId) {
+//		return plateRepository.findByExperimentId(experimentId).stream().sorted(PlateUtils.PLATE_SEQUENCE_SORTER).collect(Collectors.toList());
+//	}
+	
+//	public List<Well> getWellsByPlateId(long plateId) {
+//		return wellRepository.findByPlateId(plateId).stream().sorted(WellUtils.WELL_POSITION_SORTER).collect(Collectors.toList());
+//	}
+	
+//	public void updateWells(long plateId, List<Well> updatedWells) {
+//		if (updatedWells == null || updatedWells.isEmpty()) throw new IllegalArgumentException("Cannot update wells: no well information specified");
+//		List<Well> wells = getWellsByPlateId(plateId);
+//		List<Well> wellsToSave = new ArrayList<>();
+//		for (Well updatedWell: updatedWells) {
+//			Well well = WellUtils.findWell(wells, updatedWell.getRow(), updatedWell.getColumn()).orElse(null);
+//			if (well == null) throw new IllegalArgumentException(String.format("Invalid well coordinates: %d, %d", updatedWell.getRow(), updatedWell.getColumn()));
+//			ObjectCopyUtils.copyNonNullValues(updatedWell, well);
+//			wellsToSave.add(well);
+//		}
+//		wellRepository.saveAll(wellsToSave);
+//	}
+	
+//	public void deletePlatesByExperimentId(long experimentId) {
+//		wellRepository.deleteByExperimentId(experimentId);
+//		plateRepository.deleteByExperimentId(experimentId);
+//	}
+	
+//	public void deletePlatesByProjectId(long projectId) {
+//		wellRepository.deleteByProjectId(projectId);
+//		plateRepository.deleteByProjectId(projectId);
+//	}
+
+	private PlateDTO mapToPlateDTO(Plate plate) {
+		PlateDTO plateDTO = new PlateDTO();
+		modelMapper.typeMap(Plate.class, PlateDTO.class)
+				.map(plate, plateDTO);
+		return plateDTO;
+	}
 }

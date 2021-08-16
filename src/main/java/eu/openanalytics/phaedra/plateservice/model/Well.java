@@ -6,42 +6,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import java.util.HashSet;
-import java.util.Set;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
+@Table("hca_well")
 public class Well {
-	
 	@Id
+	@NotNull
 	private Long id;
 	@Column("plate_id")
+	@NotNull
 	private Long plateId;
-
+	@NotNull
 	private Integer row;
+	@NotNull
 	private Integer column;
-
+	@Column("type")
+	@NotNull
+	private WellType wellType = WellType.EMPTY;
+	private WellStatus status = WellStatus.ACCEPTED_DEFAULT;
+	@Column("compound_id")
+	private Long compoundId;
 	private String description;
-
-	private WellStatus status;
-	
-	@Column("well_type")
-	private WellType wellType;
-
-	@MappedCollection(idColumn = "well_id")
-	private Set<WellTagRef> tags = new HashSet<>();
 
 	public Well(Long plateId) {
 		this.plateId = plateId;
-	}
-
-	public void addTag(Tag tag) {
-		this.tags.add(new WellTagRef(tag.getTagId()));
 	}
 }

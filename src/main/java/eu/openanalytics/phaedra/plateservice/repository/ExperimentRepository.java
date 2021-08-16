@@ -16,5 +16,4 @@ public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
 	
 	@Query("delete from hca_experiment e where e.project_id = :projectId")
 	void deleteByProjectId(@Param("projectId") long projectId);
-
 }

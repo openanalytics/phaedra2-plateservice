@@ -1,33 +1,44 @@
-version: '3'
+version: '3.5'
 
 services:
-  db:
-    image: postgres:13
-    hostname: plateservice-db
-    container_name: plateservice-db
+  plates_db:
+    image: postgres:13-alpine
+    restart: always
+    hostname: plates-db
+    container_name: plates-db
     networks:
-      - phaedra2
+      - private
     environment:
-      - POSTGRES_DB=plateservice
-      - POSTGRES_USER=plateservice
-      - POSTGRES_PASSWORD=plateservice
+      - POSTGRES_DB=phaedra2
+      - POSTGRES_USER=phaedra_usr
+      - POSTGRES_PASSWORD=phaedra_usr
     volumes:
-      - ./sql/populate_database.sh:/docker-entrypoint-initdb.d/populate_database.sh:ro
-      - ./sql/1-create-tables.sql:/opt/1-create-tables.sql:ro
-  app:
-    image: openanalytics/phaedra2-plateservice
-    hostname: plateservice-app
-    container_name: plateservice-app
-    networks:
-      - phaedra2
+      - ./db/1-create-tables.sql:/opt/1-create-tables.sql
+      - ./sh:/docker-entrypoint-initdb.d/
     ports:
-      - 8080:8080
+      - 8765:5432
+  plate_service:
+    image: phaedra2-plateservice:0.0.1-SNAPSHOT
+    hostname: phaedra2-plateservice
+    container_name: phaedra2-plateservice
+    networks:
+      - private
+      - phaedra2
     depends_on:
-      - db
+      - plates_db
     environment:
-      - DB_URL=jdbc:postgresql://plateservice-db:5432/plateservice
-      - DB_USERNAME=plateservice
-      - DB_PASSWORD=plateservice
+      - DB_URL=jdbc:postgresql://plates-db:5432/phaedra2?currentSchema=plates
+      - DB_USER=phaedra_usr
+      - DB_PASSWORD=phaedra_usr
+      - JAVA_OPTS=
+        -DSERVICE_REGISTRY=http://phaedra2-serviceregistry:8761/eureka/
+    ports:
+      - 3003:3003
 
 networks:
+  private:
+    name: private
+    external: false
   phaedra2:
+    external:
+      name: phaedra2
