@@ -5,7 +5,7 @@ server:
 
 spring:
   application:
-    name: PHAEDRA-PLATE-SERVICE
+    name: phaedra-plate-service
 #  datasource:
 #    driver-class-name: org.postgresql.Driver
 #    url: jdbc:postgresql://localhost:5432/phaedra2?currentSchema=plates
@@ -20,8 +20,5 @@ logging:
     name: /var/log/plateservice.log
 
 eureka:
-  instance:
-    appname: ${spring.application.name}
   client:
-    service-url:
-      defaultZone: ${SERVICE_REGISTRY:http://localhost:8761/eureka}
+    enabled: true
