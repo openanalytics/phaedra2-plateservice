@@ -6,11 +6,6 @@ server:
 spring:
   application:
     name: phaedra-plate-service
-#  datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/phaedra2?currentSchema=plates
-#    username: phaedra_usr
-#    password: phaedra_usr
   jackson:
     serialization:
       indent_output: true
