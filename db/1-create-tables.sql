@@ -21,6 +21,7 @@ create table plates.hca_project
     updated_by  text,
     primary key (id)
 );
+grant all on table plates.hca_project to phaedra_usr;
 
 -- Create hca_experiment table
 create table plates.hca_experiment
@@ -39,6 +40,7 @@ create table plates.hca_experiment
     primary key (id),
     foreign key (project_id) references plates.hca_project (id) on delete cascade on update cascade
 );
+grant all on table plates.hca_experiment to phaedra_usr;
 
 -- Create hca_plate table
 create table plates.hca_plate
@@ -75,6 +77,7 @@ create table plates.hca_plate
     foreign key (experiment_id) references plates.hca_experiment (id) on delete cascade on update cascade
 );
 create index hca_plate_ix_barcode on plates.hca_plate (barcode);
+grant all on table plates.hca_plate to phaedra_usr;
 
 -- Create hca_well table
 create table plates.hca_well
@@ -91,6 +94,7 @@ create table plates.hca_well
     foreign key (plate_id) references plates.hca_plate (id) on delete cascade
 );
 create index hca_plate_well_ix_plate_id on plates.hca_well (plate_id);
+grant all on table plates.hca_well to phaedra_usr;
 
 -- Create hca_plate_measurement table
 create table plates.hca_plate_measurement
@@ -102,6 +106,7 @@ create table plates.hca_plate_measurement
     primary key (plate_id, measurement_id),
     foreign key (plate_id) references plates.hca_plate (id) on delete cascade on update cascade
 );
+grant all on table plates.hca_plate_measurement to phaedra_usr;
 
 --Create hca_well_substance table
 create table plates.hca_well_substance
@@ -114,3 +119,4 @@ create table plates.hca_well_substance
     primary key (id),
     foreign key (well_id) references plates.hca_well (id) on delete cascade on update cascade
 );
+grant all on table plates.hca_well_substance to phaedra_usr;
