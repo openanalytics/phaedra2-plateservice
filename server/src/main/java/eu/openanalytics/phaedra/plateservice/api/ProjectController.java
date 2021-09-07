@@ -4,7 +4,7 @@ import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import eu.openanalytics.phaedra.plateservice.service.ProjectService;
 import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.platservice.dto.ProjectDTO;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
