@@ -26,3 +26,6 @@ hs_err_pid*
 /.idea/
 /phaedra2-plateservice.iml
 /target/
+/server/target/
+/dto/target/
+/client/target/
