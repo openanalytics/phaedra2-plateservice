@@ -1,0 +1,389 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_project_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: TEXT
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: created_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: created_by
+                  type: TEXT
+              - column:
+                  name: updated_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: updated_by
+                  type: TEXT
+            tableName: hca_project
+  - changeSet:
+      id: 2
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_experiment_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: TEXT
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: status
+                  type: TEXT
+              - column:
+                  name: multiplo_method
+                  type: TEXT
+              - column:
+                  name: multiplo_parameter
+                  type: TEXT
+              - column:
+                  name: created_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: created_by
+                  type: TEXT
+              - column:
+                  name: updated_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: updated_by
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: project_id
+                  type: BIGINT
+            tableName: hca_experiment
+  - changeSet:
+      id: 3
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_plate_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: barcode
+                  type: TEXT
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: experiment_id
+                  type: BIGINT
+              - column:
+                  name: rows
+                  type: INTEGER
+              - column:
+                  name: columns
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: sequence
+                  type: INTEGER
+              - column:
+                  name: link_status
+                  type: VARCHAR(150)
+              - column:
+                  name: link_template_id
+                  type: TEXT
+              - column:
+                  name: link_source
+                  type: TEXT
+              - column:
+                  name: linked_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: calculation_status
+                  type: VARCHAR(150)
+              - column:
+                  name: calculation_error
+                  type: TEXT
+              - column:
+                  name: calculated_by
+                  type: TEXT
+              - column:
+                  name: calculated_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: validation_status
+                  type: VARCHAR(150)
+              - column:
+                  name: validated_by
+                  type: TEXT
+              - column:
+                  name: validated_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: approval_status
+                  type: VARCHAR(150)
+              - column:
+                  name: approved_by
+                  type: TEXT
+              - column:
+                  name: approved_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: upload_status
+                  type: VARCHAR(150)
+              - column:
+                  name: uploaded_by
+                  type: TEXT
+              - column:
+                  name: uploaded_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: created_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: created_by
+                  type: TEXT
+              - column:
+                  name: updated_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: updated_by
+                  type: TEXT
+            tableName: hca_plate
+  - changeSet:
+      id: 4
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_well_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: plate_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: row
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: column
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValue: EMPTY
+                  name: type
+                  type: TEXT
+              - column:
+                  name: status
+                  type: VARCHAR(150)
+              - column:
+                  name: compound_id
+                  type: BIGINT
+              - column:
+                  name: description
+                  type: TEXT
+            tableName: hca_well
+  - changeSet:
+      id: 5
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_well_substance_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: type
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: TEXT
+              - column:
+                  defaultValueNumeric: 0.0
+                  name: concentration
+                  type: FLOAT8
+              - column:
+                  constraints:
+                    nullable: false
+                  name: well_id
+                  type: BIGINT
+            tableName: hca_well_substance
+  - changeSet:
+      id: 6
+      author: sberberovic
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_plate_measurement_pkey
+                  name: plate_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_plate_measurement_pkey
+                  name: measurement_id
+                  type: BIGINT
+              - column:
+                  name: linked_by
+                  type: TEXT
+              - column:
+                  name: linked_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+            tableName: hca_plate_measurement
+  - changeSet:
+      id: 7
+      author: sberberovic
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: project_id
+            baseTableName: hca_experiment
+            constraintName: hca_experiment_project_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: hca_project
+            validate: true
+  - changeSet:
+      id: 8
+      author: sberberovic
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: experiment_id
+            baseTableName: hca_plate
+            constraintName: hca_plate_experiment_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: hca_experiment
+            validate: true
+  - changeSet:
+      id: 9
+      author: sberberovic
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: barcode
+            indexName: hca_plate_ix_barcode
+            tableName: hca_plate
+  - changeSet:
+      id: 10
+      author: sberberovic
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: plate_id
+            baseTableName: hca_plate_measurement
+            constraintName: hca_plate_measurement_plate_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: hca_plate
+            validate: true
+  - changeSet:
+      id: 11
+      author: sberberovic
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: plate_id
+            baseTableName: hca_well
+            constraintName: hca_well_plate_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: NO ACTION
+            referencedColumnNames: id
+            referencedTableName: hca_plate
+            validate: true
+  - changeSet:
+      id: 12
+      author: sberberovic
+      changes:
+        - createIndex:
+            columns:
+              - column:
+                  name: plate_id
+            indexName: hca_plate_well_ix_plate_id
+            tableName: hca_well
+  - changeSet:
+      id: 13
+      author: sberberovic
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: well_id
+            baseTableName: hca_well_substance
+            constraintName: hca_well_substance_well_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: hca_well
+            validate: true
+
