@@ -2,7 +2,6 @@ package eu.openanalytics.phaedra.platservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eu.openanalytics.phaedra.platservice.enumartion.WellStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.WellType;
 import lombok.Data;
 
 @Data
@@ -12,7 +11,7 @@ public class WellDTO {
 	private Long plateId;
 	private Integer row;
 	private Integer column;
-	private WellType wellType;
+	private String welltype;
 	private WellStatus status;
 	private Long compoundId;
 	private String description;

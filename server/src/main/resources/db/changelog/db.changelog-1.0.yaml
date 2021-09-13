@@ -386,4 +386,75 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: hca_well
             validate: true
-
+  - changeSet:
+      id: 14
+      author: tdekoninck
+      changes:
+        - createTable:
+            tableName: hca_welltype
+            columns:
+              # Use the name of the WellType as Primary Key, this makes it easy to use it other tables and services
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                  name: name
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: TEXT
+  - changeSet:
+      id: 15
+      author: tdekoninck
+      changes:
+        - dropColumn:
+            columnName: type
+            tableName: hca_well
+        - addColumn:
+            tableName: hca_well
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: welltype
+                  type: TEXT
+        - addForeignKeyConstraint:
+            baseColumnNames: welltype
+            baseTableName: hca_well
+            constraintName: hca_well_well_type_fkey
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+            referencedColumnNames: name
+            referencedTableName: hca_welltype
+            validated: true
+        # Next part is to create three example welltypes.
+        # Feel free to remove this later on, but for now it's convenient for testing purposes.
+        -  insert:
+             columns:
+              - column:
+                 name:  name
+                 value: "SAMPLE"
+              - column:
+                 name: description
+                 value: "One the three example welltypes (SAMPLE)"
+             tableName:  hca_welltype
+        -  insert:
+             columns:
+               - column:
+                   name:  name
+                   value: "LC"
+               - column:
+                   name: description
+                   value: "One the three example welltypes (LC: low controls)"
+             tableName:  hca_welltype
+        -  insert:
+             columns:
+               - column:
+                   name:  name
+                   value: "HC"
+               - column:
+                   name: description
+                   value: "One the three example welltypes (HC: high controls)"
+             tableName:  hca_welltype

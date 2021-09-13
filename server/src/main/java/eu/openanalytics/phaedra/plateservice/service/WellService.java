@@ -37,6 +37,14 @@ public class WellService {
                 Well well = new Well(plate.getId());
                 well.setRow(r);
                 well.setColumn(c);
+                // note: use an example layout for the plate. This will be changed later.
+                if (c <= 2) {
+                    well.setWelltype("LC");
+                } else if (c >= plate.getColumns() -1) {
+                    well.setWelltype("HC");
+                } else {
+                    well.setWelltype("SAMPLE");
+                }
                 wells.add(well);
             }
         }

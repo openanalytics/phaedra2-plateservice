@@ -1,7 +1,6 @@
 package eu.openanalytics.phaedra.plateservice.model;
 
 import eu.openanalytics.phaedra.platservice.enumartion.WellStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.WellType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -24,10 +23,11 @@ public class Well {
 	private Integer row;
 	@NotNull
 	private Integer column;
-	@Column("type")
-	@NotNull
-	private WellType wellType = WellType.EMPTY;
+
+	private String welltype;
+
 	private WellStatus status = WellStatus.ACCEPTED_DEFAULT;
+
 	@Column("compound_id")
 	private Long compoundId;
 	private String description;
