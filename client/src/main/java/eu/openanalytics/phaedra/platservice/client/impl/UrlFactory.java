@@ -8,4 +8,8 @@ public class UrlFactory {
         return String.format("%s/plate/%s", PLATE_SERVICE, plateId);
     }
 
+    public static String wells(long plateId) {
+        return String.format("%s/plate/%s/wells", PLATE_SERVICE, plateId);
+    }
+
 }
