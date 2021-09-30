@@ -3,9 +3,11 @@ package eu.openanalytics.phaedra.platservice.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eu.openanalytics.phaedra.platservice.enumartion.WellStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @AllArgsConstructor
