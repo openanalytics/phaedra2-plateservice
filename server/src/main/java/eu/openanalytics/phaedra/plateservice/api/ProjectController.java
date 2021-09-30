@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
+//@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
 @RestController
 public class ProjectController {
 
 	private final ProjectService projectService;
-	
+
 	private final ExperimentService experimentService;
 
 	public ProjectController(ProjectService projectService, ExperimentService experimentService) {
@@ -74,7 +74,7 @@ public class ProjectController {
 		List<ExperimentDTO> experiments = experimentService.getExperimentByProjectId(projectId);
 		return ResponseEntity.ok(experiments);
 	}
-	
+
 //	@PostMapping(value="/project/{projectId}/experiment", produces=MediaType.APPLICATION_JSON_VALUE)
 //	public ResponseEntity<ExperimentDTO> createExperiment(@PathVariable Long projectId, @RequestBody ExperimentDTO newExperiment) {
 ////		if (!experimentService.experimentExists(projectId)) return ResponseEntity.notFound().build();

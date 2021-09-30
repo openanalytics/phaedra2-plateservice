@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
+//@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
 @RestController
 public class PlateController {
-	
+
 	private final PlateService plateService;
 	private final WellService wellService;
 
@@ -49,7 +49,7 @@ public class PlateController {
 		plateService.deletePlate(plateId);
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@GetMapping(value="/plate/{plateId}", produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PlateDTO> getPlate(@PathVariable long plateId) {
 		PlateDTO response = plateService.getPlateById(plateId);
@@ -85,7 +85,7 @@ public class PlateController {
 		else
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
-	
+
 	@GetMapping(value="/plate/{plateId}/wells", produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<WellDTO>> getWells(@PathVariable long plateId) {
 		List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
@@ -106,5 +106,5 @@ public class PlateController {
 //		plateService.deletePlate(plateId);
 //		return ResponseEntity.noContent().build();
 //	}
-	
+
 }

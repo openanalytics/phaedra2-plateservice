@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
+//@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
 @RestController
 public class ExperimentController {
 
 	@Autowired
 	private ExperimentService experimentService;
-	
+
 	@Autowired
 	private PlateService plateService;
 
@@ -60,7 +60,7 @@ public class ExperimentController {
 		else
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
-	
+
 //	@GetMapping(value="/experiment/{experimentId}/plates", produces=MediaType.APPLICATION_JSON_VALUE)
 //	public ResponseEntity<List<PlateDTO>> getPlates(@PathVariable long experimentId) {
 //		List<PlateDTO> response = plateService.getPlatesByExperimentId(experimentId);
