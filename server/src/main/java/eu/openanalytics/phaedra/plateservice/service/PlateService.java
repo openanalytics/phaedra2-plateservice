@@ -5,6 +5,9 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
+import org.modelmapper.convention.NameTransformers;
+import org.modelmapper.convention.NamingConventions;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class PlateService {
-	private static final ModelMapper modelMapper = new ModelMapper();
+	private final ModelMapper modelMapper = new ModelMapper();
 
 	private final PlateRepository plateRepository;
 	private final WellService wellService;
@@ -21,6 +24,13 @@ public class PlateService {
 	public PlateService(PlateRepository plateRepository, WellService wellService) {
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
+
+		// TODO move to dedicated ModelMapper service
+		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
+				.setDestinationNameTransformer(NameTransformers.builder())
+				.setDestinationNamingConvention(NamingConventions.builder());
+		modelMapper.createTypeMap(Plate.class, PlateDTO.PlateDTOBuilder.class, builderConfiguration)
+				.setPropertyCondition(Conditions.isNotNull());
 	}
 
 	public PlateDTO createPlate(PlateDTO plateDTO) {
@@ -123,9 +133,8 @@ public class PlateService {
 //	}
 
 	private PlateDTO mapToPlateDTO(Plate plate) {
-		PlateDTO plateDTO = new PlateDTO();
-		modelMapper.typeMap(Plate.class, PlateDTO.class)
-				.map(plate, plateDTO);
-		return plateDTO;
+		var builder = modelMapper.map(plate, PlateDTO.PlateDTOBuilder.class);
+		builder.wells(wellService.getWellsByPlateId(plate.getId()));
+		return builder.build();
 	}
 }

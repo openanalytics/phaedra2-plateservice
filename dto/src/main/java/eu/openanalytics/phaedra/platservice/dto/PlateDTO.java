@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -54,4 +55,6 @@ public class PlateDTO {
 	private String createdBy;
 	private Date updatedOn;
 	private String updatedBy;
+
+	private List<WellDTO> wells;
 }

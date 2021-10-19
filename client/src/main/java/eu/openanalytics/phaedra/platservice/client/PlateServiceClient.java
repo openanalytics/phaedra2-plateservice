@@ -10,6 +10,7 @@ public interface PlateServiceClient {
 
     PlateDTO getPlate(long plateId) throws PlateUnresolvableException;
 
+    // TODO this method has become obsolete
     List<WellDTO> getWellsOfPlateSorted(long plateId) throws PlateUnresolvableException;
 
 }

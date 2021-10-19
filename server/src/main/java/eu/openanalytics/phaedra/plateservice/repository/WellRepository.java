@@ -1,13 +1,10 @@
 package eu.openanalytics.phaedra.plateservice.repository;
 
-import java.util.List;
-
-import org.springframework.data.jdbc.repository.query.Query;
+import eu.openanalytics.phaedra.plateservice.model.Well;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import eu.openanalytics.phaedra.plateservice.model.Well;
+import java.util.List;
 
 @Repository
 public interface WellRepository extends CrudRepository<Well, Long> {

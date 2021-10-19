@@ -8,7 +8,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,7 +71,7 @@ public class PlateController {
 	public ResponseEntity<List<PlateDTO>> getPlatesByExperiment(@RequestParam(required = false) long experimentId) {
 		List<PlateDTO> response = plateService.getPlatesByExperimentId(experimentId);
 		if (CollectionUtils.isNotEmpty(response))
-			return new ResponseEntity<>(response, HttpStatus.FOUND);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		else
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
@@ -86,6 +85,7 @@ public class PlateController {
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
 
+	// TODO remove this
 	@GetMapping(value="/plate/{plateId}/wells", produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<WellDTO>> getWells(@PathVariable long plateId) {
 		List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
