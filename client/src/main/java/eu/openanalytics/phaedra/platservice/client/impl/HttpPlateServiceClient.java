@@ -40,22 +40,4 @@ public class HttpPlateServiceClient implements PlateServiceClient {
         }
     }
 
-    @Override
-    public List<WellDTO> getWellsOfPlateSorted(long plateId) throws PlateUnresolvableException {
-        // 1. get wells
-        try {
-            var wells = restTemplate.getForObject(UrlFactory.wells(plateId), WellDTO[].class);
-            if (wells == null) {
-                throw new PlateUnresolvableException("Plate could not be converted");
-            }
-
-            // 2. sort wells
-            return Arrays.stream(wells).sorted(WELL_COMPARATOR).toList();
-        } catch (HttpClientErrorException.NotFound ex) {
-            throw new PlateUnresolvableException("Plate not found");
-        } catch (HttpClientErrorException ex) {
-            throw new PlateUnresolvableException("Error while fetching plate");
-        }
-    }
-
 }

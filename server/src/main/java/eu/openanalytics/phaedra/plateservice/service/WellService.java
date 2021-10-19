@@ -9,12 +9,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class WellService {
     private static final ModelMapper modelMapper = new ModelMapper();
+
+    private static final Comparator<WellDTO> WELL_COMPARATOR = Comparator.comparing(WellDTO::getRow).thenComparing(WellDTO::getColumn);
 
     private WellRepository wellRepository;
 
@@ -63,7 +66,7 @@ public class WellService {
 
     public List<WellDTO> getWellsByPlateId(long plateId) {
         List<Well> result = wellRepository.findByPlateId(plateId);
-        return result.stream().map(this::mapTpWellDTO).collect(Collectors.toList());
+        return result.stream().map(this::mapTpWellDTO).sorted(WELL_COMPARATOR).toList();
     }
 
     private WellDTO mapTpWellDTO(Well well) {

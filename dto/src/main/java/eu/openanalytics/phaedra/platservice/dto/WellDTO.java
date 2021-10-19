@@ -19,6 +19,6 @@ public class WellDTO {
 	private Integer column;
 	private String welltype;
 	private WellStatus status;
-	private Long compoundId;
+	private Long compoundId; // TODO remove?
 	private String description;
 }
