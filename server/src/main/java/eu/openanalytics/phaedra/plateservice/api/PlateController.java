@@ -53,7 +53,7 @@ public class PlateController {
 	public ResponseEntity<PlateDTO> getPlate(@PathVariable long plateId) {
 		PlateDTO response = plateService.getPlateById(plateId);
 		if (response != null)
-			return new ResponseEntity<>(response, HttpStatus.FOUND);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		else
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
@@ -62,7 +62,7 @@ public class PlateController {
 	public ResponseEntity<List<PlateDTO>> getPlates() {
 		List<PlateDTO> response = plateService.getAllPlates();
 		if (CollectionUtils.isNotEmpty(response))
-			return new ResponseEntity<>(response, HttpStatus.FOUND);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		else
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
@@ -80,7 +80,7 @@ public class PlateController {
 	public ResponseEntity<List<PlateDTO>> getPlatesByBarcode(@RequestParam(required = false) String barcode) {
 		List<PlateDTO> response = plateService.getPlatesByBarcode(barcode);
 		if (CollectionUtils.isNotEmpty(response))
-			return new ResponseEntity<>(response, HttpStatus.FOUND);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		else
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
