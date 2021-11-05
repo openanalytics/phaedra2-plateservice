@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: sberberovic
+      changes:
+        - addColumn:
+            tableName: hca_plate_measurement
+            columns:
+              - column:
+                  name: is_active
+                  type: boolean
+  - changeSet:
+      id: 2
+      author: sberberovic
+      changes:
+        - addColumn:
+            tableName: hca_plate_measurement
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                  name: id
+                  type: BIGSERIAL

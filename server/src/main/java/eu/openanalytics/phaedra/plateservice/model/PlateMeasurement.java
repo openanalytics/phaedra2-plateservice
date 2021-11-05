@@ -19,6 +19,8 @@ public class PlateMeasurement {
     @Column("measurement_id")
     @NotNull
     private Long measurementId;
+    @Column("is_active")
+    private Boolean active;
     @Column("linked_by")
     private String linkedBy;
     @Column("linked_on")
