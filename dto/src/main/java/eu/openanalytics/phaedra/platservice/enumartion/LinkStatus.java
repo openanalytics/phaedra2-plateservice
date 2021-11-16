@@ -1,5 +1,6 @@
 package eu.openanalytics.phaedra.platservice.enumartion;
 
 public enum LinkStatus {
-    //TODO
+    NOT_LINKED,
+    LINKED
 }
