@@ -22,7 +22,7 @@ public class Project {
     @Column("created_on")
     private Date createdOn = new Date();
     @Column("created_by")
-    private String createBy;
+    private String createdBy;
     @Column("updated_on")
     private Date updatedOn = new Date();
     @Column("updated_by")

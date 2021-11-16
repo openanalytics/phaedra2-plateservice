@@ -1,8 +1,8 @@
 package eu.openanalytics.phaedra.plateservice;
 
-import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.servers.Server;
+import javax.servlet.ServletContext;
+import javax.sql.DataSource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,11 +13,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.servlet.ServletContext;
-import javax.sql.DataSource;
+import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
 
 @EnableDiscoveryClient
 @EnableScheduling
@@ -75,7 +77,8 @@ public class PlateServiceApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**");
+				CorsRegistration registration = registry.addMapping("/**");
+				registration.allowedMethods("*");
 			}
 		};
 	}

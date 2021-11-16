@@ -12,7 +12,7 @@ public class ProjectDTO {
     private String name;
     private String description;
     private Date createdOn = new Date();
-    private String createBy;
+    private String createdBy;
     private Date updatedOn = new Date();
     private String updatedBy;
 }
