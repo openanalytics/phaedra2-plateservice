@@ -29,3 +29,5 @@ hs_err_pid*
 /server/target/
 /dto/target/
 /client/target/
+/client/phaedra2-plateservice-client.iml
+/server/phaedra2-plateservice-server.iml

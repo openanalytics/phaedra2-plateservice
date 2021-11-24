@@ -64,7 +64,7 @@ public class ProjectController {
 	public ResponseEntity<ProjectDTO> getProject(@PathVariable long projectId) {
 		ProjectDTO response = projectService.getProjectById(projectId);
 		if (response != null)
-			return new ResponseEntity<>(response, HttpStatus.FOUND);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		else
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
