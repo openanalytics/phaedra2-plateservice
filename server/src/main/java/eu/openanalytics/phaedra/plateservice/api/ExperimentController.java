@@ -55,7 +55,7 @@ public class ExperimentController {
 	public ResponseEntity<ExperimentDTO> getExperiment(@PathVariable Long experimentId) {
 		ExperimentDTO response = experimentService.getExperimentById(experimentId);
 		if (response != null)
-			return new ResponseEntity<>(response, HttpStatus.FOUND);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		else
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
