@@ -12,4 +12,6 @@ public class UrlFactory {
         return String.format("%s/plate/%s/wells", PLATE_SERVICE, plateId);
     }
 
+    public static String platePut() {return PLATE_SERVICE+"/plate/";}
+
 }
