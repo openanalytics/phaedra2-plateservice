@@ -21,8 +21,10 @@ public class PlateTemplate {
     @NotNull
     private Integer columns;
     @Column("created_on")
+    @NotNull
     private Date createdOn;
     @Column("created_by")
+    @NotNull
     private String createdBy;
     @Column("updated_on")
     private Date updatedOn;
