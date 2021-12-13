@@ -18,11 +18,11 @@ public class PlateTemplateService {
 
     private final PlateTemplateRepository plateTemplateRepository;
 
-    private final WellTemplateRepository wellTemplateRepository;
+    private final WellTemplateService wellTemplateService;
 
-    public PlateTemplateService(PlateTemplateRepository plateTemplateRepository, WellTemplateRepository wellTemplateRepository) {
+    public PlateTemplateService(PlateTemplateRepository plateTemplateRepository, WellTemplateService wellTemplateService) {
         this.plateTemplateRepository = plateTemplateRepository;
-        this.wellTemplateRepository = wellTemplateRepository;
+        this.wellTemplateService = wellTemplateService;
     }
 
     public PlateTemplateDTO createPlateTemplate(PlateTemplateDTO plateTemplateDTO) {
@@ -31,7 +31,8 @@ public class PlateTemplateService {
                 .map(plateTemplateDTO, plateTemplate);
         plateTemplate = plateTemplateRepository.save(plateTemplate);
 
-        //Add wellTemplates TODO
+        //Add wellTemplates
+        wellTemplateService.createWellTemplates(plateTemplate);
 
         return mapToPlateTemplateDTO(plateTemplate);
     }
