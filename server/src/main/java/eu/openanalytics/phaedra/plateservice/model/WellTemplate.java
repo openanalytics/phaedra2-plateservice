@@ -1,8 +1,5 @@
 package eu.openanalytics.phaedra.plateservice.model;
 
-import eu.openanalytics.phaedra.platservice.enumartion.SubstanceType;
-import eu.openanalytics.phaedra.platservice.enumartion.WellStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.WellType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -26,10 +23,10 @@ public class WellTemplate {
     @Column("plate_template_id")
     @NotNull
     private Long plateTemplateId;
-    //Standard Skipped wellType.
+    //Standard EMPTY wellType.
     @Column("well_type")
     @NotNull
-    private WellType wellType = WellType.EMPTY;
+    private String wellType = "EMPTY";
 
     @NotNull
     private boolean skipped = true;

@@ -40,7 +40,7 @@ public class PlateTemplateServiceTest {
     @Container
     private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
             .withDatabaseName("phaedra2")
-            .withUrlParam("currentSchema","plates")
+            .withUrlParam("currentSchema", "plates")
             .withPassword("inmemory")
             .withUsername("inmemory");
 
@@ -52,7 +52,7 @@ public class PlateTemplateServiceTest {
     }
 
     @BeforeEach
-    void before(){
+    void before() {
         WellTemplateService wellTemplateService = new WellTemplateService(this.wellTemplateRepository);
         this.plateTemplateService = new PlateTemplateService(this.plateTemplateRepository, wellTemplateService);
     }
@@ -63,12 +63,12 @@ public class PlateTemplateServiceTest {
     }
 
     @Test
-    public void isInitialized(){
+    public void isInitialized() {
         assertThat(this.plateTemplateService).isNotNull();
     }
 
     @Test
-    public void createPlateTemplateTest(){
+    public void createPlateTemplateTest() {
         PlateTemplateDTO plateTemplateDTO = PlateTemplateDTO.builder().rows(2).columns(3).createdOn(new Date()).createdBy("smarien").build();
         PlateTemplateDTO res = plateTemplateService.createPlateTemplate(plateTemplateDTO);
         assertThat(res).isNotNull();
@@ -89,7 +89,7 @@ public class PlateTemplateServiceTest {
     }
 
     @Test
-    public void updatePlateTemplateTest(){
+    public void updatePlateTemplateTest() {
         PlateTemplateDTO plateTemplateDTO = PlateTemplateDTO.builder().rows(2).columns(3).createdOn(new Date()).createdBy("smarien").name("Test").build();
         PlateTemplateDTO res = plateTemplateService.createPlateTemplate(plateTemplateDTO);
         assertThat(res).isNotNull();
@@ -108,7 +108,7 @@ public class PlateTemplateServiceTest {
     }
 
     @Test
-    public void deletePlateTemplateTest(){
+    public void deletePlateTemplateTest() {
         PlateTemplateDTO plateTemplateDTO = PlateTemplateDTO.builder().rows(2).columns(3).createdOn(new Date()).createdBy("smarien").name("Test").build();
         PlateTemplateDTO res = plateTemplateService.createPlateTemplate(plateTemplateDTO);
         assertThat(res).isNotNull();
@@ -124,7 +124,7 @@ public class PlateTemplateServiceTest {
     }
 
     @Test
-    public void getAllPlateTemplatesTest(){
+    public void getAllPlateTemplatesTest() {
         PlateTemplateDTO plateTemplateDTO = PlateTemplateDTO.builder().rows(2).columns(3).createdOn(new Date()).createdBy("smarien").name("Test").build();
         PlateTemplateDTO res = plateTemplateService.createPlateTemplate(plateTemplateDTO);
         assertThat(res).isNotNull();
@@ -138,7 +138,7 @@ public class PlateTemplateServiceTest {
         PlateTemplateDTO res3 = plateTemplateService.createPlateTemplate(plateTemplateDTO);
         List<PlateTemplateDTO> plateTemplateDTOS2 = plateTemplateService.getAllPlateTemplates();
         //Is list before new plateTemplate one smaller than new list
-        assertThat(plateTemplateDTOS.size()+1).isEqualTo(plateTemplateDTOS2.size());
+        assertThat(plateTemplateDTOS.size() + 1).isEqualTo(plateTemplateDTOS2.size());
     }
 
 }

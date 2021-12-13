@@ -1,10 +1,7 @@
 package eu.openanalytics.phaedra.plateservice.repository;
 
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.platservice.enumartion.SubstanceType;
-import eu.openanalytics.phaedra.platservice.enumartion.WellType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +31,7 @@ public class WellTemplateRepositoryTest {
     @Container
     private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
             .withDatabaseName("phaedra2")
-            .withUrlParam("currentSchema","plates")
+            .withUrlParam("currentSchema", "plates")
             .withPassword("inmemory")
             .withUsername("inmemory");
 
@@ -78,7 +75,7 @@ public class WellTemplateRepositoryTest {
         assertThat(savedWellTemplate.getDescription()).isEqualTo(wellTemplate.getDescription());
         assertThat(savedWellTemplate.getRow()).isEqualTo(wellTemplate.getRow());
         assertThat(savedWellTemplate.getColumn()).isEqualTo(wellTemplate.getColumn());
-        assertThat(savedWellTemplate.getWellType()).isEqualTo(WellType.EMPTY);
+        assertThat(savedWellTemplate.getWellType()).isEqualTo("EMPTY");
         assertThat(savedWellTemplate.isSkipped()).isTrue();
         assertThat(savedWellTemplate.getPlateTemplateId()).isEqualTo(1000L);
     }
