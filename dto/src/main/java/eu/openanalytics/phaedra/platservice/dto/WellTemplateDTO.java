@@ -1,7 +1,6 @@
 package eu.openanalytics.phaedra.platservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import eu.openanalytics.phaedra.platservice.enumartion.WellType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +20,6 @@ public class WellTemplateDTO {
     private Integer row;
     private Integer column;
     private Long plateTemplateId;
-    private WellType wellType;
-    private boolean skipped;
+    private String wellType = "EMPTY";
+    private boolean skipped = true;
 }

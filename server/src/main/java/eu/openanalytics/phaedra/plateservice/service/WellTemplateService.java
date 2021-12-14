@@ -6,7 +6,6 @@ import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
 import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
 import eu.openanalytics.phaedra.platservice.dto.WellDTO;
 import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
-import eu.openanalytics.phaedra.platservice.enumartion.WellType;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,13 +48,14 @@ public class WellTemplateService {
         return wellTemplates.stream().map(this::mapToWellTemplateDTO).collect(Collectors.toList());
     }
 
-    public WellTemplateDTO updateWellTemplate(WellTemplateDTO wellTemplateDTO){
-        WellTemplate wellTemplate = new WellTemplate(wellTemplateDTO.getPlateTemplateId());
-        modelMapper.typeMap(WellTemplateDTO.class,WellTemplate.class)
-                .setPropertyCondition(Conditions.isNotNull())
-                .map(wellTemplateDTO,wellTemplate);
-        wellTemplate = wellTemplateRepository.save(wellTemplate);
-        return mapToWellTemplateDTO(wellTemplate);
+    public void updateWellTemplate(WellTemplateDTO wellTemplateDTO){
+        Optional<WellTemplate> wellTemplate = wellTemplateRepository.findById(wellTemplateDTO.getId());
+        wellTemplate.ifPresent( w -> {
+            modelMapper.typeMap(WellTemplateDTO.class,WellTemplate.class)
+                    .setPropertyCondition(Conditions.isNotNull())
+                    .map(wellTemplateDTO, w);
+            wellTemplateRepository.save(w);
+        });
     }
 
     public List<WellTemplateDTO> getWellTemplatesByPlateTemplateId(long plateTemplateId){
