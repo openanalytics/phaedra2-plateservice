@@ -58,6 +58,11 @@ public class WellTemplateService {
         });
     }
 
+    public WellTemplateDTO getWellTemplateById(long wellTemplateId){
+        Optional<WellTemplate> result = wellTemplateRepository.findById(wellTemplateId);
+        return result.map(this::mapToWellTemplateDTO).orElse(null);
+    }
+
     public List<WellTemplateDTO> getWellTemplatesByPlateTemplateId(long plateTemplateId){
         List<WellTemplate> result = wellTemplateRepository.findByPlateTemplateId(plateTemplateId);
         return result.stream().map(this::mapToWellTemplateDTO).sorted(WELL_TEMPLATE_DTO_COMPARATOR).toList();

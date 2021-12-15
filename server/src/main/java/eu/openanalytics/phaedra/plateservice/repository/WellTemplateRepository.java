@@ -10,9 +10,5 @@ import java.util.List;
 
 @Repository
 public interface WellTemplateRepository extends CrudRepository<WellTemplate, Long> {
-
-    /*@Query("delete from hca_well_template p where p.plate_template_id=:plateTemplateId")
-    void deleteByPlateTemplateId(@Param("plateTemplateId") long plateTemplateId);*/
-
     List<WellTemplate> findByPlateTemplateId(long plateTemplateId);
 }

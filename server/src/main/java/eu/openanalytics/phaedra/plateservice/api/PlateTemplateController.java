@@ -38,7 +38,7 @@ public class PlateTemplateController {
     @DeleteMapping(value = "/plate-template/{plateTemplateId}")
     public ResponseEntity<Void> deletePlate(@PathVariable long plateTemplateId) {
         plateTemplateService.deletePlateTemplate(plateTemplateId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -51,7 +51,7 @@ public class PlateTemplateController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(value = "/plate-template", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/plate-templates", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PlateTemplateDTO>> getPlateTemplates() {
         List<PlateTemplateDTO> result = plateTemplateService.getAllPlateTemplates();
         if (CollectionUtils.isNotEmpty(result))

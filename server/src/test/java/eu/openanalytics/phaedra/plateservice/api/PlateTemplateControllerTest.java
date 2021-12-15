@@ -1,92 +1,188 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
-import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
-import eu.openanalytics.phaedra.plateservice.service.WellTemplateService;
-import eu.openanalytics.phaedra.plateservice.support.AbstractIntegrationTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
-public class PlateTemplateControllerTest extends AbstractIntegrationTest {
+@Testcontainers
+@SpringBootTest
+@Sql({"/jdbc/test-data.sql"})
+@AutoConfigureMockMvc
+@TestPropertySource(locations = "classpath:application-test.properties")
+public class PlateTemplateControllerTest {
 
-    private static final PlateTemplateService plateTemplateService = mock(PlateTemplateService.class);
-    private static final WellTemplateService wellTemplateService = mock(WellTemplateService.class);
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Test
-    public void plateTemplatePostTest() {
-        PlateTemplateDTO plateTemplateDTO = PlateTemplateDTO.builder().rows(2).columns(3).createdOn(new Date()).createdBy("smarien").build();
-        when(plateTemplateService.createPlateTemplate(plateTemplateDTO)).thenReturn(plateTemplateDTO);
-        PlateTemplateController controller = new PlateTemplateController(plateTemplateService, wellTemplateService);
+    @Autowired
+    private ObjectMapper objectMapper;
 
-        var httpEntity = controller.createPlateTemplate(plateTemplateDTO);
-        assertThat(httpEntity.getBody().getCreatedOn()).isEqualTo(plateTemplateDTO.getCreatedOn());
-        assertThat(httpEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    @DynamicPropertySource
+    static void registerPgProperties(DynamicPropertyRegistry registry) {
+        registry.add("DB_URL", Containers.postgreSQLContainer::getJdbcUrl);
+        registry.add("DB_USER", Containers.postgreSQLContainer::getUsername);
+        registry.add("DB_PASSWORD", Containers.postgreSQLContainer::getPassword);
     }
 
     @Test
-    public void plateTemplatePutTest() {
-        PlateTemplateDTO plateTemplateDTO = PlateTemplateDTO.builder().rows(2).columns(3).createdOn(new Date()).createdBy("smarien").build();
-        doNothing().when(plateTemplateService).updatePlateTemplate(plateTemplateDTO);
-        PlateTemplateController controller = new PlateTemplateController(plateTemplateService, wellTemplateService);
+    public void plateTemplatePostTest() throws Exception{
+        PlateTemplate newPlateTemplate = new PlateTemplate();
+        newPlateTemplate.setRows(2);
+        newPlateTemplate.setColumns(3);
+        newPlateTemplate.setCreatedOn(new Date());
+        newPlateTemplate.setCreatedBy("smarien");
 
-        var httpEntity = controller.updatePlate(plateTemplateDTO);
-        assertThat(httpEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
+        MvcResult mvcResult = this.mockMvc.perform(post("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        PlateTemplateDTO plateTemplateDTOResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
+        assertThat(plateTemplateDTOResult).isNotNull();
+        assertThat(plateTemplateDTOResult.getId()).isEqualTo(1L);
     }
 
     @Test
-    public void plateTemplateDeleteTest() {
-        doNothing().when(plateTemplateService).deletePlateTemplate(1111L);
-        PlateTemplateController controller = new PlateTemplateController(plateTemplateService, wellTemplateService);
-        var httpEntity = controller.deletePlate(1111L);
-        assertThat(httpEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    public void plateTemplatePutTest() throws Exception{
+        Long plateTemplateId = 1000L;
+
+        MvcResult mvcResult = this.mockMvc.perform(get("/plate-template/{plateTemplateId}", plateTemplateId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        PlateTemplate plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
+        assertThat(plateTemplate).isNotNull();
+        assertThat(plateTemplate.getId()).isEqualTo(plateTemplateId);
+
+        String newCreatedBy = "test";
+        plateTemplate.setCreatedBy(newCreatedBy);
+
+        String requestBody = objectMapper.writeValueAsString(plateTemplate);
+        this.mockMvc.perform(put("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        mvcResult = this.mockMvc.perform(get("/plate-template/{plateTemplateId}", plateTemplateId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        PlateTemplate updatedPlateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
+        assertThat(updatedPlateTemplate.getCreatedBy()).isEqualTo(newCreatedBy);
     }
 
     @Test
-    public void plateTemplateGetOneFoundTest() {
-        PlateTemplateDTO plateTemplateDTO = PlateTemplateDTO.builder().rows(2).columns(3).createdOn(new Date()).createdBy("smarien").build();
-        when(plateTemplateService.getPlateTemplateById(1111L)).thenReturn(plateTemplateDTO);
-        PlateTemplateController controller = new PlateTemplateController(plateTemplateService, wellTemplateService);
-        var httpEntity = controller.getPlateTemplate(1111L);
-        assertThat(httpEntity.getBody().getCreatedOn()).isEqualTo(plateTemplateDTO.getCreatedOn());
-        assertThat(httpEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    public void plateTemplateDeleteTest() throws Exception{
+        Long plateTemplateId = 1000L;
+
+        this.mockMvc.perform(delete("/plate-template/{plateTemplateId}", plateTemplateId))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void plateTemplateGetNotFoundTest() {
-        when(plateTemplateService.getPlateTemplateById(1111L)).thenReturn(null);
-        PlateTemplateController controller = new PlateTemplateController(plateTemplateService, wellTemplateService);
-        var httpEntity = controller.getPlateTemplate(1111L);
-        assertThat(httpEntity.getBody()).isEqualTo(null);
-        assertThat(httpEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    public void plateTemplateGetOneFoundTest() throws Exception{
+        Long plateTemplateId = 1000L;
+
+        MvcResult mvcResult = this.mockMvc.perform(get("/plate-template/{plateTemplateId}", plateTemplateId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        PlateTemplate plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
+        assertThat(plateTemplate).isNotNull();
+        assertThat(plateTemplate.getId()).isEqualTo(plateTemplateId);
     }
 
     @Test
-    public void plateTemplateGetMultipleFoundTest() {
-        PlateTemplateDTO plateTemplateDTO = PlateTemplateDTO.builder().rows(2).columns(3).createdOn(new Date()).createdBy("smarien").build();
-        List<PlateTemplateDTO> list = new ArrayList<>();
-        list.add(plateTemplateDTO);
-        when(plateTemplateService.getAllPlateTemplates()).thenReturn(list);
-        PlateTemplateController controller = new PlateTemplateController(plateTemplateService, wellTemplateService);
-        var httpEntity = controller.getPlateTemplates();
-        assertThat(httpEntity.getBody()).isEqualTo(list);
-        assertThat(httpEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    public void plateTemplateGetNotFoundTest() throws Exception{
+        Long plateTemplateId = 1111L;
+
+        MvcResult mvcResult = this.mockMvc.perform(get("/plate-template/{plateTemplateId}", plateTemplateId))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertThat(mvcResult.getResponse().getContentAsString()).isEmpty();
     }
 
     @Test
-    public void plateTemplateGetMultipleNotFoundTest() {
-        List<PlateTemplateDTO> list = new ArrayList<>();
-        when(plateTemplateService.getAllPlateTemplates()).thenReturn(list);
-        PlateTemplateController controller = new PlateTemplateController(plateTemplateService, wellTemplateService);
-        var httpEntity = controller.getPlateTemplates();
-        assertThat(httpEntity.getBody()).isEqualTo(list);
-        assertThat(httpEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    public void plateTemplateGetMultipleFoundTest() throws Exception{
+        //Check size of list
+        MvcResult mvcResult = this.mockMvc.perform(get("/plate-templates"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<PlateTemplate> plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertThat(plateTemplate).isNotNull();
+        assertThat(plateTemplate.size()).isEqualTo(1);
+
+        //Add new plateTemplate
+        PlateTemplate newPlateTemplate = new PlateTemplate();
+        newPlateTemplate.setRows(2);
+        newPlateTemplate.setColumns(3);
+        newPlateTemplate.setCreatedOn(new Date());
+        newPlateTemplate.setCreatedBy("smarien");
+
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
+        this.mockMvc.perform(post("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        MvcResult mvcResult2 = this.mockMvc.perform(get("/plate-templates"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<PlateTemplate> plateTemplate2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
+        assertThat(plateTemplate2).isNotNull();
+        assertThat(plateTemplate2.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void plateTemplateGetMultipleNotFoundTest() throws Exception{
+        //Check size of list
+        MvcResult mvcResult = this.mockMvc.perform(get("/plate-templates"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<PlateTemplate> plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertThat(plateTemplate).isNotNull();
+        assertThat(plateTemplate.size()).isEqualTo(1);
+
+        //Delete plate
+        Long plateTemplateId = 1000L;
+
+        this.mockMvc.perform(delete("/plate-template/{plateTemplateId}", plateTemplateId))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        MvcResult mvcResult2 = this.mockMvc.perform(get("/plate-templates"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+        List<PlateTemplate> plateTemplate2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
+        assertThat(plateTemplate2).isNotNull();
+        assertThat(plateTemplate2.size()).isEqualTo(0);
     }
 }

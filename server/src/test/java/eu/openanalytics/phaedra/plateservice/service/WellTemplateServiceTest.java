@@ -139,6 +139,19 @@ public class WellTemplateServiceTest {
         assertThat(convertedUpdated.getColumn()).isEqualTo(2);
     }
 
+    @Test
+    public void getWellTemplateByIdTest(){
+        WellTemplate wellTemplate = new WellTemplate();
+        wellTemplate.setRow(1);
+        wellTemplate.setColumn(1);
+        wellTemplate.setPlateTemplateId(1000L);
+        WellTemplateDTO wellTemplateDTO = mapToWellTemplateDTO(wellTemplate);
+        WellTemplateDTO res = wellTemplateService.createWellTemplate(wellTemplateDTO);
+
+        WellTemplateDTO wellTemplateDTOGet = wellTemplateService.getWellTemplateById(res.getId());
+        assertThat(wellTemplateDTOGet.getColumn()).isEqualTo(1);
+    }
+
 
     private WellTemplateDTO mapToWellTemplateDTO(WellTemplate wellTemplate) {
         WellTemplateDTO wellTemplateDTO = new WellTemplateDTO();
