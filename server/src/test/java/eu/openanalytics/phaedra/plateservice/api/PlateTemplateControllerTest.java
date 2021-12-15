@@ -63,6 +63,7 @@ public class PlateTemplateControllerTest {
         PlateTemplateDTO plateTemplateDTOResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
         assertThat(plateTemplateDTOResult).isNotNull();
         assertThat(plateTemplateDTOResult.getId()).isEqualTo(1L);
+        assertThat(plateTemplateDTOResult.getWells().size()).isEqualTo(6);
     }
 
     @Test
