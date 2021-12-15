@@ -1,0 +1,106 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: smarien
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_plate_template_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: TEXT
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: rows
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: columns
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_by
+                  type: TEXT
+              - column:
+                  name: updated_on
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: updated_by
+                  type: TEXT
+            tableName: hca_plate_template
+  - changeSet:
+      id: 2
+      author: smarien
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_well_template_pkey
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: row
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: column
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: well_type
+                  type: VARCHAR(150)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: skipped
+                  type: boolean
+              - column:
+                  constraints:
+                    nullable: false
+                  name: plate_template_id
+                  type: BIGINT
+            tableName: hca_well_template
+  - changeSet:
+      id: 3
+      author: smarien
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: plate_template_id
+            baseTableName: hca_well_template
+            constraintName: hca_well_template_plate_template_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: hca_plate_template
+            validate: true

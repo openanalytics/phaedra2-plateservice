@@ -4,6 +4,9 @@ TRUNCATE plates.hca_project RESTART IDENTITY CASCADE;
 TRUNCATE plates.hca_experiment RESTART IDENTITY CASCADE;
 TRUNCATE plates.hca_plate RESTART IDENTITY CASCADE;
 TRUNCATE plates.hca_plate_measurement RESTART IDENTITY CASCADE;
+TRUNCATE plates.hca_plate_template RESTART IDENTITY CASCADE;
+TRUNCATE plates.hca_well_template RESTART IDENTITY CASCADE;
+
 
 insert into plates.hca_project (id,name,description,created_on,created_by,updated_on,updated_by)
 values (1,'SBE_0001','Saša First Test Project','2021-09-30 07:48:19.978','sasa.berberovic','2021-09-30 07:48:19.978','sasa.berberovic');
@@ -28,3 +31,6 @@ insert into plates.hca_plate_measurement(plate_id, measurement_id, is_active, li
 values (2000,1000,true, 'sberberovic', null);
 insert into plates.hca_plate_measurement(plate_id, measurement_id, is_active, linked_by, linked_on)
 values (2000,2000,false, 'sberberovic', null);
+
+insert into plates.hca_plate_template(id,name,description,rows,columns,created_on,created_by,updated_on,updated_by)
+values (1000,null,null,2,3,'2021-10-01 07:36:17.854','smarien',null,null)
