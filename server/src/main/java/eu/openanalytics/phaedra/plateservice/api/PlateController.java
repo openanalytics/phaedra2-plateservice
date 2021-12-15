@@ -50,7 +50,7 @@ public class PlateController {
     @DeleteMapping(value = "/plate/{plateId}")
     public ResponseEntity<Void> deletePlate(@PathVariable long plateId) {
         plateService.deletePlate(plateId);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/plate/{plateId}", produces = MediaType.APPLICATION_JSON_VALUE)
