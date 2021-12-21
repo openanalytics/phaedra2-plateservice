@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class WellTemplateController {
 
@@ -36,6 +38,14 @@ public class WellTemplateController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         else
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping(value = "/well-templates", produces= MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<WellTemplateDTO> updateWellTemplates(@RequestBody List<WellTemplateDTO> wellTemplateDTOS) {
+        wellTemplateDTOS.forEach(wellTemplateDTO -> {
+            wellTemplateService.updateWellTemplate(wellTemplateDTO);
+        });
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

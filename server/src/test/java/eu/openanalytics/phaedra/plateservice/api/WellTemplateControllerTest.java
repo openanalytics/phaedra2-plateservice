@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -139,5 +140,64 @@ public class WellTemplateControllerTest {
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertThat(mvcResult.getResponse().getContentAsString()).isEmpty();
+    }
+
+    @Test
+    public void wellTemplatesPutTest() throws Exception{
+        //Create WellTemplates
+        WellTemplate wellTemplate = new WellTemplate();
+        wellTemplate.setRow(2);
+        wellTemplate.setColumn(3);
+        wellTemplate.setPlateTemplateId(1000L);
+
+        WellTemplate wellTemplate2 = new WellTemplate();
+        wellTemplate2.setRow(2);
+        wellTemplate2.setColumn(3);
+        wellTemplate2.setPlateTemplateId(1000L);
+
+        String requestBody = objectMapper.writeValueAsString(wellTemplate);
+        MvcResult mvcResult = this.mockMvc.perform(post("/well-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+        String requestBody2 = objectMapper.writeValueAsString(wellTemplate2);
+        MvcResult mvcResult2 = this.mockMvc.perform(post("/well-template").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        WellTemplateDTO wellTemplateDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), WellTemplateDTO.class);
+        assertThat(wellTemplateDTO).isNotNull();
+        assertThat(wellTemplateDTO.getId()).isEqualTo(1L);
+        assertThat(wellTemplateDTO.isSkipped()).isTrue();
+        WellTemplateDTO wellTemplateDTO2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), WellTemplateDTO.class);
+        assertThat(wellTemplateDTO2).isNotNull();
+        assertThat(wellTemplateDTO2.getId()).isEqualTo(2L);
+        assertThat(wellTemplateDTO2.isSkipped()).isTrue();
+
+        wellTemplateDTO.setSkipped(false);
+        wellTemplateDTO2.setSkipped(false);
+
+        List<WellTemplateDTO> wellTemplateDTOS = new ArrayList<>();
+        wellTemplateDTOS.add(wellTemplateDTO);
+        wellTemplateDTOS.add(wellTemplateDTO2);
+
+        String requestBody3 = objectMapper.writeValueAsString(wellTemplateDTOS);
+        this.mockMvc.perform(put("/well-templates").contentType(MediaType.APPLICATION_JSON).content(requestBody3))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        MvcResult mvcResultGet1 = this.mockMvc.perform(get("/well-template/{wellTemplateId}", wellTemplateDTO.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        WellTemplate updatedWellTemplate = objectMapper.readValue(mvcResultGet1.getResponse().getContentAsString(), WellTemplate.class);
+        assertThat(updatedWellTemplate.isSkipped()).isFalse();
+        MvcResult mvcResultGet2 = this.mockMvc.perform(get("/well-template/{wellTemplateId}", wellTemplateDTO2.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        WellTemplate updatedWellTemplate2 = objectMapper.readValue(mvcResultGet2.getResponse().getContentAsString(), WellTemplate.class);
+        assertThat(updatedWellTemplate2.isSkipped()).isFalse();
     }
 }
