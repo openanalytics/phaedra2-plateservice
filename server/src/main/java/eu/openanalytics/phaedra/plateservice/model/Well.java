@@ -23,8 +23,8 @@ public class Well {
 	private Integer row;
 	@NotNull
 	private Integer column;
-
-	private String welltype;
+	@Column("welltype")
+	private String wellType;
 
 	private WellStatus status = WellStatus.ACCEPTED_DEFAULT;
 

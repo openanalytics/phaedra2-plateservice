@@ -17,7 +17,7 @@ public class WellDTO {
 	private Long plateId;
 	private Integer row;
 	private Integer column;
-	private String welltype;
+	private String wellType;
 	private WellStatus status;
 	private Long compoundId; // TODO remove?
 	private String description;
