@@ -23,13 +23,17 @@ public class WellTemplate {
     @Column("plate_template_id")
     @NotNull
     private Long plateTemplateId;
-    //Standard EMPTY wellType.
+    //Default EMPTY wellType.
     @Column("well_type")
     @NotNull
     private String wellType = "EMPTY";
-
+    //Default true
     @NotNull
     private boolean skipped = true;
-
+    @Column("substance_name")
+    private String substanceName;
+    @Column("substance_type")
+    private String substanceType;
+    private double concentration;
     public WellTemplate(Long plateTemplateId) { this.plateTemplateId = plateTemplateId; }
 }

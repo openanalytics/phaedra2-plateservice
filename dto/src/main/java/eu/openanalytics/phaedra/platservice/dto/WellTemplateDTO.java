@@ -22,4 +22,7 @@ public class WellTemplateDTO {
     private Long plateTemplateId;
     private String wellType = "EMPTY";
     private boolean skipped = true;
+    private String substanceName;
+    private String substanceType;
+    private double concentration;
 }

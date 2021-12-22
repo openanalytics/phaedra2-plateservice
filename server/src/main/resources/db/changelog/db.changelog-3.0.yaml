@@ -104,3 +104,19 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: hca_plate_template
             validate: true
+  - changeSet:
+      id: 4
+      author: smarien
+      changes:
+        - addColumn:
+            tableName: hca_well_template
+            columns:
+              - column:
+                  name: substance_name
+                  type: VARCHAR(150)
+              - column:
+                  name: substance_type
+                  type: VARCHAR(150)
+              - column:
+                  name: concentration
+                  type: DOUBLE

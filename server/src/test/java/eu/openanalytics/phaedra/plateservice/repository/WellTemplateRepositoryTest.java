@@ -68,6 +68,9 @@ public class WellTemplateRepositoryTest {
         wellTemplate.setRow(1);
         wellTemplate.setColumn(1);
         wellTemplate.setPlateTemplateId(1000L);
+        wellTemplate.setSubstanceName("substance_name");
+        wellTemplate.setSubstanceType("substance_type");
+        wellTemplate.setConcentration(1.52);
 
         WellTemplate savedWellTemplate = wellTemplateRepository.save(wellTemplate);
         assertThat(savedWellTemplate).isNotNull();
@@ -78,6 +81,9 @@ public class WellTemplateRepositoryTest {
         assertThat(savedWellTemplate.getWellType()).isEqualTo("EMPTY");
         assertThat(savedWellTemplate.isSkipped()).isTrue();
         assertThat(savedWellTemplate.getPlateTemplateId()).isEqualTo(1000L);
+        assertThat(savedWellTemplate.getSubstanceName()).isEqualTo("substance_name");
+        assertThat(savedWellTemplate.getSubstanceType()).isEqualTo("substance_type");
+        assertThat(savedWellTemplate.getConcentration()).isEqualTo(1.52);
     }
 
     @Test
