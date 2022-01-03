@@ -16,15 +16,15 @@ values (1,'SBE_0001_EXP1','Experiment 1 project SBE_0001','OPEN',null,null,'2021
 
 insert into plates.hca_plate (id,barcode,description,experiment_id,rows,columns,sequence,link_status,link_template_id,
                             link_source,linked_on,calculation_status,calculation_error,calculated_by,calculated_on,
-                            validation_status,validated_by,validated_on,approval_status,approved_by,approved_on,
+                            validation_status,validated_by,validated_on,invalidated_reason,approval_status,approved_by,approved_on,disapproved_reason,
                             upload_status,uploaded_by,uploaded_on,created_on,created_by,updated_on,updated_by)
-values (1000,'barcode1','description1',1,16,24,0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+values (1000,'barcode1','description1',1,16,24,0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
         null,null,null,null,null,null,null);
 insert into plates.hca_plate (id,barcode,description,experiment_id,rows,columns,sequence,link_status,link_template_id,
                               link_source,linked_on,calculation_status,calculation_error,calculated_by,calculated_on,
-                              validation_status,validated_by,validated_on,approval_status,approved_by,approved_on,
+                              validation_status,validated_by,validated_on,invalidated_reason,approval_status,approved_by,approved_on,disapproved_reason,
                               upload_status,uploaded_by,uploaded_on,created_on,created_by,updated_on,updated_by)
-values (2000,'barcode2','description2',1,16,24,0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+values (2000,'barcode2','description2',1,16,24,0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
         null,null,null,null,null,null,null);
 
 insert into plates.hca_plate_measurement(plate_id, measurement_id, is_active, linked_by, linked_on)

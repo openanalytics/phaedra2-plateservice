@@ -42,10 +42,12 @@ public class PlateDTO {
 	private ValidationStatus validationStatus;
 	private String validatedBy;
 	private Date validatedOn;
+	private String invalidatedReason;
 
 	private ApprovalStatus approvalStatus;
 	private String approvedBy;
 	private Date approvedOn;
+	private String disapprovedReason;
 
 	private UploadStatus uploadStatus;
 	private String uploadedBy;

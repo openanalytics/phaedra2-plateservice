@@ -59,6 +59,8 @@ public class Plate {
 	private String validatedBy;
 	@Column("validated_on")
 	private Date validatedOn;
+	@Column("invalidated_reason")
+	private String invalidatedReason;
 
 	@Column("approval_status")
 	private ApprovalStatus approvalStatus;
@@ -66,6 +68,8 @@ public class Plate {
 	private String approvedBy;
 	@Column("approved_on")
 	private Date approvedOn;
+	@Column("disapproved_reason")
+	private String disapprovedReason;
 
 	@Column("upload_status")
 	private UploadStatus uploadStatus;

@@ -120,3 +120,16 @@ databaseChangeLog:
               - column:
                   name: concentration
                   type: DOUBLE
+  - changeSet:
+      id: 5
+      author: smarien
+      changes:
+        - addColumn:
+            tableName: hca_plate
+            columns:
+              - column:
+                  name: invalidated_reason
+                  type: TEXT
+              - column:
+                  name: disapproved_reason
+                  type: TEXT

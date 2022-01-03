@@ -84,6 +84,8 @@ public class PlateControllerTest {
 
         Integer newSequence = 2;
         plateDTOGet.setSequence(newSequence);
+        plateDTOGet.setInvalidatedReason("test");
+        plateDTOGet.setDisapprovedReason("test2");
 
         String requestBody = objectMapper.writeValueAsString(plateDTOGet);
         this.mockMvc.perform(put("/plate").contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -96,6 +98,8 @@ public class PlateControllerTest {
                 .andReturn();
         PlateDTO plateDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateDTO.class);
         assertThat(plateDTO.getSequence()).isEqualTo(newSequence);
+        assertThat(plateDTO.getInvalidatedReason()).isEqualTo("test");
+        assertThat(plateDTO.getDisapprovedReason()).isEqualTo("test2");
     }
 
     @Test
