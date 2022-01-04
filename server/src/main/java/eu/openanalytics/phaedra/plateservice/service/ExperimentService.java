@@ -71,6 +71,7 @@ public class ExperimentService {
 		return getExperimentByProjectId(projectId).stream().map(exp -> {
 			List<PlateDTO> plates = plateService.getPlatesByExperimentId(exp.getId());
 			ExperimentSummaryDTO summary = new ExperimentSummaryDTO();
+			summary.experimentId = exp.getId();
 			summary.nrPlates = plates.size();
 			summary.nrPlatesCalculated = (int) plates.stream().filter(p -> p.getCalculationStatus() == CalculationStatus.CALCULATION_OK).count();
 			summary.nrPlatesValidated = (int) plates.stream().filter(p -> p.getValidationStatus() == ValidationStatus.VALIDATED).count();
