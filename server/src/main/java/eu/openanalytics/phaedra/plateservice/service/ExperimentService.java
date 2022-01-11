@@ -1,15 +1,21 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.plateservice.model.Experiment;
-import eu.openanalytics.phaedra.plateservice.repository.ExperimentRepository;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import eu.openanalytics.phaedra.plateservice.model.Experiment;
+import eu.openanalytics.phaedra.plateservice.repository.ExperimentRepository;
+import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.platservice.dto.ExperimentSummaryDTO;
+import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.platservice.enumartion.ApprovalStatus;
+import eu.openanalytics.phaedra.platservice.enumartion.CalculationStatus;
+import eu.openanalytics.phaedra.platservice.enumartion.ValidationStatus;
 
 @Service
 public class ExperimentService {
@@ -59,6 +65,19 @@ public class ExperimentService {
 	public List<ExperimentDTO> getExperimentByProjectId(long projectId) {
 		List<Experiment> result = experimentRepository.findByProjectId(projectId);
 		return result.stream().map(this::mapToExperimentDTO).collect(Collectors.toList());
+	}
+	
+	public List<ExperimentSummaryDTO> getExperimentSummariesByProjectId(long projectId) {
+		return getExperimentByProjectId(projectId).stream().map(exp -> {
+			List<PlateDTO> plates = plateService.getPlatesByExperimentId(exp.getId());
+			ExperimentSummaryDTO summary = new ExperimentSummaryDTO();
+			summary.experimentId = exp.getId();
+			summary.nrPlates = plates.size();
+			summary.nrPlatesCalculated = (int) plates.stream().filter(p -> p.getCalculationStatus() == CalculationStatus.CALCULATION_OK).count();
+			summary.nrPlatesValidated = (int) plates.stream().filter(p -> p.getValidationStatus() == ValidationStatus.VALIDATED).count();
+			summary.nrPlatesApproved = (int) plates.stream().filter(p -> p.getApprovalStatus() == ApprovalStatus.APPROVED).count();
+			return summary;
+		}).toList();
 	}
 	
 	private ExperimentDTO mapToExperimentDTO(Experiment experiment) {
