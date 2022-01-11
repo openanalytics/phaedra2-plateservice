@@ -54,7 +54,7 @@ public class PlateControllerTest {
         Plate plate = new Plate();
         plate.setRows(3);
         plate.setColumns(4);
-        plate.setExperimentId(1L);
+        plate.setExperimentId(1000L);
         plate.setSequence(1);
 
         String requestBody = objectMapper.writeValueAsString(plate);
@@ -150,7 +150,7 @@ public class PlateControllerTest {
         Plate plate = new Plate();
         plate.setRows(3);
         plate.setColumns(4);
-        plate.setExperimentId(1L);
+        plate.setExperimentId(1000L);
         plate.setSequence(1);
 
         String requestBody = objectMapper.writeValueAsString(plate);
@@ -200,7 +200,7 @@ public class PlateControllerTest {
 
     @Test
     public void getPlatesByExperimentFoundTest() throws Exception {
-        Long experimentId = 1L;
+        Long experimentId = 1000L;
 
         MvcResult mvcResult = this.mockMvc.perform(get("/plate/").param("experimentId", experimentId.toString()))
                 .andDo(print())
@@ -258,7 +258,7 @@ public class PlateControllerTest {
         Plate plate = new Plate();
         plate.setRows(3);
         plate.setColumns(4);
-        plate.setExperimentId(1L);
+        plate.setExperimentId(1000L);
         plate.setSequence(1);
 
         String requestBody = objectMapper.writeValueAsString(plate);

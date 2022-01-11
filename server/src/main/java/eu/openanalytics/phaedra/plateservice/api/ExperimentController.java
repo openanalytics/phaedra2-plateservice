@@ -48,7 +48,7 @@ public class ExperimentController {
 	@DeleteMapping(value="/experiment/{experimentId}")
 	public ResponseEntity<Void> deleteExperiment(@PathVariable long experimentId) {
 		experimentService.deleteExperiment(experimentId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping(value="/experiment/{experimentId}", produces=MediaType.APPLICATION_JSON_VALUE)
