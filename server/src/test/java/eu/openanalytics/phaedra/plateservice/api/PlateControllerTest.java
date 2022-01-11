@@ -282,5 +282,22 @@ public class PlateControllerTest {
         assertThat(plateDTOGet.getWells().size()).isEqualTo(12);
     }
 
+    @Test
+    public void plateMeasurementPostTest() throws Exception {
+        PlateMeasurement plateMeasurement = new PlateMeasurement();
+        plateMeasurement.setPlateId(1000L);
+        plateMeasurement.setMeasurementId(1000L);
+        plateMeasurement.setActive(true);
+
+        String requestBody = objectMapper.writeValueAsString(plateMeasurement);
+        MvcResult mvcResult = this.mockMvc.perform(post("/plate/{plateId}/measurement", 1000L).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        PlateMeasurementDTO plateMeasurementDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateMeasurementDTO.class);
+        assertThat(plateMeasurementDTO).isNotNull();
+        assertThat(plateMeasurementDTO.getMeasurementId()).isEqualTo(1000L);
+    }
 
 }

@@ -3,6 +3,7 @@ package eu.openanalytics.phaedra.plateservice.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.phaedra.plateservice.model.Project;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
+import eu.openanalytics.phaedra.platservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.platservice.dto.ProjectDTO;
 import org.junit.jupiter.api.Test;
@@ -154,5 +155,24 @@ public class ProjectControllerTest {
         List<ProjectDTO> projectDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         assertThat(projectDTO).isNotEmpty();
         assertThat(projectDTO.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void projectGetExperimentSummaries() throws Exception {
+        Long projectId = 1000L;
+        MvcResult mvcResult = this.mockMvc.perform(get("/project/{projectId}/experimentsummaries",projectId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        List<ExperimentSummaryDTO> experimentSummaryDTOS = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertThat(experimentSummaryDTOS).isNotEmpty();
+        assertThat(experimentSummaryDTOS.size()).isEqualTo(1);
+        ExperimentSummaryDTO ret = objectMapper.convertValue(experimentSummaryDTOS.get(0), ExperimentSummaryDTO.class);
+
+        assertThat(ret.experimentId).isEqualTo(1000L);
+        assertThat(ret.nrPlates).isEqualTo(2);
+        assertThat(ret.nrPlatesCalculated).isEqualTo(0);
+        assertThat(ret.nrPlatesValidated).isEqualTo(0);
+        assertThat(ret.nrPlatesApproved).isEqualTo(0);
     }
 }

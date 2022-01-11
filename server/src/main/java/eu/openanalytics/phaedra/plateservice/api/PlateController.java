@@ -101,7 +101,7 @@ public class PlateController {
     public ResponseEntity addMeasurement(@PathVariable long plateId, @RequestBody PlateMeasurementDTO plateMeasurementDTO) {
         PlateMeasurementDTO result = plateMeasurementService.addPlateMeasurement(plateMeasurementDTO);
         plateMeasurementService.setActivePlateMeasurement(result.getPlateId(), result.getMeasurementId());
-        return ResponseEntity.ok(result);
+        return new ResponseEntity(result, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/plate/{plateId}/measurements", produces = MediaType.APPLICATION_JSON_VALUE)
