@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.plateservice.PlateServiceApplication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -34,6 +36,7 @@ import javax.sql.DataSource;
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Sql({"/jdbc/test-data.sql"})
+@Import({MeasurementServiceClientAutoConfiguration.class})
 abstract public class AbstractIntegrationTest {
 
 

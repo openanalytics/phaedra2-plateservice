@@ -4,8 +4,6 @@ import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
 import eu.openanalytics.phaedra.plateservice.repository.PlateMeasurementRepository;
 import eu.openanalytics.phaedra.platservice.dto.PlateMeasurementDTO;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +13,7 @@ import java.util.stream.Collectors;
 public class PlateMeasurementService {
     private static final ModelMapper modelMapper = new ModelMapper();
 
-    private PlateMeasurementRepository plateMeasurementRepository;
+    private final PlateMeasurementRepository plateMeasurementRepository;
 
     public PlateMeasurementService(PlateMeasurementRepository plateMeasurementRepository) {
         this.plateMeasurementRepository = plateMeasurementRepository;

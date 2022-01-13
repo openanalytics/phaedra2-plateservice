@@ -2,7 +2,6 @@ package eu.openanalytics.phaedra.plateservice.repository;
 
 import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
-import liquibase.pro.packaged.D;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

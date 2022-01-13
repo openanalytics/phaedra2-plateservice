@@ -1,5 +1,7 @@
 package eu.openanalytics.phaedra.plateservice;
 
+import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
+import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
 import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
@@ -9,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,6 +23,7 @@ import javax.sql.DataSource;
 @EnableDiscoveryClient
 @EnableScheduling
 @SpringBootApplication
+@Import({MeasurementServiceClientAutoConfiguration.class})
 public class PlateServiceApplication {
 	private final ServletContext servletContext;
 	private final Environment environment;
@@ -34,10 +38,16 @@ public class PlateServiceApplication {
 		app.run(args);
 	}
 
+//	@Bean
+//	@LoadBalanced
+//	public RestTemplate restTemplate() {
+//		return new RestTemplate();
+//	}
+
 	@Bean
 	@LoadBalanced
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
+	public PhaedraRestTemplate restTemplate() {
+		return new PhaedraRestTemplate();
 	}
 
 	@Bean

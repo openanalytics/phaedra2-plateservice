@@ -42,6 +42,11 @@
 			<artifactId>phaedra2-commons</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>eu.openanalytics.phaedra</groupId>
+			<artifactId>phaedra2-measurementservice-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 		<!-- Spring Cloud Eureka dependencies -->
 		<dependency>
@@ -71,6 +76,12 @@
 			<artifactId>postgresql</artifactId>
 			<version>1.16.0</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>eu.openanalytics.phaedra</groupId>
+			<artifactId>phaedra2-measurementservice-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

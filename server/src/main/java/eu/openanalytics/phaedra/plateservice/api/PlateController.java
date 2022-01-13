@@ -1,5 +1,8 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
+import com.google.common.primitives.Longs;
+import eu.openanalytics.phaedra.measservice.dto.MeasurementDTO;
+import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
@@ -20,19 +23,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-//@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
 @RestController
 public class PlateController {
 
     private final PlateService plateService;
     private final WellService wellService;
     private final PlateMeasurementService plateMeasurementService;
+    private final MeasurementServiceClient measurementServiceClient;
 
-    public PlateController(PlateService plateService, WellService wellService, PlateMeasurementService plateMeasurementService) {
+    public PlateController(PlateService plateService, WellService wellService, PlateMeasurementService plateMeasurementService, MeasurementServiceClient measurementServiceClient) {
         this.plateService = plateService;
         this.wellService = wellService;
         this.plateMeasurementService = plateMeasurementService;
+        this.measurementServiceClient = measurementServiceClient;
     }
 
     @PostMapping(value = "/plate", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -104,10 +109,20 @@ public class PlateController {
         return ResponseEntity.ok(result);
     }
 
+//    @GetMapping(value = "/plate/{plateId}/measurements", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<List<PlateMeasurementDTO>> getPlateMeasurements(@PathVariable(name = "plateId") long plateId) {
+//        List<PlateMeasurementDTO> results = plateMeasurementService.getPlateMeasurements(plateId);
+//
+//
+//        return new ResponseEntity(results, HttpStatus.OK);
+//    }
+
     @GetMapping(value = "/plate/{plateId}/measurements", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PlateMeasurementDTO>> getPlateMeasurements(@PathVariable(name = "plateId") long plateId) {
-        List<PlateMeasurementDTO> results = plateMeasurementService.getPlateMeasurements(plateId);
-        return new ResponseEntity(results, HttpStatus.OK);
+    public ResponseEntity<MeasurementDTO[]> getPlateMeasurements(@PathVariable(name = "plateId") long plateId) {
+        List<PlateMeasurementDTO> plateMeasurements = plateMeasurementService.getPlateMeasurements(plateId);
+        List<Long> measIds = plateMeasurements.stream().map(PlateMeasurementDTO::getMeasurementId).collect(Collectors.toList());
+        MeasurementDTO[] measurementDTOs = measurementServiceClient.getMeasurements(Longs.toArray(measIds));
+        return new ResponseEntity(measurementDTOs, HttpStatus.OK);
     }
 
     @GetMapping(value = "/plate/{plateId}/measurement/{measId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -123,19 +138,4 @@ public class PlateController {
 		PlateMeasurementDTO result = plateMeasurementService.setActivePlateMeasurement(plateId, measId);
 		return new ResponseEntity(result, HttpStatus.OK);
     }
-
-//	@PutMapping(value="/plate/{plateId}/wells", produces=MediaType.APPLICATION_JSON_VALUE)
-//	public ResponseEntity<Void> updateWells(@PathVariable long plateId, @RequestBody List<Well> wells) {
-//		if (!plateService.plateExists(plateId)) return ResponseEntity.notFound().build();
-//		plateService.updateWells(plateId, wells);
-//		return ResponseEntity.ok().build();
-//	}
-//
-//	@DeleteMapping(value="/plate/{plateId}")
-//	public ResponseEntity<Void> deletePlate(@PathVariable long plateId) {
-//		if (!plateService.plateExists(plateId)) return ResponseEntity.notFound().build();
-//		plateService.deletePlate(plateId);
-//		return ResponseEntity.noContent().build();
-//	}
-
 }
