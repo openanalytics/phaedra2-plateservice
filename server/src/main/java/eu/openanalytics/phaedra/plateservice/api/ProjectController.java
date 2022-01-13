@@ -58,7 +58,7 @@ public class ProjectController {
 	@DeleteMapping(value="/project/{projectId}")
 	public ResponseEntity<Void> deleteProject(@PathVariable long projectId) {
 		projectService.deleteProject(projectId);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping(value="/project/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)

@@ -22,7 +22,7 @@ public class PlateMeasurementIntegrationTest extends AbstractIntegrationTest {
 //                .linkedOn(new Date())
 //                .build();
 //
-//        performRequest(post("/plate/1000/measurement", input1), HttpStatus.OK, PlateMeasurementDTO.class);
+//        performRequest(post("/plate/1000/measurement", input1), HttpStatus.CREATED, PlateMeasurementDTO.class);
 //
 //        var res1 = performRequest(get("/plate/1000/measurements"), HttpStatus.OK, List.class);
 //        Assertions.assertTrue(res1.size() == 1);
