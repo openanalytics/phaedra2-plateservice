@@ -120,7 +120,7 @@ public class PlateController {
     @GetMapping(value = "/plate/{plateId}/measurements", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MeasurementDTO[]> getPlateMeasurements(@PathVariable(name = "plateId") long plateId) {
         List<PlateMeasurementDTO> plateMeasurements = plateMeasurementService.getPlateMeasurements(plateId);
-        List<Long> measIds = plateMeasurements.stream().map(PlateMeasurementDTO::getMeasurementId).collect(Collectors.toList());
+        List<Long> measIds = plateMeasurements.stream().map(PlateMeasurementDTO::getMeasurementId).toList();
         MeasurementDTO[] measurementDTOs = measurementServiceClient.getMeasurements(Longs.toArray(measIds));
         return new ResponseEntity(measurementDTOs, HttpStatus.OK);
     }
