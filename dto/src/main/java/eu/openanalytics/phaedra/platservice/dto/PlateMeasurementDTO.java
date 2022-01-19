@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -20,9 +17,21 @@ import java.util.Date;
 public class PlateMeasurementDTO {
     @JsonIgnore
     private Long id;
-    private Long plateId;
     private Long measurementId;
+
+    private Long plateId;
     private Boolean active;
     private String linkedBy;
     private Date linkedOn;
+
+    private String name;
+    private String barcode;
+    private String description;
+    private int rows;
+    private int columns;
+    private Date createdOn;
+    private String createdBy;
+    private String[] wellColumns;
+    private String[] subWellColumns;
+    private String[] imageChannels;
 }

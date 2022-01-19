@@ -24,12 +24,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>eu.openanalytics.phaedra</groupId>
-			<artifactId>phaedra2-plateservice-dto</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
 		<!-- Swagger dependencies -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -44,7 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>eu.openanalytics.phaedra</groupId>
-			<artifactId>phaedra2-measurementservice-client</artifactId>
+			<artifactId>phaedra2-plateservice-dto</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

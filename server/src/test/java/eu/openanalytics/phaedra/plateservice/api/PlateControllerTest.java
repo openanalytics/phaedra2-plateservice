@@ -255,7 +255,7 @@ public class PlateControllerTest {
 
     @Test
     public void plateAreWellsPresentTest() throws Exception {
-        Plate plate = new Plate();
+        PlateDTO plate = new PlateDTO();
         plate.setRows(3);
         plate.setColumns(4);
         plate.setExperimentId(1000L);
