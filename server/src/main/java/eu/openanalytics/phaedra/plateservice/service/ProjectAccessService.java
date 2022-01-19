@@ -5,12 +5,11 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.ProjectAccess;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectAccessRepository;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.platservice.dto.ProjectAccessDTO;
 import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
 import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
@@ -19,18 +18,51 @@ import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
 public class ProjectAccessService {
 
 	private final ProjectAccessRepository projectAccessRepository;
-	private final PlateService plateService;
-	private final ExperimentService experimentService;
-	
+
 	private static final ModelMapper modelMapper = new ModelMapper();
 	
-	public ProjectAccessService(ProjectAccessRepository projectAccessRepository,
-			PlateService plateService,
-			ExperimentService experimentService) {
-		
+	public ProjectAccessService(ProjectAccessRepository projectAccessRepository) {
 		this.projectAccessRepository = projectAccessRepository;
-		this.plateService = plateService;
-		this.experimentService = experimentService;
+	}
+	
+	public void checkCanCreateProjects() throws AccessDeniedException {
+		boolean hasAccess = AuthorizationHelper.checkForCurrentPrincipal(principal -> AuthorizationHelper.hasUserAccess(principal));
+		if (!hasAccess) {
+			throw new AccessDeniedException("No permission to create new projects");
+		}
+	}
+	
+	/**
+	 * Test if the current principal has an access level on the specified project that
+	 * is at least equal to requiredLevel.
+	 * If this is not the case, an AccessDeniedException will be thrown.
+	 * 
+	 * @param projectId The ID of the project to check.
+	 * @param requiredLevel The minimum access level that is needed.
+	 */
+	public void checkAccessLevel(long projectId, ProjectAccessLevel requiredLevel) throws AccessDeniedException {
+		boolean hasAccess = AuthorizationHelper.checkForCurrentPrincipal(principal -> {
+			ProjectAccessLevel level = getAccessLevel(principal, projectId);
+			return (level != null && level.compareTo(requiredLevel) >= 0);
+		});
+		if (!hasAccess) {
+			throw new AccessDeniedException(String.format("No permission to perform %s on project %d", requiredLevel, projectId));
+		}
+	}
+	
+	/**
+	 * Test if the current principal has an access level on the specified project that
+	 * is at least equal to requiredLevel.
+	 * 
+	 * @param projectId The ID of the project to check.
+	 * @param requiredLevel The minimum access level that is needed.
+	 * @return True if the principal has the required access level, false otherwise.
+	 */
+	public boolean hasAccessLevel(long projectId, ProjectAccessLevel requiredLevel) {
+		return AuthorizationHelper.checkForCurrentPrincipal(principal -> {
+			ProjectAccessLevel level = getAccessLevel(principal, projectId);
+			return (level != null && level.compareTo(requiredLevel) >= 0);
+		});
 	}
 	
 	/**
@@ -45,16 +77,6 @@ public class ProjectAccessService {
 	public boolean hasAccessLevel(Object principal, long projectId, ProjectAccessLevel requiredLevel) {
 		ProjectAccessLevel level = getAccessLevel(principal, projectId);
 		return (level != null && level.compareTo(requiredLevel) >= 0);
-	}
-	
-	public boolean hasAccessLevelForExperiment(Object principal, long experimentId, ProjectAccessLevel requiredLevel) {
-		ExperimentDTO experiment = experimentService.getExperimentById(experimentId);
-		return (experiment == null) ? false : hasAccessLevel(principal, experiment.getProjectId(), requiredLevel);
-	}
-	
-	public boolean hasAccessLevelForPlate(Object principal, long plateId, ProjectAccessLevel requiredLevel) {
-		PlateDTO plate = plateService.getPlateById(plateId);
-		return (plate == null) ? false : hasAccessLevelForExperiment(principal, plate.getExperimentId(), requiredLevel);
 	}
 	
 	/**
