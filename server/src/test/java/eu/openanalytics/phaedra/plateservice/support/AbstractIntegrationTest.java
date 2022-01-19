@@ -31,7 +31,7 @@ import javax.sql.DataSource;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {PlateServiceApplication.class})
 @WebAppConfiguration
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Sql({"/jdbc/test-data.sql"})
 abstract public class AbstractIntegrationTest {

@@ -11,6 +11,7 @@ import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Testcontainers
 @SpringBootTest
 @Sql({"/jdbc/test-data.sql"})
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class PlateControllerTest {
 
