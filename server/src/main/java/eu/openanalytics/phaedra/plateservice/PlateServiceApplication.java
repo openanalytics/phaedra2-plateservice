@@ -2,6 +2,7 @@ package eu.openanalytics.phaedra.plateservice;
 
 import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
+import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
 import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
@@ -16,13 +17,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 @EnableDiscoveryClient
 @EnableScheduling
-@SpringBootApplication
+@SpringBootApplication(exclude = AuthorizationHelper.class)
 @Import({MeasurementServiceClientAutoConfiguration.class})
 public class PlateServiceApplication {
 	private final ServletContext servletContext;
@@ -37,12 +39,6 @@ public class PlateServiceApplication {
 		SpringApplication app = new SpringApplication(PlateServiceApplication.class);
 		app.run(args);
 	}
-
-//	@Bean
-//	@LoadBalanced
-//	public RestTemplate restTemplate() {
-//		return new RestTemplate();
-//	}
 
 	@Bean
 	@LoadBalanced
@@ -77,15 +73,4 @@ public class PlateServiceApplication {
 		Server server = new Server().url(servletContext.getContextPath()).description("Default Server URL");
 		return new OpenAPI().addServersItem(server);
 	}
-
-//	@Bean
-//	public WebMvcConfigurer corsConfigurer() {
-//		return new WebMvcConfigurer() {
-//			@Override
-//			public void addCorsMappings(CorsRegistry registry) {
-//				CorsRegistration registration = registry.addMapping("/**");
-//				registration.allowedMethods("*");
-//			}
-//		};
-//	}
 }
