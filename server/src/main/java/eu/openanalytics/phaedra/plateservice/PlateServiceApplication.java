@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,7 @@ import javax.sql.DataSource;
 
 @EnableDiscoveryClient
 @EnableScheduling
-@SpringBootApplication(exclude = AuthorizationHelper.class)
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @Import({MeasurementServiceClientAutoConfiguration.class})
 public class PlateServiceApplication {
 	private final ServletContext servletContext;
