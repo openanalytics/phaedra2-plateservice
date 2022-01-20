@@ -15,6 +15,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
@@ -25,6 +26,7 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @EnableDiscoveryClient
 @EnableScheduling
+@EnableWebSecurity
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @Import({MeasurementServiceClientAutoConfiguration.class})
 public class PlateServiceApplication {

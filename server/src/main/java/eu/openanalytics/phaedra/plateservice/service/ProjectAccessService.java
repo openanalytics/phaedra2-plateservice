@@ -5,7 +5,6 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.ProjectAccess;
@@ -25,11 +24,8 @@ public class ProjectAccessService {
 		this.projectAccessRepository = projectAccessRepository;
 	}
 	
-	public void checkCanCreateProjects() throws AccessDeniedException {
-		boolean hasAccess = AuthorizationHelper.checkForCurrentPrincipal(principal -> AuthorizationHelper.hasUserAccess(principal));
-		if (!hasAccess) {
-			throw new AccessDeniedException("No permission to create new projects");
-		}
+	public void checkCanCreateProjects() {
+		AuthorizationHelper.performAccessCheck(AuthorizationHelper::hasUserAccess, e -> "Not authorized to create new projects");
 	}
 	
 	/**
@@ -40,14 +36,11 @@ public class ProjectAccessService {
 	 * @param projectId The ID of the project to check.
 	 * @param requiredLevel The minimum access level that is needed.
 	 */
-	public void checkAccessLevel(long projectId, ProjectAccessLevel requiredLevel) throws AccessDeniedException {
-		boolean hasAccess = AuthorizationHelper.checkForCurrentPrincipal(principal -> {
-			ProjectAccessLevel level = getAccessLevel(principal, projectId);
+	public void checkAccessLevel(long projectId, ProjectAccessLevel requiredLevel) {
+		AuthorizationHelper.performAccessCheck(principal -> {
+			ProjectAccessLevel level = getAccessLevel(projectId);
 			return (level != null && level.compareTo(requiredLevel) >= 0);
-		});
-		if (!hasAccess) {
-			throw new AccessDeniedException(String.format("No permission to perform %s on project %d", requiredLevel, projectId));
-		}
+		}, e -> String.format("Not authorized: requires access level %s on project %d", requiredLevel, projectId));
 	}
 	
 	/**
@@ -59,41 +52,24 @@ public class ProjectAccessService {
 	 * @return True if the principal has the required access level, false otherwise.
 	 */
 	public boolean hasAccessLevel(long projectId, ProjectAccessLevel requiredLevel) {
-		return AuthorizationHelper.checkForCurrentPrincipal(principal -> {
-			ProjectAccessLevel level = getAccessLevel(principal, projectId);
-			return (level != null && level.compareTo(requiredLevel) >= 0);
-		});
-	}
-	
-	/**
-	 * Test if the specified principal has an access level on the specified project that
-	 * is at least equal to requiredLevel.
-	 * 
-	 * @param principal The authenticated principal to check.
-	 * @param projectId The ID of the project to check.
-	 * @param requiredLevel The minimum access level that is needed.
-	 * @return True if the principal has the required access level, false otherwise.
-	 */
-	public boolean hasAccessLevel(Object principal, long projectId, ProjectAccessLevel requiredLevel) {
-		ProjectAccessLevel level = getAccessLevel(principal, projectId);
+		ProjectAccessLevel level = getAccessLevel(projectId);
 		return (level != null && level.compareTo(requiredLevel) >= 0);
 	}
 	
 	/**
-	 * Test if the specified principal has access to the specified project, and if so,
+	 * Test if the current principal has access to the specified project, and if so,
 	 * what their highest access level is.
 	 * 
-	 * @param principal The authenticated principal to check.
 	 * @param projectId The ID of the project to check.
 	 * @return The highest access level, or null if the project is not accessible.
 	 */
-	public ProjectAccessLevel getAccessLevel(Object principal, long projectId) {
+	public ProjectAccessLevel getAccessLevel(long projectId) {
 		// Note: administrators automatically have admin-level access to all projects.
-		if (AuthorizationHelper.hasAdminAccess(principal)) return ProjectAccessLevel.Admin;
+		if (AuthorizationHelper.hasAdminAccess()) return ProjectAccessLevel.Admin;
 		
 		return getProjectAccessForProject(projectId)
 			.stream()
-			.filter(pa -> AuthorizationHelper.hasTeamAccess(principal, pa.getTeamName()))
+			.filter(pa -> AuthorizationHelper.hasTeamAccess(pa.getTeamName()))
 			.collect(Collectors.reducing(BinaryOperator.maxBy((pa1, pa2) -> pa1.getAccessLevel().compareTo(pa2.getAccessLevel()))))
 			.map(ProjectAccessDTO::getAccessLevel)
 			.orElse(null);

@@ -1,7 +1,7 @@
 server:
   servlet:
     context-path: /phaedra/plate-service
-  port: 3003
+  port: 8080
 
 spring:
   application:
@@ -13,7 +13,14 @@ spring:
     kubernetes:
       enabled: false
   liquibase:
-    enabled: false
+    default-schema: plates
+    liquibase-schema: plates
+    enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://keycloak.phaedra.poc.openanalytics.io/auth/realms/phaedra2/protocol/openid-connect/certs
 
 logging:
   file:
@@ -21,5 +28,4 @@ logging:
 
 eureka:
   client:
-    enabled: true
-
+    enabled: false
