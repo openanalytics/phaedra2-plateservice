@@ -18,6 +18,9 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 			+ " (select experiment_id from hca_experiment where project_id = :projectId)")
 	void deleteByProjectId(@Param("projectId") long projectId);
 
+	@Query("select e.project_id from hca_plate p, hca_experiment e where p.experiment_id = e.experiment_id and p.plate_id = :plateId")
+	Long findProjectIdByPlateId(@Param("plateId") long plateId);
+	
 	List<Plate> findByExperimentId(long experimentId);
 
 	List<Plate> findByBarcode(String barcoce);

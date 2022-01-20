@@ -15,6 +15,7 @@ import eu.openanalytics.phaedra.platservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.platservice.enumartion.ApprovalStatus;
 import eu.openanalytics.phaedra.platservice.enumartion.CalculationStatus;
+import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
 import eu.openanalytics.phaedra.platservice.enumartion.ValidationStatus;
 
 @Service
@@ -23,10 +24,12 @@ public class ExperimentService {
 
 	private final ExperimentRepository experimentRepository;
 	private final PlateService plateService;
-
-	public ExperimentService(ExperimentRepository experimentRepository, PlateService plateService) {
+	private final ProjectAccessService projectAccessService;
+	
+	public ExperimentService(ExperimentRepository experimentRepository, PlateService plateService, ProjectAccessService projectAccessService) {
 		this.experimentRepository = experimentRepository;
 		this.plateService = plateService;
+		this.projectAccessService = projectAccessService;
 	}
 
 	public ExperimentDTO createExperiment(ExperimentDTO experimentDTO) {
@@ -34,6 +37,7 @@ public class ExperimentService {
 		modelMapper.typeMap(ExperimentDTO.class, Experiment.class)
 				.map(experimentDTO, experiment);
 
+		projectAccessService.checkAccessLevel(experiment.getProjectId(), ProjectAccessLevel.Write);
 		experiment = experimentRepository.save(experiment);
 		return mapToExperimentDTO(experiment);
 	}
@@ -41,6 +45,7 @@ public class ExperimentService {
 	public void updateExperiment(ExperimentDTO experimentDTO) {
 		Optional<Experiment> experiment = experimentRepository.findById(experimentDTO.getId());
 		experiment.ifPresent(e -> {
+			projectAccessService.checkAccessLevel(e.getProjectId(), ProjectAccessLevel.Write);
 			modelMapper.typeMap(ExperimentDTO.class, Experiment.class)
 					.setPropertyCondition(Conditions.isNotNull())
 					.map(experimentDTO, e);
@@ -49,25 +54,35 @@ public class ExperimentService {
 	}
 	
 	public void deleteExperiment(long experimentId) {
-		experimentRepository.deleteById(experimentId);
+		experimentRepository.findById(experimentId).ifPresent(e -> {
+			projectAccessService.checkAccessLevel(e.getProjectId(), ProjectAccessLevel.Write);
+			experimentRepository.deleteById(experimentId);
+		});
 	}
 
 	public ExperimentDTO getExperimentById(long experimentId) {
-		Optional<Experiment> experiment = experimentRepository.findById(experimentId);
-		return experiment.map(this::mapToExperimentDTO).orElse(null);
+		return experimentRepository.findById(experimentId)
+				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
+				.map(this::mapToExperimentDTO)
+				.orElse(null);
 	}
 
 	public List<ExperimentDTO> getAllExperiments() {
 		List<Experiment> result = (List<Experiment>) experimentRepository.findAll();
-		return result.stream().map(this::mapToExperimentDTO).collect(Collectors.toList());
+		return result.stream()
+				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
+				.map(this::mapToExperimentDTO)
+				.toList();
 	}
 
 	public List<ExperimentDTO> getExperimentByProjectId(long projectId) {
+		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 		List<Experiment> result = experimentRepository.findByProjectId(projectId);
 		return result.stream().map(this::mapToExperimentDTO).collect(Collectors.toList());
 	}
 	
 	public List<ExperimentSummaryDTO> getExperimentSummariesByProjectId(long projectId) {
+		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 		return getExperimentByProjectId(projectId).stream().map(exp -> {
 			List<PlateDTO> plates = plateService.getPlatesByExperimentId(exp.getId());
 			ExperimentSummaryDTO summary = new ExperimentSummaryDTO();
