@@ -5,6 +5,8 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.ProjectAccess;
@@ -77,6 +79,7 @@ public class ProjectAccessService {
 	
 	/* Basic CRUD */
 	
+	@CacheEvict(value = "project_access", key = "#projectAccess?.projectId")
 	public ProjectAccessDTO createProjectAccess(ProjectAccessDTO projectAccess) {
 		ProjectAccess newAccess = projectAccessRepository.save(modelMapper.map(projectAccess, ProjectAccess.class));
 		return modelMapper.map(newAccess, ProjectAccessDTO.class);
@@ -86,6 +89,7 @@ public class ProjectAccessService {
 		projectAccessRepository.deleteById(projectAccessId);
 	}
 	
+	@Cacheable("project_access")
 	public List<ProjectAccessDTO> getProjectAccessForProject(long projectId) {
 		return projectAccessRepository.findByProjectId(projectId)
 				.stream()
