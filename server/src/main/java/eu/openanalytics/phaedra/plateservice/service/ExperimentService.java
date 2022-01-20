@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.Experiment;
@@ -26,7 +27,7 @@ public class ExperimentService {
 	private final PlateService plateService;
 	private final ProjectAccessService projectAccessService;
 	
-	public ExperimentService(ExperimentRepository experimentRepository, PlateService plateService, ProjectAccessService projectAccessService) {
+	public ExperimentService(ExperimentRepository experimentRepository, @Lazy PlateService plateService, ProjectAccessService projectAccessService) {
 		this.experimentRepository = experimentRepository;
 		this.plateService = plateService;
 		this.projectAccessService = projectAccessService;
