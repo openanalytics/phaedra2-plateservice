@@ -1,8 +1,13 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
 import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.platservice.dto.WellDTO;
+import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.platservice.enumartion.LinkStatus;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -10,6 +15,7 @@ import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,10 +26,14 @@ public class PlateService {
 
 	private final PlateRepository plateRepository;
 	private final WellService wellService;
+	private final PlateTemplateService plateTemplateService;
+	private final WellTemplateService wellTemplateService;
 
-	public PlateService(PlateRepository plateRepository, WellService wellService) {
+	public PlateService(PlateRepository plateRepository, WellService wellService, PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService) {
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
+		this.plateTemplateService = plateTemplateService;
+		this.wellTemplateService = wellTemplateService;
 
 		// TODO move to dedicated ModelMapper service
 		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
@@ -78,6 +88,40 @@ public class PlateService {
 	public PlateDTO getPlateById(long plateId) {
 		Optional<Plate> result = plateRepository.findById(plateId);
 		return result.map(this::mapToPlateDTO).orElse(null);
+	}
+
+	public PlateDTO linkPlate(long plateId, long plateTemplateId){
+		PlateDTO plateDTO = getPlateById(plateId);
+		//get plateTemplate and plate
+		PlateTemplateDTO plateTemplateDTO = this.plateTemplateService.getPlateTemplateById(plateTemplateId);
+		//Check if they exist
+		if (plateDTO==null || plateTemplateDTO==null)
+			return null;
+		//Check for same dimensions
+		if (plateDTO.getRows()!=plateTemplateDTO.getRows()||plateDTO.getColumns()!=plateTemplateDTO.getColumns())
+			return null;
+
+		//Change wells
+		this.linkWithPlateTemplate(plateDTO,plateTemplateDTO);
+
+		//Set Link properties of plate
+		plateDTO.setLinkTemplateId(plateTemplateDTO.getId().toString());
+		plateDTO.setLinkSource("layout-template");
+		plateDTO.setLinkStatus(LinkStatus.LINKED);
+		plateDTO.setLinkedOn(new Date());
+		return plateDTO;
+	}
+
+	private void linkWithPlateTemplate(PlateDTO plateDTO, PlateTemplateDTO plateTemplateDTO){
+		//Get wells
+		List<WellDTO> wells = wellService.getWellsByPlateId(plateDTO.getId());
+		List<WellTemplateDTO> wellTemplates  = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateDTO.getId());
+
+		for (int i = 0; i < wells.size(); i++){
+			wells.get(i).setWellType(wellTemplates.get(i).getWellType());
+			//TODO change substances and concentration
+		}
+		wellService.updateWells(wells);
 	}
 
 	private PlateDTO mapToPlateDTO(Plate plate) {

@@ -4,10 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
 import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.platservice.dto.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -113,7 +113,7 @@ public class PlateControllerTest {
     }
 
     @Test
-    public void plateTemplateGetOneFoundTest() throws Exception {
+    public void plateGetOneFoundTest() throws Exception {
         Long plateId = 1000L;
 
         MvcResult mvcResult = this.mockMvc.perform(get("/plate/{plateId}", plateId))
@@ -299,6 +299,137 @@ public class PlateControllerTest {
         PlateMeasurementDTO plateMeasurementDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateMeasurementDTO.class);
         assertThat(plateMeasurementDTO).isNotNull();
         assertThat(plateMeasurementDTO.getMeasurementId()).isEqualTo(1000L);
+    }
+
+    @Test
+    public void linkPlateNotFoundPlateTest() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1234L, 1234L))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
+
+    @Test
+    public void linkPlateNotFoundPlateTemplateTest() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1000L, 1234L))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
+
+    @Test
+    public void linkPlateSimpleTest() throws Exception {
+        //Add template
+        PlateTemplate newPlateTemplate = new PlateTemplate();
+        newPlateTemplate.setRows(2);
+        newPlateTemplate.setColumns(3);
+        newPlateTemplate.setCreatedOn(new Date());
+        newPlateTemplate.setCreatedBy("smarien");
+
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
+        MvcResult mvcResult = this.mockMvc.perform(post("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        //Add Plate
+        Plate plate = new Plate();
+        plate.setRows(2);
+        plate.setColumns(3);
+        plate.setExperimentId(1000L);
+        plate.setSequence(1);
+
+        String requestBody2 = objectMapper.writeValueAsString(plate);
+        MvcResult mvcResult2 = this.mockMvc.perform(post("/plate").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        MvcResult mvcResult3 = this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1L, 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Long plateId = 1L;
+
+        MvcResult mvcResult4 = this.mockMvc.perform(get("/plate/{plateId}", plateId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        PlateDTO plateDTO = objectMapper.readValue(mvcResult4.getResponse().getContentAsString(), PlateDTO.class);
+        assertThat(plateDTO).isNotNull();
+        assertThat(plateDTO.getId()).isEqualTo(plateId);
+        for (WellDTO w : plateDTO.getWells()){
+            assertThat(w.getWellType()).isEqualTo("EMPTY");
+        }
+    }
+
+    @Test
+    public void linkPlateHardTest() throws Exception{
+        //Add template
+        PlateTemplate newPlateTemplate = new PlateTemplate();
+        newPlateTemplate.setRows(2);
+        newPlateTemplate.setColumns(3);
+        newPlateTemplate.setCreatedOn(new Date());
+        newPlateTemplate.setCreatedBy("smarien");
+
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
+        MvcResult mvcResult = this.mockMvc.perform(post("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        PlateTemplateDTO plateTemplateDTOResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
+        List<WellTemplateDTO> wellTemplateDTOS = plateTemplateDTOResult.getWells();
+        assertThat(wellTemplateDTOS.size()).isEqualTo(6);
+
+        //Add Plate
+        Plate plate = new Plate();
+        plate.setRows(2);
+        plate.setColumns(3);
+        plate.setExperimentId(1000L);
+        plate.setSequence(1);
+
+        String requestBody2 = objectMapper.writeValueAsString(plate);
+        MvcResult mvcResult2 = this.mockMvc.perform(post("/plate").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        //Change WellTemplates
+        wellTemplateDTOS.get(0).setWellType("HC");
+        wellTemplateDTOS.get(1).setWellType("LC");
+        wellTemplateDTOS.get(2).setWellType("EMPTY");
+        wellTemplateDTOS.get(3).setWellType("SAMPLE");
+        wellTemplateDTOS.get(4).setWellType("LC");
+        wellTemplateDTOS.get(5).setWellType("HC");
+
+
+        String requestBody3 = objectMapper.writeValueAsString(wellTemplateDTOS);
+        this.mockMvc.perform(put("/well-templates").contentType(MediaType.APPLICATION_JSON).content(requestBody3))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        //Link
+        this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1L, 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        MvcResult mvcResult3 = this.mockMvc.perform(get("/plate/{plateId}", 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        PlateDTO plateDTO = objectMapper.readValue(mvcResult3.getResponse().getContentAsString(), PlateDTO.class);
+        assertThat(plateDTO).isNotNull();
+        assertThat(plateDTO.getId()).isEqualTo(1L);
+        List<WellDTO> wellDTOS = plateDTO.getWells();
+        assertThat(wellDTOS.get(0).getWellType()).isEqualTo("HC");
+        assertThat(wellDTOS.get(1).getWellType()).isEqualTo("LC");
+        assertThat(wellDTOS.get(2).getWellType()).isEqualTo("EMPTY");
+        assertThat(wellDTOS.get(3).getWellType()).isEqualTo("SAMPLE");
+        assertThat(wellDTOS.get(4).getWellType()).isEqualTo("LC");
+        assertThat(wellDTOS.get(5).getWellType()).isEqualTo("HC");
     }
 
 }

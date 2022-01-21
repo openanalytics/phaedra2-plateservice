@@ -56,12 +56,19 @@ public class WellService {
     }
 
     public WellDTO updateWell(WellDTO wellDTO) {
+        //TODO change to map function
         Well well = new Well(wellDTO.getPlateId());
         modelMapper.typeMap(WellDTO.class, Well.class)
                 .setPropertyCondition(Conditions.isNotNull())
                 .map(wellDTO, well);
         well = wellRepository.save(well);
         return mapTpWellDTO(well);
+    }
+
+    public List<WellDTO> updateWells(List<WellDTO> wellDTOS){
+        List<Well> wells = wellDTOS.stream().map(this::mapToWell).toList();
+        wellRepository.saveAll(wells);
+        return wellDTOS;
     }
 
     public List<WellDTO> getWellsByPlateId(long plateId) {
@@ -74,5 +81,13 @@ public class WellService {
         modelMapper.typeMap(Well.class, WellDTO.class)
                 .map(well, wellDTO);
         return wellDTO;
+    }
+
+    private Well mapToWell(WellDTO wellDTO) {
+        Well well = new Well(wellDTO.getPlateId());
+        modelMapper.typeMap(WellDTO.class, Well.class)
+                .setPropertyCondition(Conditions.isNotNull())
+                .map(wellDTO, well);
+        return well;
     }
 }
