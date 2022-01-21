@@ -1,12 +1,10 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
-import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
-import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
-import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
-import org.checkerframework.checker.nullness.Opt;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -21,21 +19,27 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
+import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
+import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
 
 @Testcontainers
 @SpringBootTest
 @Sql({"/jdbc/test-data.sql"})
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class WellTemplateServiceTest {
+	
     @Autowired
     private WellTemplateRepository wellTemplateRepository;
 
     @Autowired
     private PlateTemplateRepository plateTemplateRepository;
+    
+    @Autowired
+    private PlateTemplateService plateTemplateService;
 
     private WellTemplateService wellTemplateService;
 
@@ -58,7 +62,7 @@ public class WellTemplateServiceTest {
 
     @BeforeEach
     void before() {
-        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository);
+        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService);
     }
 
     @Test
