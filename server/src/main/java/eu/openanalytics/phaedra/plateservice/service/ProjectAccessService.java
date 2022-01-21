@@ -5,6 +5,7 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import eu.openanalytics.phaedra.plateservice.model.ProjectAccess;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectAccessRepository;
 import eu.openanalytics.phaedra.platservice.dto.ProjectAccessDTO;
 import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
-import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class ProjectAccessService {
@@ -22,12 +23,15 @@ public class ProjectAccessService {
 
 	private static final ModelMapper modelMapper = new ModelMapper();
 	
+	@Autowired
+	private IAuthorizationService authService;
+	
 	public ProjectAccessService(ProjectAccessRepository projectAccessRepository) {
 		this.projectAccessRepository = projectAccessRepository;
 	}
 	
 	public void checkCanCreateProjects() {
-		AuthorizationHelper.performAccessCheck(AuthorizationHelper::hasUserAccess, e -> "Not authorized to create new projects");
+		authService.performAccessCheck(p -> authService.hasUserAccess(), e -> "Not authorized to create new projects");
 	}
 	
 	/**
@@ -39,7 +43,7 @@ public class ProjectAccessService {
 	 * @param requiredLevel The minimum access level that is needed.
 	 */
 	public void checkAccessLevel(long projectId, ProjectAccessLevel requiredLevel) {
-		AuthorizationHelper.performAccessCheck(principal -> {
+		authService.performAccessCheck(principal -> {
 			ProjectAccessLevel level = getAccessLevel(projectId);
 			return (level != null && level.compareTo(requiredLevel) >= 0);
 		}, e -> String.format("Not authorized: requires access level %s on project %d", requiredLevel, projectId));
@@ -67,11 +71,11 @@ public class ProjectAccessService {
 	 */
 	public ProjectAccessLevel getAccessLevel(long projectId) {
 		// Note: administrators automatically have admin-level access to all projects.
-		if (AuthorizationHelper.hasAdminAccess()) return ProjectAccessLevel.Admin;
+		if (authService.hasAdminAccess()) return ProjectAccessLevel.Admin;
 		
 		return getProjectAccessForProject(projectId)
 			.stream()
-			.filter(pa -> AuthorizationHelper.hasTeamAccess(pa.getTeamName()))
+			.filter(pa -> authService.hasTeamAccess(pa.getTeamName()))
 			.collect(Collectors.reducing(BinaryOperator.maxBy((pa1, pa2) -> pa1.getAccessLevel().compareTo(pa2.getAccessLevel()))))
 			.map(ProjectAccessDTO::getAccessLevel)
 			.orElse(null);

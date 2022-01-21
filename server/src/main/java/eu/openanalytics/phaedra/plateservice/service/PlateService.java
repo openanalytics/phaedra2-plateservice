@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
-import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class PlateService {
@@ -28,6 +29,9 @@ public class PlateService {
 	private final WellService wellService;
 	private final ExperimentService experimentService;
 	private final ProjectAccessService projectAccessService;
+	
+	@Autowired
+	private IAuthorizationService authService;
 	
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService, ProjectAccessService projectAccessService) {
 		this.plateRepository = plateRepository;
@@ -53,7 +57,7 @@ public class PlateService {
 		
 		Plate plate = new Plate();
 		modelMapper.typeMap(PlateDTO.class, Plate.class).map(plateDTO, plate);
-		plate.setCreatedBy(AuthorizationHelper.getCurrentPrincipalName());
+		plate.setCreatedBy(authService.getCurrentPrincipalName());
 		plate.setCreatedOn(new Date());
 		plate = plateRepository.save(plate);
 
@@ -70,7 +74,7 @@ public class PlateService {
 			modelMapper.typeMap(PlateDTO.class, Plate.class)
 					.setPropertyCondition(Conditions.isNotNull())
 					.map(plateDTO, p);
-			p.setUpdatedBy(AuthorizationHelper.getCurrentPrincipalName());
+			p.setUpdatedBy(authService.getCurrentPrincipalName());
 			p.setUpdatedOn(new Date());
 			plateRepository.save(p);
 		});

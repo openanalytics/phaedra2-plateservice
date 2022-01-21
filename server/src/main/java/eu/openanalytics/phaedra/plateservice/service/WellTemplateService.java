@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
@@ -15,7 +16,7 @@ import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
 import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
 import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
-import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class WellTemplateService {
@@ -26,6 +27,9 @@ public class WellTemplateService {
     private final WellTemplateRepository wellTemplateRepository;
     private final PlateTemplateService plateTemplateService;
     
+	@Autowired
+	private IAuthorizationService authService;
+	
     public WellTemplateService(WellTemplateRepository wellTemplateRepository, PlateTemplateService plateTemplateService) {
     	this.wellTemplateRepository = wellTemplateRepository;
     	this.plateTemplateService = plateTemplateService;
@@ -34,7 +38,7 @@ public class WellTemplateService {
     public WellTemplateDTO createWellTemplate(WellTemplateDTO wellTemplateDTO) {
     	Optional.ofNullable(plateTemplateService.getPlateTemplateById(wellTemplateDTO.getPlateTemplateId()))
     			.map(PlateTemplateDTO::getCreatedBy)
-    			.ifPresent(AuthorizationHelper::performOwnershipCheck);
+    			.ifPresent(creator -> authService.performOwnershipCheck(creator));
     	
         WellTemplate wellTemplate = new WellTemplate(wellTemplateDTO.getPlateTemplateId());
         modelMapper.typeMap(WellTemplateDTO.class, WellTemplate.class)
@@ -44,7 +48,7 @@ public class WellTemplateService {
     }
 
     public List<WellTemplateDTO> createWellTemplates(PlateTemplate plateTemplate) {
-    	AuthorizationHelper.performOwnershipCheck(plateTemplate.getCreatedBy());
+    	authService.performOwnershipCheck(plateTemplate.getCreatedBy());
     	
         List<WellTemplate> wellTemplates = new ArrayList<>(plateTemplate.getRows()*plateTemplate.getColumns());
         for (int r = 1; r <= plateTemplate.getRows(); r++) {
@@ -62,7 +66,7 @@ public class WellTemplateService {
     public void updateWellTemplate(WellTemplateDTO wellTemplateDTO) {
     	Optional.ofNullable(plateTemplateService.getPlateTemplateById(wellTemplateDTO.getPlateTemplateId()))
 			.map(PlateTemplateDTO::getCreatedBy)
-			.ifPresent(AuthorizationHelper::performOwnershipCheck);
+			.ifPresent(creator -> authService.performOwnershipCheck(creator));
     	
         Optional<WellTemplate> wellTemplate = wellTemplateRepository.findById(wellTemplateDTO.getId());
         wellTemplate.ifPresent( w -> {
@@ -74,14 +78,14 @@ public class WellTemplateService {
     }
 
     public WellTemplateDTO getWellTemplateById(long wellTemplateId) {
-    	AuthorizationHelper.performAccessCheck(AuthorizationHelper::hasUserAccess);
+    	authService.performAccessCheck(p -> authService.hasUserAccess());
     	
         Optional<WellTemplate> result = wellTemplateRepository.findById(wellTemplateId);
         return result.map(this::mapToWellTemplateDTO).orElse(null);
     }
 
     public List<WellTemplateDTO> getWellTemplatesByPlateTemplateId(long plateTemplateId) {
-    	AuthorizationHelper.performAccessCheck(AuthorizationHelper::hasUserAccess);
+    	authService.performAccessCheck(p -> authService.hasUserAccess());
     	
         List<WellTemplate> result = wellTemplateRepository.findByPlateTemplateId(plateTemplateId);
         return result.stream().map(this::mapToWellTemplateDTO).sorted(WELL_TEMPLATE_DTO_COMPARATOR).toList();

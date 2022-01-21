@@ -7,13 +7,14 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.Project;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectRepository;
 import eu.openanalytics.phaedra.platservice.dto.ProjectDTO;
 import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
-import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class ProjectService {
@@ -24,6 +25,9 @@ public class ProjectService {
 	private final ExperimentService experimentService;
 
 	private final ProjectAccessService projectAccessService;
+	
+	@Autowired
+	private IAuthorizationService authService;
 	
 	public ProjectService(ProjectRepository projectRepository, ExperimentService experimentService, ProjectAccessService projectAccessService) {
 		this.projectRepository = projectRepository;
@@ -36,7 +40,7 @@ public class ProjectService {
 		
 		Project project = new Project();
 		modelMapper.typeMap(ProjectDTO.class, Project.class).map(projectDTO, project);
-		project.setCreatedBy(AuthorizationHelper.getCurrentPrincipalName());
+		project.setCreatedBy(authService.getCurrentPrincipalName());
 		project.setCreatedOn(new Date());
 		project = projectRepository.save(project);
 		
@@ -50,7 +54,7 @@ public class ProjectService {
 			modelMapper.typeMap(ProjectDTO.class, Project.class)
 					.setPropertyCondition(Conditions.isNotNull())
 					.map(projectDTO, p);
-			p.setUpdatedBy(AuthorizationHelper.getCurrentPrincipalName());
+			p.setUpdatedBy(authService.getCurrentPrincipalName());
 			p.setUpdatedOn(new Date());
 			projectRepository.save(p);
 		});

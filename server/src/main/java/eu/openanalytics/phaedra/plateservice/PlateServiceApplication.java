@@ -21,6 +21,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
+import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
@@ -77,6 +79,11 @@ public class PlateServiceApplication {
 	public OpenAPI customOpenAPI() {
 		Server server = new Server().url(servletContext.getContextPath()).description("Default Server URL");
 		return new OpenAPI().addServersItem(server);
+	}
+	
+	@Bean
+	public IAuthorizationService authService() {
+		return AuthorizationServiceFactory.create();
 	}
 	
 	@Bean

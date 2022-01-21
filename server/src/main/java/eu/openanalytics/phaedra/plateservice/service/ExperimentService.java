@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ import eu.openanalytics.phaedra.platservice.enumartion.ApprovalStatus;
 import eu.openanalytics.phaedra.platservice.enumartion.CalculationStatus;
 import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
 import eu.openanalytics.phaedra.platservice.enumartion.ValidationStatus;
-import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class ExperimentService {
@@ -28,6 +29,9 @@ public class ExperimentService {
 	private final ExperimentRepository experimentRepository;
 	private final PlateService plateService;
 	private final ProjectAccessService projectAccessService;
+	
+	@Autowired
+	private IAuthorizationService authService;
 	
 	public ExperimentService(ExperimentRepository experimentRepository, @Lazy PlateService plateService, ProjectAccessService projectAccessService) {
 		this.experimentRepository = experimentRepository;
@@ -39,7 +43,7 @@ public class ExperimentService {
 		Experiment experiment = new Experiment();
 		modelMapper.typeMap(ExperimentDTO.class, Experiment.class)
 				.map(experimentDTO, experiment);
-		experiment.setCreatedBy(AuthorizationHelper.getCurrentPrincipalName());
+		experiment.setCreatedBy(authService.getCurrentPrincipalName());
 		experiment.setCreatedOn(new Date());
 
 		projectAccessService.checkAccessLevel(experiment.getProjectId(), ProjectAccessLevel.Write);
@@ -54,7 +58,7 @@ public class ExperimentService {
 			modelMapper.typeMap(ExperimentDTO.class, Experiment.class)
 					.setPropertyCondition(Conditions.isNotNull())
 					.map(experimentDTO, e);
-			e.setUpdatedBy(AuthorizationHelper.getCurrentPrincipalName());
+			e.setUpdatedBy(authService.getCurrentPrincipalName());
 			e.setUpdatedOn(new Date());
 			experimentRepository.save(e);
 		});
