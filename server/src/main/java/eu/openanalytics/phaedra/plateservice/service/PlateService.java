@@ -1,5 +1,6 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
 
 @Service
 public class PlateService {
@@ -50,8 +52,9 @@ public class PlateService {
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
 		
 		Plate plate = new Plate();
-		modelMapper.typeMap(PlateDTO.class, Plate.class)
-				.map(plateDTO, plate);
+		modelMapper.typeMap(PlateDTO.class, Plate.class).map(plateDTO, plate);
+		plate.setCreatedBy(AuthorizationHelper.getCurrentPrincipalName());
+		plate.setCreatedOn(new Date());
 		plate = plateRepository.save(plate);
 
 		// Automatically create the corresponding wells
@@ -67,6 +70,8 @@ public class PlateService {
 			modelMapper.typeMap(PlateDTO.class, Plate.class)
 					.setPropertyCondition(Conditions.isNotNull())
 					.map(plateDTO, p);
+			p.setUpdatedBy(AuthorizationHelper.getCurrentPrincipalName());
+			p.setUpdatedOn(new Date());
 			plateRepository.save(p);
 		});
 		return plateDTO;

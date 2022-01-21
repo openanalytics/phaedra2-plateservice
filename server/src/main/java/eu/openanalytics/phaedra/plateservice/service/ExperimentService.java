@@ -1,5 +1,6 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ import eu.openanalytics.phaedra.platservice.enumartion.ApprovalStatus;
 import eu.openanalytics.phaedra.platservice.enumartion.CalculationStatus;
 import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
 import eu.openanalytics.phaedra.platservice.enumartion.ValidationStatus;
+import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
 
 @Service
 public class ExperimentService {
@@ -37,6 +39,8 @@ public class ExperimentService {
 		Experiment experiment = new Experiment();
 		modelMapper.typeMap(ExperimentDTO.class, Experiment.class)
 				.map(experimentDTO, experiment);
+		experiment.setCreatedBy(AuthorizationHelper.getCurrentPrincipalName());
+		experiment.setCreatedOn(new Date());
 
 		projectAccessService.checkAccessLevel(experiment.getProjectId(), ProjectAccessLevel.Write);
 		experiment = experimentRepository.save(experiment);
@@ -50,6 +54,8 @@ public class ExperimentService {
 			modelMapper.typeMap(ExperimentDTO.class, Experiment.class)
 					.setPropertyCondition(Conditions.isNotNull())
 					.map(experimentDTO, e);
+			e.setUpdatedBy(AuthorizationHelper.getCurrentPrincipalName());
+			e.setUpdatedOn(new Date());
 			experimentRepository.save(e);
 		});
 	}

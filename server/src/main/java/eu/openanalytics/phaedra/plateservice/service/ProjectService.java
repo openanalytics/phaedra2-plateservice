@@ -1,5 +1,6 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import eu.openanalytics.phaedra.plateservice.model.Project;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectRepository;
 import eu.openanalytics.phaedra.platservice.dto.ProjectDTO;
 import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
 
 @Service
 public class ProjectService {
@@ -31,10 +33,13 @@ public class ProjectService {
 
 	public ProjectDTO createProject(ProjectDTO projectDTO) {
 		projectAccessService.checkCanCreateProjects();
+		
 		Project project = new Project();
-		modelMapper.typeMap(ProjectDTO.class, Project.class)
-				.map(projectDTO, project);
+		modelMapper.typeMap(ProjectDTO.class, Project.class).map(projectDTO, project);
+		project.setCreatedBy(AuthorizationHelper.getCurrentPrincipalName());
+		project.setCreatedOn(new Date());
 		project = projectRepository.save(project);
+		
 		return mapToProjectDTO(project);
 	}
 
@@ -45,6 +50,8 @@ public class ProjectService {
 			modelMapper.typeMap(ProjectDTO.class, Project.class)
 					.setPropertyCondition(Conditions.isNotNull())
 					.map(projectDTO, p);
+			p.setUpdatedBy(AuthorizationHelper.getCurrentPrincipalName());
+			p.setUpdatedOn(new Date());
 			projectRepository.save(p);
 		});
 	}
