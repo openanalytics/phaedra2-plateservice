@@ -2,18 +2,18 @@ package eu.openanalytics.phaedra.plateservice.service;
 
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
-import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.platservice.dto.*;
 import eu.openanalytics.phaedra.platservice.enumartion.LinkStatus;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -28,12 +28,14 @@ public class PlateService {
 	private final WellService wellService;
 	private final PlateTemplateService plateTemplateService;
 	private final WellTemplateService wellTemplateService;
+	private final WellSubstanceService wellSubstanceService;
 
-	public PlateService(PlateRepository plateRepository, WellService wellService, PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService) {
+	public PlateService(PlateRepository plateRepository, WellService wellService, PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService) {
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
 		this.plateTemplateService = plateTemplateService;
 		this.wellTemplateService = wellTemplateService;
+		this.wellSubstanceService = wellSubstanceService;
 
 		// TODO move to dedicated ModelMapper service
 		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
@@ -96,10 +98,10 @@ public class PlateService {
 		PlateTemplateDTO plateTemplateDTO = this.plateTemplateService.getPlateTemplateById(plateTemplateId);
 		//Check if they exist
 		if (plateDTO==null || plateTemplateDTO==null)
-			return null;
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plate or template can not be found for these ids.");
 		//Check for same dimensions
 		if (plateDTO.getRows()!=plateTemplateDTO.getRows()||plateDTO.getColumns()!=plateTemplateDTO.getColumns())
-			return null;
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Plate or template have different dimensions.");
 
 		//Change wells
 		this.linkWithPlateTemplate(plateDTO,plateTemplateDTO);
@@ -121,7 +123,19 @@ public class PlateService {
 
 		for (int i = 0; i < wells.size(); i++){
 			wells.get(i).setWellType(wellTemplates.get(i).getWellType());
-			//TODO change substances and concentration
+			var previousWellSubstance = wellSubstanceService.getWellSubstanceByWellId(wells.get(i).getId());
+			//Do we need to create/update substance?
+			if (wellTemplates.get(i).getSubstanceType()!=null){
+				if (previousWellSubstance==null){
+					createNewWellSubstance(wells.get(i),wellTemplates.get(i));
+				} else {
+					updateExistingWellSubstance(previousWellSubstance, wellTemplates.get(i));
+				}
+			}
+			//If no new substance, delete substance
+			else if (previousWellSubstance!=null){
+				wellSubstanceService.deleteWellSubstance(previousWellSubstance.getId());
+			}
 		}
 		wellService.updateWells(wells);
 	}
@@ -130,5 +144,21 @@ public class PlateService {
 		var builder = modelMapper.map(plate, PlateDTO.PlateDTOBuilder.class);
 		builder.wells(wellService.getWellsByPlateId(plate.getId()));
 		return builder.build();
+	}
+
+	private void createNewWellSubstance(WellDTO wellDTO, WellTemplateDTO wellTemplateDTO) {
+		WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
+		wellSubstanceDTO.setWellId(wellDTO.getId());
+		wellSubstanceDTO.setType(wellTemplateDTO.getSubstanceType());
+		wellSubstanceDTO.setName(wellTemplateDTO.getSubstanceName());
+		wellSubstanceDTO.setConcentration(wellTemplateDTO.getConcentration());
+		wellSubstanceService.createWellSubstance(wellSubstanceDTO);
+	}
+
+	private void updateExistingWellSubstance(WellSubstanceDTO wellSubstanceDTO, WellTemplateDTO wellTemplateDTO) {
+		wellSubstanceDTO.setType(wellTemplateDTO.getSubstanceType());
+		wellSubstanceDTO.setName(wellTemplateDTO.getSubstanceName());
+		wellSubstanceDTO.setConcentration(wellTemplateDTO.getConcentration());
+		wellSubstanceService.updateWellSubstance(wellSubstanceDTO);
 	}
 }

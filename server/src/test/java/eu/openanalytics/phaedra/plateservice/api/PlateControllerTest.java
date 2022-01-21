@@ -8,6 +8,7 @@ import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.platservice.dto.*;
 import eu.openanalytics.phaedra.platservice.enumartion.LinkStatus;
+import eu.openanalytics.phaedra.platservice.enumartion.SubstanceType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -319,6 +320,26 @@ public class PlateControllerTest {
     }
 
     @Test
+    public void linkPlateWrongDimensionsTest() throws Exception {
+        PlateTemplate newPlateTemplate = new PlateTemplate();
+        newPlateTemplate.setRows(22);
+        newPlateTemplate.setColumns(33);
+        newPlateTemplate.setCreatedOn(new Date());
+        newPlateTemplate.setCreatedBy("smarien");
+
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
+        MvcResult mvcResult = this.mockMvc.perform(post("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        MvcResult mvcResult2 = this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1000L, 1L))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
     public void linkPlateSimpleTest() throws Exception {
         //Add template
         PlateTemplate newPlateTemplate = new PlateTemplate();
@@ -360,13 +381,13 @@ public class PlateControllerTest {
         PlateDTO plateDTO = objectMapper.readValue(mvcResult4.getResponse().getContentAsString(), PlateDTO.class);
         assertThat(plateDTO).isNotNull();
         assertThat(plateDTO.getId()).isEqualTo(plateId);
-        for (WellDTO w : plateDTO.getWells()){
+        for (WellDTO w : plateDTO.getWells()) {
             assertThat(w.getWellType()).isEqualTo("EMPTY");
         }
     }
 
     @Test
-    public void linkPlateHardTest() throws Exception{
+    public void linkPlateHardTest() throws Exception {
         //Add template
         PlateTemplate newPlateTemplate = new PlateTemplate();
         newPlateTemplate.setRows(2);
@@ -399,11 +420,23 @@ public class PlateControllerTest {
 
         //Change WellTemplates
         wellTemplateDTOS.get(0).setWellType("HC");
+        wellTemplateDTOS.get(0).setSubstanceType("COMPOUND");
+        wellTemplateDTOS.get(0).setSubstanceName("eeee");
         wellTemplateDTOS.get(1).setWellType("LC");
+        wellTemplateDTOS.get(1).setSubstanceType("COMPOUND");
+        wellTemplateDTOS.get(1).setSubstanceName("test-name");
+        wellTemplateDTOS.get(1).setConcentration(0.1);
         wellTemplateDTOS.get(2).setWellType("EMPTY");
         wellTemplateDTOS.get(3).setWellType("SAMPLE");
+        wellTemplateDTOS.get(3).setSubstanceType("COMPOUND");
+        wellTemplateDTOS.get(3).setSubstanceName("eeee");
         wellTemplateDTOS.get(4).setWellType("LC");
+        wellTemplateDTOS.get(4).setSubstanceType("COMPOUND");
+        wellTemplateDTOS.get(4).setSubstanceName("test-name2");
         wellTemplateDTOS.get(5).setWellType("HC");
+        wellTemplateDTOS.get(5).setSubstanceType("COMPOUND");
+        wellTemplateDTOS.get(5).setSubstanceName("eeee");
+        wellTemplateDTOS.get(5).setConcentration(0.3);
 
 
         String requestBody3 = objectMapper.writeValueAsString(wellTemplateDTOS);
@@ -430,11 +463,50 @@ public class PlateControllerTest {
         assertThat(plateDTO.getLinkedOn()).isNotNull();
         List<WellDTO> wellDTOS = plateDTO.getWells();
         assertThat(wellDTOS.get(0).getWellType()).isEqualTo("HC");
+        assertThat(wellDTOS.get(0).getWellSubstance().getType()).isEqualTo("COMPOUND");
+        assertThat(wellDTOS.get(0).getWellSubstance().getConcentration()).isEqualTo(0.0);
         assertThat(wellDTOS.get(1).getWellType()).isEqualTo("LC");
+        assertThat(wellDTOS.get(1).getWellSubstance().getName()).isEqualTo("test-name");
+        assertThat(wellDTOS.get(1).getWellSubstance().getConcentration()).isEqualTo(0.1);
         assertThat(wellDTOS.get(2).getWellType()).isEqualTo("EMPTY");
+        assertThat(wellDTOS.get(2).getWellSubstance()).isNull();
         assertThat(wellDTOS.get(3).getWellType()).isEqualTo("SAMPLE");
+        assertThat(wellDTOS.get(3).getWellSubstance().getType()).isEqualTo("COMPOUND");
         assertThat(wellDTOS.get(4).getWellType()).isEqualTo("LC");
+        assertThat(wellDTOS.get(4).getWellSubstance().getName()).isEqualTo("test-name2");
         assertThat(wellDTOS.get(5).getWellType()).isEqualTo("HC");
+        assertThat(wellDTOS.get(5).getWellSubstance().getConcentration()).isEqualTo(0.3);
+
+        //Change again to test delete and edit functionality
+        wellTemplateDTOS.get(0).setSubstanceName("qwerty"); //changed
+        wellTemplateDTOS.get(0).setSubstanceType("VIRUS"); //changed
+        //wellTemplateDTOS.get(1).setSubstanceType(null); //Should get removed TODO fix that you can update null to property to test delete
+
+        String requestBody4 = objectMapper.writeValueAsString(wellTemplateDTOS);
+        this.mockMvc.perform(put("/well-templates").contentType(MediaType.APPLICATION_JSON).content(requestBody4))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        //Link again
+        this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1L, 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        MvcResult changedWell1 = this.mockMvc.perform(get("/plate/{plateId}", 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        PlateDTO plateDTOChanged = objectMapper.readValue(changedWell1.getResponse().getContentAsString(), PlateDTO.class);
+        assertThat(plateDTOChanged).isNotNull();
+        assertThat(plateDTOChanged.getId()).isEqualTo(1L);
+        List<WellDTO> changedWellDTOS = plateDTOChanged.getWells();
+        assertThat(changedWellDTOS.get(0).getWellType()).isEqualTo("HC");
+        assertThat(changedWellDTOS.get(0).getWellSubstance().getName()).isEqualTo("qwerty");
+        assertThat(changedWellDTOS.get(0).getWellSubstance().getType()).isEqualTo("VIRUS");
+        assertThat(changedWellDTOS.get(0).getWellSubstance().getId()).isEqualTo(wellDTOS.get(0).getWellSubstance().getId());
+        assertThat(changedWellDTOS.get(1).getWellType()).isEqualTo("LC");
+        //assertThat(changedWellDTOS.get(1).getWellSubstance()).isNull();
     }
 
 }
