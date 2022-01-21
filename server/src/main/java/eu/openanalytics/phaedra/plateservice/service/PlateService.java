@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.Plate;
@@ -25,7 +27,7 @@ public class PlateService {
 	private final ExperimentService experimentService;
 	private final ProjectAccessService projectAccessService;
 	
-	public PlateService(PlateRepository plateRepository, WellService wellService, ExperimentService experimentService, ProjectAccessService projectAccessService) {
+	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService, ProjectAccessService projectAccessService) {
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
 		this.experimentService = experimentService;
@@ -107,7 +109,8 @@ public class PlateService {
 				.orElse(null);
 	}
 	
-	private Long getProjectIdByPlateId(long plateId) {
+	@Cacheable("plate_project_id")
+	public Long getProjectIdByPlateId(long plateId) {
 		return plateRepository.findProjectIdByPlateId(plateId);
 	}
 

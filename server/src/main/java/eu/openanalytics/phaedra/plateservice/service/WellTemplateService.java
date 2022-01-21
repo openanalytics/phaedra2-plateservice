@@ -1,32 +1,41 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
-import eu.openanalytics.phaedra.plateservice.model.Well;
-import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
-import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
-import eu.openanalytics.phaedra.platservice.dto.WellDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
-import org.modelmapper.Conditions;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
+import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
+import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
+
 @Service
 public class WellTemplateService {
+	
     private static final ModelMapper modelMapper = new ModelMapper();
-
     private static final Comparator<WellTemplateDTO> WELL_TEMPLATE_DTO_COMPARATOR = Comparator.comparing(WellTemplateDTO::getRow).thenComparing(WellTemplateDTO::getColumn);
 
-    private WellTemplateRepository wellTemplateRepository;
+    private final WellTemplateRepository wellTemplateRepository;
+    private final PlateTemplateService plateTemplateService;
+    
+    public WellTemplateService(WellTemplateRepository wellTemplateRepository, PlateTemplateService plateTemplateService) {
+    	this.wellTemplateRepository = wellTemplateRepository;
+    	this.plateTemplateService = plateTemplateService;
+    }
 
-    public WellTemplateService(WellTemplateRepository wellTemplateRepository){ this.wellTemplateRepository = wellTemplateRepository;}
-
-    public WellTemplateDTO createWellTemplate(WellTemplateDTO wellTemplateDTO){
+    public WellTemplateDTO createWellTemplate(WellTemplateDTO wellTemplateDTO) {
+    	Optional.ofNullable(plateTemplateService.getPlateTemplateById(wellTemplateDTO.getPlateTemplateId()))
+    			.map(PlateTemplateDTO::getCreatedBy)
+    			.ifPresent(AuthorizationHelper::performOwnershipCheck);
+    	
         WellTemplate wellTemplate = new WellTemplate(wellTemplateDTO.getPlateTemplateId());
         modelMapper.typeMap(WellTemplateDTO.class, WellTemplate.class)
                 .map(wellTemplateDTO, wellTemplate);
@@ -34,7 +43,9 @@ public class WellTemplateService {
         return mapToWellTemplateDTO(wellTemplate);
     }
 
-    public List<WellTemplateDTO> createWellTemplates(PlateTemplate plateTemplate){
+    public List<WellTemplateDTO> createWellTemplates(PlateTemplate plateTemplate) {
+    	AuthorizationHelper.performOwnershipCheck(plateTemplate.getCreatedBy());
+    	
         List<WellTemplate> wellTemplates = new ArrayList<>(plateTemplate.getRows()*plateTemplate.getColumns());
         for (int r = 1; r <= plateTemplate.getRows(); r++) {
             for (int c = 1; c <= plateTemplate.getColumns(); c++) {
@@ -48,7 +59,11 @@ public class WellTemplateService {
         return wellTemplates.stream().map(this::mapToWellTemplateDTO).collect(Collectors.toList());
     }
 
-    public void updateWellTemplate(WellTemplateDTO wellTemplateDTO){
+    public void updateWellTemplate(WellTemplateDTO wellTemplateDTO) {
+    	Optional.ofNullable(plateTemplateService.getPlateTemplateById(wellTemplateDTO.getPlateTemplateId()))
+			.map(PlateTemplateDTO::getCreatedBy)
+			.ifPresent(AuthorizationHelper::performOwnershipCheck);
+    	
         Optional<WellTemplate> wellTemplate = wellTemplateRepository.findById(wellTemplateDTO.getId());
         wellTemplate.ifPresent( w -> {
             modelMapper.typeMap(WellTemplateDTO.class,WellTemplate.class)
@@ -58,12 +73,16 @@ public class WellTemplateService {
         });
     }
 
-    public WellTemplateDTO getWellTemplateById(long wellTemplateId){
+    public WellTemplateDTO getWellTemplateById(long wellTemplateId) {
+    	AuthorizationHelper.performAccessCheck(AuthorizationHelper::hasUserAccess);
+    	
         Optional<WellTemplate> result = wellTemplateRepository.findById(wellTemplateId);
         return result.map(this::mapToWellTemplateDTO).orElse(null);
     }
 
-    public List<WellTemplateDTO> getWellTemplatesByPlateTemplateId(long plateTemplateId){
+    public List<WellTemplateDTO> getWellTemplatesByPlateTemplateId(long plateTemplateId) {
+    	AuthorizationHelper.performAccessCheck(AuthorizationHelper::hasUserAccess);
+    	
         List<WellTemplate> result = wellTemplateRepository.findByPlateTemplateId(plateTemplateId);
         return result.stream().map(this::mapToWellTemplateDTO).sorted(WELL_TEMPLATE_DTO_COMPARATOR).toList();
     }

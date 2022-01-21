@@ -33,7 +33,7 @@ public class ProjectAccessService {
 	/**
 	 * Test if the current principal has an access level on the specified project that
 	 * is at least equal to requiredLevel.
-	 * If this is not the case, an AccessDeniedException will be thrown.
+	 * If this is not the case, a ResponseStatusException will be thrown.
 	 * 
 	 * @param projectId The ID of the project to check.
 	 * @param requiredLevel The minimum access level that is needed.

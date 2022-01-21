@@ -1,11 +1,10 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
-import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
-import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
-import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -13,9 +12,10 @@ import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
+import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
 
 @Service
 public class PlateTemplateService {
@@ -38,6 +38,10 @@ public class PlateTemplateService {
     }
 
     public PlateTemplateDTO createPlateTemplate(PlateTemplateDTO plateTemplateDTO) {
+    	AuthorizationHelper.performAccessCheck(AuthorizationHelper::hasUserAccess);
+    	plateTemplateDTO.setCreatedBy(AuthorizationHelper.getCurrentPrincipalName());
+    	plateTemplateDTO.setCreatedOn(new Date());
+    	
         PlateTemplate plateTemplate = new PlateTemplate();
         modelMapper.typeMap(PlateTemplateDTO.class, PlateTemplate.class)
                 .map(plateTemplateDTO, plateTemplate);
@@ -50,6 +54,10 @@ public class PlateTemplateService {
     }
 
     public void updatePlateTemplate(PlateTemplateDTO plateTemplateDTO) {
+    	AuthorizationHelper.performOwnershipCheck(plateTemplateDTO.getCreatedBy());
+    	plateTemplateDTO.setUpdatedBy(AuthorizationHelper.getCurrentPrincipalName());
+    	plateTemplateDTO.setUpdatedOn(new Date());
+    	
         Optional<PlateTemplate> plateTemplate = plateTemplateRepository.findById(plateTemplateDTO.getId());
         plateTemplate.ifPresent(p -> {
             modelMapper.typeMap(PlateTemplateDTO.class, PlateTemplate.class)
@@ -60,10 +68,16 @@ public class PlateTemplateService {
     }
 
     public void deletePlateTemplate(long plateTemplateId) {
+    	plateTemplateRepository.findById(plateTemplateId)
+    		.map(PlateTemplate::getCreatedBy)
+    		.ifPresent(AuthorizationHelper::performOwnershipCheck);
+    	
         plateTemplateRepository.deleteById(plateTemplateId);
     }
 
     public List<PlateTemplateDTO> getAllPlateTemplates() {
+    	AuthorizationHelper.performAccessCheck(AuthorizationHelper::hasUserAccess);
+    	
         List<PlateTemplate> plateTemplates = (List<PlateTemplate>) plateTemplateRepository.findAll();
         return plateTemplates.stream()
                 .map(this::mapToPlateTemplateDTO)
@@ -71,6 +85,8 @@ public class PlateTemplateService {
     }
 
     public PlateTemplateDTO getPlateTemplateById(long plateTemplateId) {
+    	AuthorizationHelper.performAccessCheck(AuthorizationHelper::hasUserAccess);
+    	
         Optional<PlateTemplate> result = plateTemplateRepository.findById(plateTemplateId);
         return result.map(this::mapToPlateTemplateDTO).orElse(null);
     }
