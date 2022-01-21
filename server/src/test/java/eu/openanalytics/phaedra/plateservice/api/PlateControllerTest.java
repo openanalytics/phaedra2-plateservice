@@ -7,6 +7,7 @@ import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.platservice.dto.*;
+import eu.openanalytics.phaedra.platservice.enumartion.LinkStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -423,6 +424,10 @@ public class PlateControllerTest {
         PlateDTO plateDTO = objectMapper.readValue(mvcResult3.getResponse().getContentAsString(), PlateDTO.class);
         assertThat(plateDTO).isNotNull();
         assertThat(plateDTO.getId()).isEqualTo(1L);
+        assertThat(plateDTO.getLinkSource()).isEqualTo("layout-template");
+        assertThat(plateDTO.getLinkStatus()).isEqualTo(LinkStatus.LINKED);
+        assertThat(Long.parseLong(plateDTO.getLinkTemplateId())).isEqualTo(1L);
+        assertThat(plateDTO.getLinkedOn()).isNotNull();
         List<WellDTO> wellDTOS = plateDTO.getWells();
         assertThat(wellDTOS.get(0).getWellType()).isEqualTo("HC");
         assertThat(wellDTOS.get(1).getWellType()).isEqualTo("LC");

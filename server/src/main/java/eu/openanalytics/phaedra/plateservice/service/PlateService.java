@@ -109,6 +109,8 @@ public class PlateService {
 		plateDTO.setLinkSource("layout-template");
 		plateDTO.setLinkStatus(LinkStatus.LINKED);
 		plateDTO.setLinkedOn(new Date());
+		//Save in DB
+		this.updatePlate(plateDTO);
 		return plateDTO;
 	}
 
