@@ -480,7 +480,7 @@ public class PlateControllerTest {
         //Change again to test delete and edit functionality
         wellTemplateDTOS.get(0).setSubstanceName("qwerty"); //changed
         wellTemplateDTOS.get(0).setSubstanceType("VIRUS"); //changed
-        //wellTemplateDTOS.get(1).setSubstanceType(null); //Should get removed TODO fix that you can update null to property to test delete
+        wellTemplateDTOS.get(1).setSubstanceType(""); //Should get removed
 
         String requestBody4 = objectMapper.writeValueAsString(wellTemplateDTOS);
         this.mockMvc.perform(put("/well-templates").contentType(MediaType.APPLICATION_JSON).content(requestBody4))
@@ -506,7 +506,7 @@ public class PlateControllerTest {
         assertThat(changedWellDTOS.get(0).getWellSubstance().getType()).isEqualTo("VIRUS");
         assertThat(changedWellDTOS.get(0).getWellSubstance().getId()).isEqualTo(wellDTOS.get(0).getWellSubstance().getId());
         assertThat(changedWellDTOS.get(1).getWellType()).isEqualTo("LC");
-        //assertThat(changedWellDTOS.get(1).getWellSubstance()).isNull();
+        assertThat(changedWellDTOS.get(1).getWellSubstance()).isNull();
     }
 
 }

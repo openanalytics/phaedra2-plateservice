@@ -125,7 +125,7 @@ public class PlateService {
 			wells.get(i).setWellType(wellTemplates.get(i).getWellType());
 			var previousWellSubstance = wellSubstanceService.getWellSubstanceByWellId(wells.get(i).getId());
 			//Do we need to create/update substance?
-			if (wellTemplates.get(i).getSubstanceType()!=null){
+			if (wellTemplates.get(i).getSubstanceType()!=null && !wellTemplates.get(i).getSubstanceType().equals("")){
 				if (previousWellSubstance==null){
 					createNewWellSubstance(wells.get(i),wellTemplates.get(i));
 				} else {
