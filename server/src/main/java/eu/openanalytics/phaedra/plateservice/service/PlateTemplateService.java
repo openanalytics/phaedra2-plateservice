@@ -1,21 +1,23 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
-import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
-import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
-import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
+import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class PlateTemplateService {
@@ -25,7 +27,10 @@ public class PlateTemplateService {
 
     private final WellTemplateService wellTemplateService;
 
-    public PlateTemplateService(PlateTemplateRepository plateTemplateRepository, WellTemplateService wellTemplateService) {
+	@Autowired
+	private IAuthorizationService authService;
+	
+    public PlateTemplateService(PlateTemplateRepository plateTemplateRepository, @Lazy WellTemplateService wellTemplateService) {
         this.plateTemplateRepository = plateTemplateRepository;
         this.wellTemplateService = wellTemplateService;
 
@@ -38,6 +43,10 @@ public class PlateTemplateService {
     }
 
     public PlateTemplateDTO createPlateTemplate(PlateTemplateDTO plateTemplateDTO) {
+    	authService.performAccessCheck(p -> authService.hasUserAccess());
+    	plateTemplateDTO.setCreatedBy(authService.getCurrentPrincipalName());
+    	plateTemplateDTO.setCreatedOn(new Date());
+    	
         PlateTemplate plateTemplate = new PlateTemplate();
         modelMapper.typeMap(PlateTemplateDTO.class, PlateTemplate.class)
                 .map(plateTemplateDTO, plateTemplate);
@@ -50,6 +59,10 @@ public class PlateTemplateService {
     }
 
     public void updatePlateTemplate(PlateTemplateDTO plateTemplateDTO) {
+    	authService.performOwnershipCheck(plateTemplateDTO.getCreatedBy());
+    	plateTemplateDTO.setUpdatedBy(authService.getCurrentPrincipalName());
+    	plateTemplateDTO.setUpdatedOn(new Date());
+    	
         Optional<PlateTemplate> plateTemplate = plateTemplateRepository.findById(plateTemplateDTO.getId());
         plateTemplate.ifPresent(p -> {
             modelMapper.typeMap(PlateTemplateDTO.class, PlateTemplate.class)
@@ -60,10 +73,16 @@ public class PlateTemplateService {
     }
 
     public void deletePlateTemplate(long plateTemplateId) {
+    	plateTemplateRepository.findById(plateTemplateId)
+    		.map(PlateTemplate::getCreatedBy)
+    		.ifPresent(creator -> authService.performOwnershipCheck(creator));
+    	
         plateTemplateRepository.deleteById(plateTemplateId);
     }
 
     public List<PlateTemplateDTO> getAllPlateTemplates() {
+    	authService.performAccessCheck(p -> authService.hasUserAccess());
+    	
         List<PlateTemplate> plateTemplates = (List<PlateTemplate>) plateTemplateRepository.findAll();
         return plateTemplates.stream()
                 .map(this::mapToPlateTemplateDTO)
@@ -71,6 +90,8 @@ public class PlateTemplateService {
     }
 
     public PlateTemplateDTO getPlateTemplateById(long plateTemplateId) {
+    	authService.performAccessCheck(p -> authService.hasUserAccess());
+    	
         Optional<PlateTemplate> result = plateTemplateRepository.findById(plateTemplateId);
         return result.map(this::mapToPlateTemplateDTO).orElse(null);
     }

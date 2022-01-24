@@ -53,7 +53,7 @@ public class PlateTemplateServiceTest {
 
     @BeforeEach
     void before() {
-        WellTemplateService wellTemplateService = new WellTemplateService(this.wellTemplateRepository);
+        WellTemplateService wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService);
         this.plateTemplateService = new PlateTemplateService(this.plateTemplateRepository, wellTemplateService);
     }
 

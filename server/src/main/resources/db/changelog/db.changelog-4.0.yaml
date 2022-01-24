@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: fmichielssen
+      changes:
+        - createTable:
+            tableName: hca_project_access
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: hca_project_access_pkey
+              - column:
+                  name: project_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: team_name
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: access_level
+                  type: TEXT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: hca_project_access_project_id_fkey
+            baseTableName: hca_project_access
+            baseColumnNames: project_id
+            referencedTableName: hca_project
+            referencedColumnNames: id
+            onDelete: CASCADE
+            validate: true
