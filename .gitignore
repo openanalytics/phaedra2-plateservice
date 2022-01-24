@@ -37,3 +37,5 @@ target/
 /client/target/
 /client/phaedra2-plateservice-client.iml
 /server/phaedra2-plateservice-server.iml
+
+.DS_Store
