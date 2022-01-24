@@ -5,7 +5,6 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -19,15 +18,14 @@ import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 @Service
 public class ProjectAccessService {
 
-	private final ProjectAccessRepository projectAccessRepository;
-
 	private static final ModelMapper modelMapper = new ModelMapper();
+
+	private final ProjectAccessRepository projectAccessRepository;
+	private final IAuthorizationService authService;
 	
-	@Autowired
-	private IAuthorizationService authService;
-	
-	public ProjectAccessService(ProjectAccessRepository projectAccessRepository) {
+	public ProjectAccessService(ProjectAccessRepository projectAccessRepository, IAuthorizationService authService) {
 		this.projectAccessRepository = projectAccessRepository;
+		this.authService = authService;
 	}
 	
 	public void checkCanCreateProjects() {

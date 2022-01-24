@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -29,14 +28,15 @@ public class ExperimentService {
 	private final ExperimentRepository experimentRepository;
 	private final PlateService plateService;
 	private final ProjectAccessService projectAccessService;
+	private final IAuthorizationService authService;
 	
-	@Autowired
-	private IAuthorizationService authService;
-	
-	public ExperimentService(ExperimentRepository experimentRepository, @Lazy PlateService plateService, ProjectAccessService projectAccessService) {
+	public ExperimentService(ExperimentRepository experimentRepository, @Lazy PlateService plateService,
+			ProjectAccessService projectAccessService, IAuthorizationService authService) {
+		
 		this.experimentRepository = experimentRepository;
 		this.plateService = plateService;
 		this.projectAccessService = projectAccessService;
+		this.authService = authService;
 	}
 
 	public ExperimentDTO createExperiment(ExperimentDTO experimentDTO) {

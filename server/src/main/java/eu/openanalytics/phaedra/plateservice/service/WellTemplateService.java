@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
@@ -26,13 +25,12 @@ public class WellTemplateService {
 
     private final WellTemplateRepository wellTemplateRepository;
     private final PlateTemplateService plateTemplateService;
-    
-	@Autowired
-	private IAuthorizationService authService;
+	private final IAuthorizationService authService;
 	
-    public WellTemplateService(WellTemplateRepository wellTemplateRepository, PlateTemplateService plateTemplateService) {
+    public WellTemplateService(WellTemplateRepository wellTemplateRepository, PlateTemplateService plateTemplateService, IAuthorizationService authService) {
     	this.wellTemplateRepository = wellTemplateRepository;
     	this.plateTemplateService = plateTemplateService;
+    	this.authService = authService;
     }
 
     public WellTemplateDTO createWellTemplate(WellTemplateDTO wellTemplateDTO) {

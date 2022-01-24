@@ -25,6 +25,8 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
 import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Testcontainers
 @SpringBootTest
@@ -41,6 +43,8 @@ public class WellTemplateServiceTest {
     @Autowired
     private PlateTemplateService plateTemplateService;
 
+    private IAuthorizationService authService = AuthorizationServiceFactory.create();
+    
     private WellTemplateService wellTemplateService;
 
     private static final ModelMapper modelMapper = new ModelMapper();
@@ -62,7 +66,7 @@ public class WellTemplateServiceTest {
 
     @BeforeEach
     void before() {
-        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService);
+        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService, this.authService);
     }
 
     @Test

@@ -10,7 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +25,12 @@ public class PlateTemplateService {
     private final PlateTemplateRepository plateTemplateRepository;
 
     private final WellTemplateService wellTemplateService;
-
-	@Autowired
-	private IAuthorizationService authService;
+	private final IAuthorizationService authService;
 	
-    public PlateTemplateService(PlateTemplateRepository plateTemplateRepository, @Lazy WellTemplateService wellTemplateService) {
+    public PlateTemplateService(PlateTemplateRepository plateTemplateRepository, @Lazy WellTemplateService wellTemplateService, IAuthorizationService authService) {
         this.plateTemplateRepository = plateTemplateRepository;
         this.wellTemplateService = wellTemplateService;
+        this.authService = authService;
 
         // TODO move to dedicated ModelMapper service
         Configuration builderConfiguration = modelMapper.getConfiguration().copy()

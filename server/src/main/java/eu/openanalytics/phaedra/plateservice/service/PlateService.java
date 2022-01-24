@@ -9,7 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -36,21 +35,21 @@ public class PlateService {
 	private final WellService wellService;
 	private final ExperimentService experimentService;
 	private final ProjectAccessService projectAccessService;
-	
-	@Autowired
-	private IAuthorizationService authService;
+	private final IAuthorizationService authService;
 	
 	private final PlateTemplateService plateTemplateService;
 	private final WellTemplateService wellTemplateService;
 	private final WellSubstanceService wellSubstanceService;
 
-	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService, ProjectAccessService projectAccessService,
+	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
+			ProjectAccessService projectAccessService, IAuthorizationService authService,
 			PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService) {
 		
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
 		this.experimentService = experimentService;
 		this.projectAccessService = projectAccessService;
+		this.authService = authService;
 		this.plateTemplateService = plateTemplateService;
 		this.wellTemplateService = wellTemplateService;
 		this.wellSubstanceService = wellSubstanceService;
