@@ -20,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
+import eu.openanalytics.phaedra.util.auth.AuthenticationConfigHelper;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
@@ -87,12 +88,6 @@ public class PlateServiceApplication {
 	
 	@Bean
 	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
-		http
-			.authorizeRequests()
-				.anyRequest().authenticated()
-			.and()
-				.csrf().disable()
-				.oauth2ResourceServer().jwt();
-		return http.build();
+		return AuthenticationConfigHelper.configure(http);
 	}
 }
