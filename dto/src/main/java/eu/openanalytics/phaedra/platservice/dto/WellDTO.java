@@ -21,4 +21,5 @@ public class WellDTO {
 	private WellStatus status;
 	private Long compoundId; // TODO remove?
 	private String description;
+	private WellSubstanceDTO wellSubstance;
 }

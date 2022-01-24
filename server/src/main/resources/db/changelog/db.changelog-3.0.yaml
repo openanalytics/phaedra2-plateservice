@@ -133,3 +133,16 @@ databaseChangeLog:
               - column:
                   name: disapproved_reason
                   type: TEXT
+  - changeSet:
+      id: 6
+      author: smarien
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: name
+                  value: "EMPTY"
+              - column:
+                  name: description
+                  value: "Extra well type column to be in line with template"
+            tableName: hca_welltype

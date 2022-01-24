@@ -2,7 +2,6 @@ package eu.openanalytics.phaedra.plateservice;
 
 import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
-import eu.openanalytics.phaedra.util.auth.AuthorizationHelper;
 import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
