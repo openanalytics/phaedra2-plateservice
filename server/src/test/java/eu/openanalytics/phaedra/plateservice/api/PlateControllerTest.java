@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Testcontainers
 @SpringBootTest
 @Sql({"/jdbc/test-data.sql"})
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class PlateControllerTest {
 
@@ -300,5 +300,4 @@ public class PlateControllerTest {
         assertThat(plateMeasurementDTO).isNotNull();
         assertThat(plateMeasurementDTO.getMeasurementId()).isEqualTo(1000L);
     }
-
 }
