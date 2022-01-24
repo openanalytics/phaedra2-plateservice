@@ -25,6 +25,8 @@ import javax.sql.DataSource;
 
 @EnableDiscoveryClient
 @EnableScheduling
+// Temporary disable security autoconfiguration for plate-service
+// TODO: When authorisation is tested and ready to be integrated into other services remove the exclude property
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @Import({MeasurementServiceClientAutoConfiguration.class})
 public class PlateServiceApplication {

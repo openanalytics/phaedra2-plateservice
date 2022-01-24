@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Testcontainers
 @SpringBootTest
 @Sql({"/jdbc/test-data.sql"})
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class PlateControllerTest {
 
