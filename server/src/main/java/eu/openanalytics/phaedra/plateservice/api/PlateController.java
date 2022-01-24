@@ -128,4 +128,10 @@ public class PlateController {
 		PlateMeasurementDTO result = plateMeasurementService.setActivePlateMeasurement(plateId, measId);
 		return new ResponseEntity(result, HttpStatus.OK);
     }
+
+    @PutMapping(value = "/plate/{plateId}/link/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> linkPlate(@PathVariable long plateId, @PathVariable long plateTemplateId) {
+        PlateDTO plateDTO = plateService.linkPlate(plateId,plateTemplateId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
