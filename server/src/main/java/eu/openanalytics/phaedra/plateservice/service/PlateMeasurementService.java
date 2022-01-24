@@ -6,8 +6,10 @@ import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClie
 import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
 import eu.openanalytics.phaedra.plateservice.repository.PlateMeasurementRepository;
 import eu.openanalytics.phaedra.platservice.dto.PlateMeasurementDTO;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,7 +38,11 @@ public class PlateMeasurementService {
         Map<Long, PlateMeasurement> plateMeasurementByMeasurementId = result.stream().collect(Collectors.toMap(PlateMeasurement::getMeasurementId, pm -> pm));
 
         List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurements(Longs.toArray(plateMeasurementByMeasurementId.keySet()));
-        return measurementDTOs.stream().map(mDTO -> modelMapper.map(plateMeasurementByMeasurementId.get(mDTO.getId()), mDTO)).toList();
+        if (CollectionUtils.isNotEmpty(measurementDTOs)) {
+            return measurementDTOs.stream().map(mDTO -> modelMapper.map(plateMeasurementByMeasurementId.get(mDTO.getId()), mDTO)).toList();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public PlateMeasurementDTO getPlateMeasurementByMeasId(long plateId, long measId) {
