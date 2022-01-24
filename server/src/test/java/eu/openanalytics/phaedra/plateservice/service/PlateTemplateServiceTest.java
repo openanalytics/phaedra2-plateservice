@@ -6,6 +6,8 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
 import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import eu.openanalytics.phaedra.util.auth.impl.MockAuthorizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +55,9 @@ public class PlateTemplateServiceTest {
 
     @BeforeEach
     void before() {
-        WellTemplateService wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService);
-        this.plateTemplateService = new PlateTemplateService(this.plateTemplateRepository, wellTemplateService);
+        IAuthorizationService authorizationService = new MockAuthorizationService();
+        WellTemplateService wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService, authorizationService);
+        this.plateTemplateService = new PlateTemplateService(this.plateTemplateRepository, wellTemplateService, authorizationService);
     }
 
     @Test

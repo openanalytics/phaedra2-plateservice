@@ -27,10 +27,9 @@ public class PlateTemplateService {
 
     private final WellTemplateService wellTemplateService;
 
-	@Autowired
-	private IAuthorizationService authService;
-	
-    public PlateTemplateService(PlateTemplateRepository plateTemplateRepository, @Lazy WellTemplateService wellTemplateService) {
+	private final IAuthorizationService authService;
+
+    public PlateTemplateService(PlateTemplateRepository plateTemplateRepository, @Lazy WellTemplateService wellTemplateService, IAuthorizationService authService) {
         this.plateTemplateRepository = plateTemplateRepository;
         this.wellTemplateService = wellTemplateService;
 
@@ -40,13 +39,14 @@ public class PlateTemplateService {
                 .setDestinationNamingConvention(NamingConventions.builder());
         modelMapper.createTypeMap(PlateTemplate.class, PlateTemplateDTO.PlateTemplateDTOBuilder.class, builderConfiguration)
                 .setPropertyCondition(Conditions.isNotNull());
+        this.authService = authService;
     }
 
     public PlateTemplateDTO createPlateTemplate(PlateTemplateDTO plateTemplateDTO) {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
     	plateTemplateDTO.setCreatedBy(authService.getCurrentPrincipalName());
     	plateTemplateDTO.setCreatedOn(new Date());
-    	
+
         PlateTemplate plateTemplate = new PlateTemplate();
         modelMapper.typeMap(PlateTemplateDTO.class, PlateTemplate.class)
                 .map(plateTemplateDTO, plateTemplate);
@@ -62,7 +62,7 @@ public class PlateTemplateService {
     	authService.performOwnershipCheck(plateTemplateDTO.getCreatedBy());
     	plateTemplateDTO.setUpdatedBy(authService.getCurrentPrincipalName());
     	plateTemplateDTO.setUpdatedOn(new Date());
-    	
+
         Optional<PlateTemplate> plateTemplate = plateTemplateRepository.findById(plateTemplateDTO.getId());
         plateTemplate.ifPresent(p -> {
             modelMapper.typeMap(PlateTemplateDTO.class, PlateTemplate.class)
@@ -76,13 +76,13 @@ public class PlateTemplateService {
     	plateTemplateRepository.findById(plateTemplateId)
     		.map(PlateTemplate::getCreatedBy)
     		.ifPresent(creator -> authService.performOwnershipCheck(creator));
-    	
+
         plateTemplateRepository.deleteById(plateTemplateId);
     }
 
     public List<PlateTemplateDTO> getAllPlateTemplates() {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
-    	
+
         List<PlateTemplate> plateTemplates = (List<PlateTemplate>) plateTemplateRepository.findAll();
         return plateTemplates.stream()
                 .map(this::mapToPlateTemplateDTO)
@@ -91,7 +91,7 @@ public class PlateTemplateService {
 
     public PlateTemplateDTO getPlateTemplateById(long plateTemplateId) {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
-    	
+
         Optional<PlateTemplate> result = plateTemplateRepository.findById(plateTemplateId);
         return result.map(this::mapToPlateTemplateDTO).orElse(null);
     }

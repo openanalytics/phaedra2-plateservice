@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import eu.openanalytics.phaedra.util.auth.impl.MockAuthorizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -31,13 +33,13 @@ import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
 @Sql({"/jdbc/test-data.sql"})
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class WellTemplateServiceTest {
-	
+
     @Autowired
     private WellTemplateRepository wellTemplateRepository;
 
     @Autowired
     private PlateTemplateRepository plateTemplateRepository;
-    
+
     @Autowired
     private PlateTemplateService plateTemplateService;
 
@@ -62,7 +64,8 @@ public class WellTemplateServiceTest {
 
     @BeforeEach
     void before() {
-        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService);
+        IAuthorizationService authorizationService = new MockAuthorizationService();
+        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService, authorizationService);
     }
 
     @Test

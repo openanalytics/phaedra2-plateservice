@@ -10,8 +10,12 @@ import eu.openanalytics.phaedra.plateservice.PlateServiceApplication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -30,13 +34,12 @@ import javax.sql.DataSource;
 @Testcontainers
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {PlateServiceApplication.class})
+@EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 @WebAppConfiguration
 @AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @Sql({"/jdbc/test-data.sql"})
 abstract public class AbstractIntegrationTest {
-
-
     protected final ObjectMapper om;
 
     @Autowired
