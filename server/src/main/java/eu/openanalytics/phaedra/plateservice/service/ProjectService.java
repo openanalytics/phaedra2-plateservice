@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.Project;
@@ -23,16 +22,16 @@ public class ProjectService {
 	private final ProjectRepository projectRepository;
 	
 	private final ExperimentService experimentService;
-
 	private final ProjectAccessService projectAccessService;
+	private final IAuthorizationService authService;
 	
-	@Autowired
-	private IAuthorizationService authService;
-	
-	public ProjectService(ProjectRepository projectRepository, ExperimentService experimentService, ProjectAccessService projectAccessService) {
+	public ProjectService(ProjectRepository projectRepository, ExperimentService experimentService,
+			ProjectAccessService projectAccessService, IAuthorizationService authService) {
+		
 		this.projectRepository = projectRepository;
 		this.experimentService = experimentService;
 		this.projectAccessService = projectAccessService;
+		this.authService = authService;
 	}
 
 	public ProjectDTO createProject(ProjectDTO projectDTO) {

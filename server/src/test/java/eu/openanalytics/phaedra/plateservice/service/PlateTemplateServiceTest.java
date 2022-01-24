@@ -1,13 +1,10 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
-import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
-import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
-import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
-import eu.openanalytics.phaedra.util.auth.impl.MockAuthorizationService;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Date;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +18,13 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Date;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.as;
-import static org.assertj.core.api.Assertions.assertThat;
+import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
+import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
+import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Testcontainers
 @SpringBootTest
@@ -36,6 +35,8 @@ public class PlateTemplateServiceTest {
     private PlateTemplateRepository plateTemplateRepository;
     @Autowired
     private WellTemplateRepository wellTemplateRepository;
+
+    private IAuthorizationService authService = AuthorizationServiceFactory.create();
 
     private PlateTemplateService plateTemplateService;
 
@@ -55,9 +56,8 @@ public class PlateTemplateServiceTest {
 
     @BeforeEach
     void before() {
-        IAuthorizationService authorizationService = new MockAuthorizationService();
-        WellTemplateService wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService, authorizationService);
-        this.plateTemplateService = new PlateTemplateService(this.plateTemplateRepository, wellTemplateService, authorizationService);
+        WellTemplateService wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService, this.authService);
+        this.plateTemplateService = new PlateTemplateService(this.plateTemplateRepository, wellTemplateService, this.authService);
     }
 
     @Test

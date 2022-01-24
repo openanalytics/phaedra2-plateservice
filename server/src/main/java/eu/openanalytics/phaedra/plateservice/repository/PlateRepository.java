@@ -15,7 +15,7 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 	void deleteByExperimentId(@Param("experimentId") long experimentId);
 
 	@Query("delete from hca_plate p where p.experiment_id in"
-			+ " (select experiment_id from hca_experiment where project_id = :projectId)")
+			+ " (select id from hca_experiment where project_id = :projectId)")
 	void deleteByProjectId(@Param("projectId") long projectId);
 
 	@Query("select e.project_id from hca_plate p, hca_experiment e where p.experiment_id = e.id and p.id = :plateId")

@@ -43,6 +43,8 @@ public class WellTemplateServiceTest {
     @Autowired
     private PlateTemplateService plateTemplateService;
 
+    private IAuthorizationService authService = AuthorizationServiceFactory.create();
+
     private WellTemplateService wellTemplateService;
 
     private static final ModelMapper modelMapper = new ModelMapper();
@@ -64,8 +66,7 @@ public class WellTemplateServiceTest {
 
     @BeforeEach
     void before() {
-        IAuthorizationService authorizationService = new MockAuthorizationService();
-        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService, authorizationService);
+        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService, this.authService);
     }
 
     @Test

@@ -10,7 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +31,7 @@ public class PlateTemplateService {
     public PlateTemplateService(PlateTemplateRepository plateTemplateRepository, @Lazy WellTemplateService wellTemplateService, IAuthorizationService authService) {
         this.plateTemplateRepository = plateTemplateRepository;
         this.wellTemplateService = wellTemplateService;
+        this.authService = authService;
 
         // TODO move to dedicated ModelMapper service
         Configuration builderConfiguration = modelMapper.getConfiguration().copy()
@@ -39,7 +39,6 @@ public class PlateTemplateService {
                 .setDestinationNamingConvention(NamingConventions.builder());
         modelMapper.createTypeMap(PlateTemplate.class, PlateTemplateDTO.PlateTemplateDTOBuilder.class, builderConfiguration)
                 .setPropertyCondition(Conditions.isNotNull());
-        this.authService = authService;
     }
 
     public PlateTemplateDTO createPlateTemplate(PlateTemplateDTO plateTemplateDTO) {
