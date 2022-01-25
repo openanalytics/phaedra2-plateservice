@@ -51,14 +51,12 @@ public class PlateMeasurementService {
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 
         List<PlateMeasurement> result = plateMeasurementRepository.findByPlateId(plateId);
-        Map<Long, PlateMeasurement> plateMeasurementByMeasurementId = result.stream().collect(Collectors.toMap(PlateMeasurement::getMeasurementId, pm -> pm));
-
-        List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurementsByMeasIds(Longs.toArray(plateMeasurementByMeasurementId.keySet()));
-        if (CollectionUtils.isNotEmpty(measurementDTOs)) {
+        if (CollectionUtils.isNotEmpty(result)) {
+            Map<Long, PlateMeasurement> plateMeasurementByMeasurementId = result.stream().collect(Collectors.toMap(PlateMeasurement::getMeasurementId, pm -> pm));
+            List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurementsByMeasIds(Longs.toArray(plateMeasurementByMeasurementId.keySet()));
             return measurementDTOs.stream().map(mDTO -> modelMapper.map(plateMeasurementByMeasurementId.get(mDTO.getId()), mDTO)).toList();
-        } else {
-            return new ArrayList<>();
         }
+        return new ArrayList<>();
     }
 
     public PlateMeasurementDTO getPlateMeasurementByMeasId(long plateId, long measId) {
