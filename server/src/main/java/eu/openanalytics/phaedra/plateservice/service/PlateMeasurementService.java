@@ -53,7 +53,7 @@ public class PlateMeasurementService {
         List<PlateMeasurement> result = plateMeasurementRepository.findByPlateId(plateId);
         Map<Long, PlateMeasurement> plateMeasurementByMeasurementId = result.stream().collect(Collectors.toMap(PlateMeasurement::getMeasurementId, pm -> pm));
 
-        List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurements(Longs.toArray(plateMeasurementByMeasurementId.keySet()));
+        List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurementsByMeasIds(Longs.toArray(plateMeasurementByMeasurementId.keySet()));
         if (CollectionUtils.isNotEmpty(measurementDTOs)) {
             return measurementDTOs.stream().map(mDTO -> modelMapper.map(plateMeasurementByMeasurementId.get(mDTO.getId()), mDTO)).toList();
         } else {
