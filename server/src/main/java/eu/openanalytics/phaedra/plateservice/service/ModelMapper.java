@@ -25,23 +25,26 @@ public class ModelMapper {
     public PlateMeasurementDTO map(PlateMeasurement plateMeasurement, MeasurementDTO measurementDTO) {
         PlateMeasurementDTO plateMeasurementDTO = new PlateMeasurementDTO();
 
-        plateMeasurementDTO.setMeasurementId(measurementDTO.getId());
+        if (plateMeasurement != null) {
+            plateMeasurementDTO.setPlateId(plateMeasurement.getPlateId());
+            plateMeasurementDTO.setActive(plateMeasurement.getActive());
+            plateMeasurementDTO.setLinkedBy(plateMeasurement.getLinkedBy());
+            plateMeasurementDTO.setLinkedOn(plateMeasurement.getLinkedOn());
+        }
 
-        plateMeasurementDTO.setPlateId(plateMeasurement.getPlateId());
-        plateMeasurementDTO.setActive(plateMeasurement.getActive());
-        plateMeasurementDTO.setLinkedBy(plateMeasurement.getLinkedBy());
-        plateMeasurementDTO.setLinkedOn(plateMeasurement.getLinkedOn());
-
-        plateMeasurementDTO.setName(measurementDTO.getName());
-        plateMeasurementDTO.setBarcode(measurementDTO.getBarcode());
-        plateMeasurementDTO.setDescription(measurementDTO.getDescription());
-        plateMeasurementDTO.setRows(measurementDTO.getRows());
-        plateMeasurementDTO.setColumns(measurementDTO.getColumns());
-        plateMeasurementDTO.setCreatedOn(measurementDTO.getCreatedOn());
-        plateMeasurementDTO.setCreatedBy(measurementDTO.getCreatedBy());
-        plateMeasurementDTO.setWellColumns(measurementDTO.getWellColumns());
-        plateMeasurementDTO.setSubWellColumns(measurementDTO.getSubWellColumns());
-        plateMeasurementDTO.setImageChannels(measurementDTO.getImageChannels());
+        if (measurementDTO != null) {
+            plateMeasurementDTO.setMeasurementId(measurementDTO.getId());
+            plateMeasurementDTO.setName(measurementDTO.getName());
+            plateMeasurementDTO.setBarcode(measurementDTO.getBarcode());
+            plateMeasurementDTO.setDescription(measurementDTO.getDescription());
+            plateMeasurementDTO.setRows(measurementDTO.getRows());
+            plateMeasurementDTO.setColumns(measurementDTO.getColumns());
+            plateMeasurementDTO.setCreatedOn(measurementDTO.getCreatedOn());
+            plateMeasurementDTO.setCreatedBy(measurementDTO.getCreatedBy());
+            plateMeasurementDTO.setWellColumns(measurementDTO.getWellColumns());
+            plateMeasurementDTO.setSubWellColumns(measurementDTO.getSubWellColumns());
+            plateMeasurementDTO.setImageChannels(measurementDTO.getImageChannels());
+        }
 
         return plateMeasurementDTO;
     }
