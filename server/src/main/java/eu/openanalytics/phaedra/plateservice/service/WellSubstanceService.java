@@ -1,19 +1,15 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.plateservice.model.Experiment;
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.model.Well;
-import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
-import eu.openanalytics.phaedra.plateservice.repository.WellSubstanceRepository;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellSubstanceDTO;
+import java.util.List;
+import java.util.Optional;
+
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
+import eu.openanalytics.phaedra.plateservice.repository.WellSubstanceRepository;
+import eu.openanalytics.phaedra.platservice.dto.WellSubstanceDTO;
 
 @Service
 public class WellSubstanceService {
@@ -27,8 +23,15 @@ public class WellSubstanceService {
 
     public WellSubstanceDTO getWellSubstanceByWellId(long wellId) {
         WellSubstance result = wellSubstanceRepository.findByWellId(wellId);
-        if (result==null)return null;
+        if (result == null) return null;
         return mapToWellSubstanceDTO(result);
+    }
+    
+    public List<WellSubstanceDTO> getWellSubstancesByPlateId(long plateId) {
+    	return wellSubstanceRepository.findByPlateId(plateId)
+    			.stream()
+    			.map(this::mapToWellSubstanceDTO)
+    			.toList();
     }
 
     public void updateWellSubstance(WellSubstanceDTO wellSubstanceDTO) {

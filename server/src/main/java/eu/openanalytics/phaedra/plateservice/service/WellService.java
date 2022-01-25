@@ -3,6 +3,7 @@ package eu.openanalytics.phaedra.plateservice.service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.Conditions;
@@ -13,10 +14,12 @@ import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
 import eu.openanalytics.phaedra.platservice.dto.WellDTO;
+import eu.openanalytics.phaedra.platservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
 
 @Service
 public class WellService {
+	
     private static final ModelMapper modelMapper = new ModelMapper();
 
     private static final Comparator<WellDTO> WELL_COMPARATOR = Comparator.comparing(WellDTO::getRow).thenComparing(WellDTO::getColumn);
@@ -38,10 +41,9 @@ public class WellService {
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
     	
         Well well = new Well(wellDTO.getPlateId());
-        modelMapper.typeMap(WellDTO.class, Well.class)
-                .map(wellDTO, well);
+        modelMapper.map(wellDTO, Well.class);
         well = wellRepository.save(well);
-        return mapToWellDTO(well);
+        return modelMapper.map(well, WellDTO.class);
     }
 
     public List<WellDTO> createWells(Plate plate) {
@@ -54,13 +56,12 @@ public class WellService {
                 Well well = new Well(plate.getId());
                 well.setRow(r);
                 well.setColumn(c);
-                //Default set wellType to EMPTY
                 well.setWellType("EMPTY");
                 wells.add(well);
             }
         }
         wellRepository.saveAll(wells);
-        return wells.stream().map(this::mapToWellDTO).collect(Collectors.toList());
+        return wells.stream().map(well -> modelMapper.map(well, WellDTO.class)).collect(Collectors.toList());
     }
 
     public WellDTO updateWell(WellDTO wellDTO) {
@@ -73,7 +74,11 @@ public class WellService {
                 .setPropertyCondition(Conditions.isNotNull())
                 .map(wellDTO, well);
         well = wellRepository.save(well);
-        return mapToWellDTO(well);
+        
+        WellDTO updatedDTO = modelMapper.map(well, WellDTO.class);
+        updatedDTO.setWellSubstance(wellSubstanceService.getWellSubstanceByWellId(well.getId()));
+        
+        return updatedDTO;
     }
 
     public List<WellDTO> updateWells(List<WellDTO> wellDTOS){
@@ -83,19 +88,19 @@ public class WellService {
     }
 
     public List<WellDTO> getWellsByPlateId(long plateId) {
-    	long projectId = plateService.getProjectIdByPlateId(plateId);
+    	long projectId = Optional.ofNullable(plateService.getProjectIdByPlateId(plateId)).orElse(0l);
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
     	
-        List<Well> result = wellRepository.findByPlateId(plateId);
-        return result.stream().map(this::mapToWellDTO).sorted(WELL_COMPARATOR).toList();
-    }
-
-    private WellDTO mapToWellDTO(Well well) {
-        WellDTO wellDTO = new WellDTO();
-        modelMapper.typeMap(Well.class, WellDTO.class)
-                .map(well, wellDTO);
-        wellDTO.setWellSubstance(wellSubstanceService.getWellSubstanceByWellId(well.getId()));
-        return wellDTO;
+    	List<WellSubstanceDTO> substances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
+    	
+        return wellRepository.findByPlateId(plateId).stream()
+        		.map(well -> modelMapper.map(well, WellDTO.class))
+        		.map(dto -> {
+        			dto.setWellSubstance(substances.stream().filter(s -> s.getWellId() == dto.getId()).findAny().orElse(null));
+        			return dto;
+        		})
+        		.sorted(WELL_COMPARATOR)
+        		.toList();
     }
 
     private Well mapToWell(WellDTO wellDTO) {

@@ -110,10 +110,14 @@ public class PlateService {
 	}
 
 	public List<PlateDTO> getPlatesByExperimentId(long experimentId) {
+		return getPlatesByExperimentId(experimentId, true);
+	}
+	
+	public List<PlateDTO> getPlatesByExperimentId(long experimentId, boolean includeWellDTOs) {
 		List<Plate> result = plateRepository.findByExperimentId(experimentId);
 		return result.stream()
 				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
-				.map(this::mapToPlateDTO)
+				.map(p -> (includeWellDTOs ? mapToPlateDTO(p) : modelMapper.map(p, PlateDTO.class)))
 				.toList();
 	}
 
