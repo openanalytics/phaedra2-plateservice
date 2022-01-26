@@ -67,20 +67,12 @@ public class PlateMeasurementService {
         return mapToPlateMeasurementDTO(result);
     }
 
-    public PlateMeasurementDTO setActivePlateMeasurement(long plateId, long measId) {
-    	long projectId = plateService.getProjectIdByPlateId(plateId);
+    public PlateMeasurementDTO setActivePlateMeasurement(PlateMeasurementDTO plateMeasurementDTO) {
+    	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
 
-        plateMeasurementRepository.findByPlateId(plateId).stream()
-                .filter(pm -> pm.getPlateId().equals(plateId) && pm.getActive() == true)
-                .forEach(pm -> {
-                    pm.setActive(false);
-                    plateMeasurementRepository.save(pm);
-                });
-
-        PlateMeasurement plateMeasurement = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateId, measId);
-        plateMeasurement.setActive(true);
-
+        PlateMeasurement plateMeasurement = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateMeasurementDTO.getPlateId(), plateMeasurementDTO.getMeasurementId());
+        plateMeasurement.setActive(plateMeasurementDTO.getActive());
         return modelMapper.map(plateMeasurementRepository.save(plateMeasurement));
     }
 

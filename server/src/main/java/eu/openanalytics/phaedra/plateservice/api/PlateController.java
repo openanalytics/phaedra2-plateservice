@@ -105,7 +105,7 @@ public class PlateController {
     @PostMapping(value = "/plate/{plateId}/measurement", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity addMeasurement(@PathVariable long plateId, @RequestBody PlateMeasurementDTO plateMeasurementDTO) {
         PlateMeasurementDTO result = plateMeasurementService.addPlateMeasurement(plateMeasurementDTO);
-        plateMeasurementService.setActivePlateMeasurement(result.getPlateId(), result.getMeasurementId());
+        plateMeasurementService.setActivePlateMeasurement(plateMeasurementDTO);
         return new ResponseEntity(result, HttpStatus.CREATED);
     }
 
@@ -124,8 +124,9 @@ public class PlateController {
 
     @PutMapping(value = "/plate/{plateId}/measurement/{measId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlateMeasurementDTO> setActiveMeasurement(@PathVariable(name = "plateId") long plateId,
-											   @PathVariable(name = "measId") long measId) {
-		PlateMeasurementDTO result = plateMeasurementService.setActivePlateMeasurement(plateId, measId);
+											   @PathVariable(name = "measId") long measId,
+                                                                    @RequestBody PlateMeasurementDTO plateMeasurementDTO) {
+		PlateMeasurementDTO result = plateMeasurementService.setActivePlateMeasurement(plateMeasurementDTO);
 		return new ResponseEntity(result, HttpStatus.OK);
     }
 
