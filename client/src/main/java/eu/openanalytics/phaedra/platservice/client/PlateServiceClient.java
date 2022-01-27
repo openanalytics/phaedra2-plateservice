@@ -5,6 +5,6 @@ import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
 
 public interface PlateServiceClient {
 
-    PlateDTO getPlate(long plateId) throws PlateUnresolvableException;
+    PlateDTO getPlate(long plateId, String... authToken) throws PlateUnresolvableException;
 
 }

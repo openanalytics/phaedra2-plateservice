@@ -4,6 +4,11 @@ import eu.openanalytics.phaedra.platservice.client.PlateServiceClient;
 import eu.openanalytics.phaedra.platservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.platservice.dto.WellDTO;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,15 +29,21 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     }
 
     @Override
-    public PlateDTO getPlate(long plateId) throws PlateUnresolvableException {
+    public PlateDTO getPlate(long plateId, String... authToken) throws PlateUnresolvableException {
         // 1. get plate
         try {
-            var plate = restTemplate.getForObject(UrlFactory.plate(plateId), PlateDTO.class);
-            if (plate == null) {
+            String token = ArrayUtils.isNotEmpty(authToken) ? authToken[0] : null;
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
+            HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
+
+            var plate = restTemplate.exchange(UrlFactory.plate(plateId), HttpMethod.GET, httpEntity, PlateDTO.class);
+//            var plate = restTemplate.getForObject(UrlFactory.plate(plateId), PlateDTO.class);
+            if (plate.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
             }
 
-            return plate;
+            return plate.getBody();
         } catch (HttpClientErrorException.NotFound ex) {
             throw new PlateUnresolvableException("Plate not found");
         } catch (HttpClientErrorException ex) {
