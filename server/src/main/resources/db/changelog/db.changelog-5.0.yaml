@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: sberberovic
+      changes:
+        - dropForeignKeyConstraint:
+            constraintName: hca_plate_measurement_plate_id_fkey
+            baseTableName: hca_plate_measurement
+        - addForeignKeyConstraint:
+            baseColumnNames: plate_id
+            baseTableName: hca_plate_measurement
+            constraintName: hca_plate_measurement_plate_id_fkey
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: CASCADE
+            onUpdate: CASCADE
+            referencedColumnNames: id
+            referencedTableName: hca_plate
+            validate: true
