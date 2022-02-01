@@ -36,7 +36,7 @@ public class PlateService {
 	private final ExperimentService experimentService;
 	private final ProjectAccessService projectAccessService;
 	private final IAuthorizationService authService;
-	
+
 	private final PlateTemplateService plateTemplateService;
 	private final WellTemplateService wellTemplateService;
 	private final WellSubstanceService wellSubstanceService;
@@ -44,7 +44,7 @@ public class PlateService {
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
 			ProjectAccessService projectAccessService, IAuthorizationService authService,
 			PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService) {
-		
+
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
 		this.experimentService = experimentService;
@@ -67,9 +67,9 @@ public class PlateService {
 				.map(ExperimentDTO::getProjectId)
 				.orElse(0L);
 		if (projectId == 0L) return null; // Experiment not found or not accessible.
-		
+
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
-		
+
 		Plate plate = new Plate();
 		modelMapper.typeMap(PlateDTO.class, Plate.class).map(plateDTO, plate);
 		plate.setCreatedBy(authService.getCurrentPrincipalName());
@@ -112,7 +112,7 @@ public class PlateService {
 	public List<PlateDTO> getPlatesByExperimentId(long experimentId) {
 		return getPlatesByExperimentId(experimentId, true);
 	}
-	
+
 	public List<PlateDTO> getPlatesByExperimentId(long experimentId, boolean includeWellDTOs) {
 		List<Plate> result = plateRepository.findByExperimentId(experimentId);
 		return result.stream()
@@ -136,7 +136,7 @@ public class PlateService {
 				.map(this::mapToPlateDTO)
 				.orElse(null);
 	}
-	
+
 	@Cacheable("plate_project_id")
 	public Long getProjectIdByPlateId(long plateId) {
 		return plateRepository.findProjectIdByPlateId(plateId);
@@ -187,7 +187,7 @@ public class PlateService {
 				wellSubstanceService.deleteWellSubstance(previousWellSubstance.getId());
 			}
 		}
-		wellService.updateWells(wells);
+		plateDTO.setWells(wellService.updateWells(wells));
 	}
 
 	private PlateDTO mapToPlateDTO(Plate plate) {
