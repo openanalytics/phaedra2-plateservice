@@ -87,6 +87,7 @@ public class ProjectAccessService {
 		return modelMapper.map(newAccess, ProjectAccessDTO.class);
 	}
 
+	@CacheEvict(value = "project_access", allEntries = true)
 	public void deleteProjectAccess(long projectAccessId) {
 		projectAccessRepository.deleteById(projectAccessId);
 	}
