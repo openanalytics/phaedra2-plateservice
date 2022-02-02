@@ -2,7 +2,7 @@ package eu.openanalytics.phaedra.plateservice.service;
 
 import eu.openanalytics.phaedra.measservice.dto.MeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
-import eu.openanalytics.phaedra.platservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 

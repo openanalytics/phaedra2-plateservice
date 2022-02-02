@@ -13,13 +13,13 @@ import org.springframework.stereotype.Service;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
-import eu.openanalytics.phaedra.platservice.dto.WellDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
 
 @Service
 public class WellService {
-	
+
     private static final ModelMapper modelMapper = new ModelMapper();
 
     private static final Comparator<WellDTO> WELL_COMPARATOR = Comparator.comparing(WellDTO::getRow).thenComparing(WellDTO::getColumn);
@@ -28,7 +28,7 @@ public class WellService {
     private final PlateService plateService;
     private final ProjectAccessService projectAccessService;
     private final WellSubstanceService wellSubstanceService;
-    
+
     public WellService(WellRepository wellRepository, PlateService plateService, ProjectAccessService projectAccessService, WellSubstanceService wellSubstanceService) {
         this.wellRepository = wellRepository;
         this.plateService = plateService;
@@ -39,7 +39,7 @@ public class WellService {
     public WellDTO createWell(WellDTO wellDTO) {
     	long projectId = plateService.getProjectIdByPlateId(wellDTO.getPlateId());
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
-    	
+
         Well well = new Well(wellDTO.getPlateId());
         modelMapper.map(wellDTO, Well.class);
         well = wellRepository.save(well);
@@ -49,7 +49,7 @@ public class WellService {
     public List<WellDTO> createWells(Plate plate) {
     	long projectId = plateService.getProjectIdByPlateId(plate.getId());
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
-    	
+
         List<Well> wells = new ArrayList<>(plate.getRows() * plate.getColumns());
         for (int r = 1; r <= plate.getRows(); r++) {
             for (int c = 1; c <= plate.getColumns(); c++) {
@@ -67,17 +67,17 @@ public class WellService {
     public WellDTO updateWell(WellDTO wellDTO) {
     	long projectId = plateService.getProjectIdByPlateId(wellDTO.getPlateId());
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
-    	
+
         //TODO change to map function
         Well well = new Well(wellDTO.getPlateId());
         modelMapper.typeMap(WellDTO.class, Well.class)
                 .setPropertyCondition(Conditions.isNotNull())
                 .map(wellDTO, well);
         well = wellRepository.save(well);
-        
+
         WellDTO updatedDTO = modelMapper.map(well, WellDTO.class);
         updatedDTO.setWellSubstance(wellSubstanceService.getWellSubstanceByWellId(well.getId()));
-        
+
         return updatedDTO;
     }
 
@@ -90,9 +90,9 @@ public class WellService {
     public List<WellDTO> getWellsByPlateId(long plateId) {
     	long projectId = Optional.ofNullable(plateService.getProjectIdByPlateId(plateId)).orElse(0l);
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
-    	
+
     	List<WellSubstanceDTO> substances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
-    	
+
         return wellRepository.findByPlateId(plateId).stream()
         		.map(well -> modelMapper.map(well, WellDTO.class))
         		.map(dto -> {

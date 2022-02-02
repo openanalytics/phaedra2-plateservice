@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.Experiment;
 import eu.openanalytics.phaedra.plateservice.repository.ExperimentRepository;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentSummaryDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.platservice.enumartion.ApprovalStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.CalculationStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
-import eu.openanalytics.phaedra.platservice.enumartion.ValidationStatus;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.ApprovalStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumartion.ValidationStatus;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
@@ -29,10 +29,10 @@ public class ExperimentService {
 	private final PlateService plateService;
 	private final ProjectAccessService projectAccessService;
 	private final IAuthorizationService authService;
-	
+
 	public ExperimentService(ExperimentRepository experimentRepository, @Lazy PlateService plateService,
 			ProjectAccessService projectAccessService, IAuthorizationService authService) {
-		
+
 		this.experimentRepository = experimentRepository;
 		this.plateService = plateService;
 		this.projectAccessService = projectAccessService;
@@ -63,7 +63,7 @@ public class ExperimentService {
 			experimentRepository.save(e);
 		});
 	}
-	
+
 	public void deleteExperiment(long experimentId) {
 		experimentRepository.findById(experimentId).ifPresent(e -> {
 			projectAccessService.checkAccessLevel(e.getProjectId(), ProjectAccessLevel.Write);
@@ -91,7 +91,7 @@ public class ExperimentService {
 		List<Experiment> result = experimentRepository.findByProjectId(projectId);
 		return result.stream().map(this::mapToExperimentDTO).collect(Collectors.toList());
 	}
-	
+
 	public List<ExperimentSummaryDTO> getExperimentSummariesByProjectId(long projectId) {
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 		return getExperimentByProjectId(projectId).stream().map(exp -> {
@@ -105,7 +105,7 @@ public class ExperimentService {
 			return summary;
 		}).toList();
 	}
-	
+
 	private ExperimentDTO mapToExperimentDTO(Experiment experiment) {
 		ExperimentDTO experimentDTO = new ExperimentDTO();
 		modelMapper.typeMap(Experiment.class, ExperimentDTO.class)

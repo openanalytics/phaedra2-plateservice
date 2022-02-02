@@ -17,14 +17,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
-import eu.openanalytics.phaedra.platservice.enumartion.LinkStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service

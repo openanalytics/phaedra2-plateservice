@@ -1,11 +1,10 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.plateservice.service.WellSubstanceService;
-import eu.openanalytics.phaedra.platservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.platservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,6 +1,6 @@
 package eu.openanalytics.phaedra.plateservice.model;
 
-import eu.openanalytics.phaedra.platservice.enumartion.WellStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.WellStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;

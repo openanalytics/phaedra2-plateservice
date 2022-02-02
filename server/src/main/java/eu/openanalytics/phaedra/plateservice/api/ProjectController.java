@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import eu.openanalytics.phaedra.plateservice.service.ProjectService;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentSummaryDTO;
-import eu.openanalytics.phaedra.platservice.dto.ProjectDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 
 //@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
 @RestController
@@ -75,7 +75,7 @@ public class ProjectController {
 		List<ExperimentDTO> experiments = experimentService.getExperimentByProjectId(projectId);
 		return ResponseEntity.ok(experiments);
 	}
-	
+
 	@GetMapping(value="/project/{projectId}/experimentsummaries", produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ExperimentSummaryDTO>> getExperimentSummaries(@PathVariable long projectId) {
 		List<ExperimentSummaryDTO> summaries = experimentService.getExperimentSummariesByProjectId(projectId);

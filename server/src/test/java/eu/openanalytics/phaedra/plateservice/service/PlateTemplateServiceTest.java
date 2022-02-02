@@ -22,7 +22,7 @@ import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
 import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 

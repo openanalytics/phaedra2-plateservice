@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service

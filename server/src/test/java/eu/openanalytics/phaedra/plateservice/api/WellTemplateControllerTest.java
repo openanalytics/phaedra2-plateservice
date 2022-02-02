@@ -1,13 +1,9 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
-import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
-import eu.openanalytics.phaedra.plateservice.service.WellTemplateService;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.platservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,11 +18,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.Project;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectRepository;
-import eu.openanalytics.phaedra.platservice.dto.ProjectDTO;
-import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
@@ -20,14 +20,14 @@ public class ProjectService {
 	private static final ModelMapper modelMapper = new ModelMapper();
 
 	private final ProjectRepository projectRepository;
-	
+
 	private final ExperimentService experimentService;
 	private final ProjectAccessService projectAccessService;
 	private final IAuthorizationService authService;
-	
+
 	public ProjectService(ProjectRepository projectRepository, ExperimentService experimentService,
 			ProjectAccessService projectAccessService, IAuthorizationService authService) {
-		
+
 		this.projectRepository = projectRepository;
 		this.experimentService = experimentService;
 		this.projectAccessService = projectAccessService;
@@ -36,13 +36,13 @@ public class ProjectService {
 
 	public ProjectDTO createProject(ProjectDTO projectDTO) {
 		projectAccessService.checkCanCreateProjects();
-		
+
 		Project project = new Project();
 		modelMapper.typeMap(ProjectDTO.class, Project.class).map(projectDTO, project);
 		project.setCreatedBy(authService.getCurrentPrincipalName());
 		project.setCreatedOn(new Date());
 		project = projectRepository.save(project);
-		
+
 		return mapToProjectDTO(project);
 	}
 
@@ -72,7 +72,7 @@ public class ProjectService {
 				.map(this::mapToProjectDTO)
 				.collect(Collectors.toList());
 	}
-	
+
 	public ProjectDTO getProjectById(long projectId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		return result

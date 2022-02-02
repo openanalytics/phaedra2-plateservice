@@ -2,8 +2,7 @@ package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
 import eu.openanalytics.phaedra.plateservice.service.WellTemplateService;
-import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

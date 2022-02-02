@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.ProjectAccess;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectAccessRepository;
-import eu.openanalytics.phaedra.platservice.dto.ProjectAccessDTO;
-import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectAccessDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
@@ -22,21 +22,21 @@ public class ProjectAccessService {
 
 	private final ProjectAccessRepository projectAccessRepository;
 	private final IAuthorizationService authService;
-	
+
 	public ProjectAccessService(ProjectAccessRepository projectAccessRepository, IAuthorizationService authService) {
 		this.projectAccessRepository = projectAccessRepository;
 		this.authService = authService;
 	}
-	
+
 	public void checkCanCreateProjects() {
 		authService.performAccessCheck(p -> authService.hasUserAccess(), e -> "Not authorized to create new projects");
 	}
-	
+
 	/**
 	 * Test if the current principal has an access level on the specified project that
 	 * is at least equal to requiredLevel.
 	 * If this is not the case, a ResponseStatusException will be thrown.
-	 * 
+	 *
 	 * @param projectId The ID of the project to check.
 	 * @param requiredLevel The minimum access level that is needed.
 	 */
@@ -46,11 +46,11 @@ public class ProjectAccessService {
 			return (level != null && level.compareTo(requiredLevel) >= 0);
 		}, e -> String.format("Not authorized: requires access level %s on project %d", requiredLevel, projectId));
 	}
-	
+
 	/**
 	 * Test if the current principal has an access level on the specified project that
 	 * is at least equal to requiredLevel.
-	 * 
+	 *
 	 * @param projectId The ID of the project to check.
 	 * @param requiredLevel The minimum access level that is needed.
 	 * @return True if the principal has the required access level, false otherwise.
@@ -59,18 +59,18 @@ public class ProjectAccessService {
 		ProjectAccessLevel level = getAccessLevel(projectId);
 		return (level != null && level.compareTo(requiredLevel) >= 0);
 	}
-	
+
 	/**
 	 * Test if the current principal has access to the specified project, and if so,
 	 * what their highest access level is.
-	 * 
+	 *
 	 * @param projectId The ID of the project to check.
 	 * @return The highest access level, or null if the project is not accessible.
 	 */
 	public ProjectAccessLevel getAccessLevel(long projectId) {
 		// Note: administrators automatically have admin-level access to all projects.
 		if (authService.hasAdminAccess()) return ProjectAccessLevel.Admin;
-		
+
 		return getProjectAccessForProject(projectId)
 			.stream()
 			.filter(pa -> authService.hasTeamAccess(pa.getTeamName()))
@@ -78,19 +78,19 @@ public class ProjectAccessService {
 			.map(ProjectAccessDTO::getAccessLevel)
 			.orElse(null);
 	}
-	
+
 	/* Basic CRUD */
-	
+
 	@CacheEvict(value = "project_access", key = "#projectAccess?.projectId")
 	public ProjectAccessDTO createProjectAccess(ProjectAccessDTO projectAccess) {
 		ProjectAccess newAccess = projectAccessRepository.save(modelMapper.map(projectAccess, ProjectAccess.class));
 		return modelMapper.map(newAccess, ProjectAccessDTO.class);
 	}
-	
+
 	public void deleteProjectAccess(long projectAccessId) {
 		projectAccessRepository.deleteById(projectAccessId);
 	}
-	
+
 	@Cacheable("project_access")
 	public List<ProjectAccessDTO> getProjectAccessForProject(long projectId) {
 		return projectAccessRepository.findByProjectId(projectId)

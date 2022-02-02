@@ -2,7 +2,7 @@ package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

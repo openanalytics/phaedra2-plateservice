@@ -1,7 +1,7 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.plateservice.service.WellService;
-import eu.openanalytics.phaedra.platservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

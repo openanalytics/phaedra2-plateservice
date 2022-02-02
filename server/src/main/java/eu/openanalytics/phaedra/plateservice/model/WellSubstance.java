@@ -1,6 +1,6 @@
 package eu.openanalytics.phaedra.plateservice.model;
 
-import eu.openanalytics.phaedra.platservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;

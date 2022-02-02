@@ -1,10 +1,10 @@
 package eu.openanalytics.phaedra.plateservice.model;
 
-import eu.openanalytics.phaedra.platservice.enumartion.ApprovalStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.CalculationStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.LinkStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.UploadStatus;
-import eu.openanalytics.phaedra.platservice.enumartion.ValidationStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.ApprovalStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.UploadStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.ValidationStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;

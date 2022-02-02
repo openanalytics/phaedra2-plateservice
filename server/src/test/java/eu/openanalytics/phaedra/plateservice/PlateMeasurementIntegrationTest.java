@@ -1,7 +1,7 @@
 package eu.openanalytics.phaedra.plateservice;
 
 import eu.openanalytics.phaedra.plateservice.support.AbstractIntegrationTest;
-import eu.openanalytics.phaedra.platservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

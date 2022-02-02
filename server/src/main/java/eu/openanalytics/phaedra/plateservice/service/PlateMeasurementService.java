@@ -5,8 +5,8 @@ import eu.openanalytics.phaedra.measservice.dto.MeasurementDTO;
 import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
 import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
 import eu.openanalytics.phaedra.plateservice.repository.PlateMeasurementRepository;
-import eu.openanalytics.phaedra.platservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.platservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;

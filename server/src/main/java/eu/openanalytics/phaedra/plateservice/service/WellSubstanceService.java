@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
 import eu.openanalytics.phaedra.plateservice.repository.WellSubstanceRepository;
-import eu.openanalytics.phaedra.platservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 
 @Service
 public class WellSubstanceService {
@@ -26,7 +26,7 @@ public class WellSubstanceService {
         if (result == null) return null;
         return mapToWellSubstanceDTO(result);
     }
-    
+
     public List<WellSubstanceDTO> getWellSubstancesByPlateId(long plateId) {
     	return wellSubstanceRepository.findByPlateId(plateId)
     			.stream()

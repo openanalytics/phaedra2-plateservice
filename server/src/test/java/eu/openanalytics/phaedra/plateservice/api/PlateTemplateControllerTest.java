@@ -3,7 +3,7 @@ package eu.openanalytics.phaedra.plateservice.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.platservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
