@@ -1,8 +1,7 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
-import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
-import eu.openanalytics.phaedra.plateservice.service.PlateService;
-import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +14,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
+import eu.openanalytics.phaedra.plateservice.service.PlateService;
+import eu.openanalytics.phaedra.platservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.platservice.dto.PlateDTO;
 
 //@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
 @RestController
@@ -60,9 +62,13 @@ public class ExperimentController {
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
 
-//	@GetMapping(value="/experiment/{experimentId}/plates", produces=MediaType.APPLICATION_JSON_VALUE)
-//	public ResponseEntity<List<PlateDTO>> getPlates(@PathVariable long experimentId) {
-//		List<PlateDTO> response = plateService.getPlatesByExperimentId(experimentId);
-//		return ResponseEntity.ok(plates);
-//	}
+	@GetMapping(value="/experiment/{experimentId}/plates", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PlateDTO>> getPlates(@PathVariable long experimentId) {
+		// Return 404 if the experiment was not found or not accessible.
+		ExperimentDTO experiment = experimentService.getExperimentById(experimentId);
+		if (experiment == null) return ResponseEntity.notFound().build();
+		
+		List<PlateDTO> plates = plateService.getPlatesByExperimentId(experimentId);
+		return ResponseEntity.ok(plates);
+	}
 }
