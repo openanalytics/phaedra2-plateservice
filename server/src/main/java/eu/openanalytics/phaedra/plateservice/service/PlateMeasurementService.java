@@ -71,9 +71,22 @@ public class PlateMeasurementService {
     	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
 
-        PlateMeasurement plateMeasurement = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateMeasurementDTO.getPlateId(), plateMeasurementDTO.getMeasurementId());
-        plateMeasurement.setActive(plateMeasurementDTO.getActive());
-        return modelMapper.map(plateMeasurementRepository.save(plateMeasurement));
+    	PlateMeasurement plateMeasurement = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateMeasurementDTO.getPlateId(), plateMeasurementDTO.getMeasurementId());
+    	if (plateMeasurement != null) {
+            plateMeasurement.setActive(plateMeasurementDTO.getActive());
+
+            List<PlateMeasurement> plateMeasurements = plateMeasurementRepository.findByPlateId(plateMeasurementDTO.getPlateId());
+            for (PlateMeasurement pm : plateMeasurements) {
+                if (pm.getId() != plateMeasurement.getMeasurementId()) {
+                    pm.setActive(false);
+                    plateMeasurementRepository.save(plateMeasurement);
+                }
+            }
+            return modelMapper.map(plateMeasurementRepository.save(plateMeasurement));
+        } else {
+    	    //TODO: Throw an exception because this state should not be possible
+    	    return null;
+        }
     }
 
     private PlateMeasurementDTO mapToPlateMeasurementDTO(PlateMeasurement plateMeasurement) {
