@@ -74,15 +74,16 @@ public class PlateMeasurementService {
     	PlateMeasurement plateMeasurement = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateMeasurementDTO.getPlateId(), plateMeasurementDTO.getMeasurementId());
     	if (plateMeasurement != null) {
             plateMeasurement.setActive(plateMeasurementDTO.getActive());
+            plateMeasurementRepository.save(plateMeasurement);
 
             List<PlateMeasurement> plateMeasurements = plateMeasurementRepository.findByPlateId(plateMeasurementDTO.getPlateId());
             for (PlateMeasurement pm : plateMeasurements) {
-                if (pm.getId() != plateMeasurement.getMeasurementId()) {
+                if (!pm.getMeasurementId().equals(plateMeasurementDTO.getMeasurementId())) {
                     pm.setActive(false);
-                    plateMeasurementRepository.save(plateMeasurement);
+                    plateMeasurementRepository.save(pm);
                 }
             }
-            return modelMapper.map(plateMeasurementRepository.save(plateMeasurement));
+            return plateMeasurementDTO;
         } else {
     	    //TODO: Throw an exception because this state should not be possible
     	    return null;
