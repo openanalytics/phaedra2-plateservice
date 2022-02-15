@@ -11,6 +11,7 @@
 
     <artifactId>phaedra2-plateservice-client</artifactId>
     <name>phaedra2-plateservice-client</name>
+    <version>0.0.1-SNAPSHOT</version>
 
     <properties>
         <java.version>16</java.version>
