@@ -55,24 +55,27 @@
                         <exclude>templates/**</exclude>
                         <exclude>src/main/resources/static/handlebars/node_modules/**</exclude>
                         <exclude>**/*.sql</exclude>
-                        <exclude>.idea/**</exclude>
+                        <exclude>Dockerfile.app</exclude>
+                        <exclude>Dockerfile.db</exclude>
+                        <exclude>Jenkinsfile</exclude>
+                        <exclude>**/*.sh</exclude>
                     </excludes>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>generate-copyright-headers</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                    <!--            <execution>-->
-                    <!--                <id>check-copyright-headers</id>-->
-                    <!--                <phase>package</phase>-->
-                    <!--                <goals>-->
-                    <!--                    <goal>check</goal>-->
-                    <!--                </goals>-->
-                    <!--            </execution>-->
+<!--                    <execution>-->
+<!--                        <id>generate-copyright-headers</id>-->
+<!--                        <phase>process-sources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>format</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+                                <execution>
+                                    <id>check-copyright-headers</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>check</goal>
+                                    </goals>
+                                </execution>
                 </executions>
             </plugin>
         </plugins>
