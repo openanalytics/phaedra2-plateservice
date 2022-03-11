@@ -32,4 +32,6 @@ public interface PlateMeasurementRepository extends CrudRepository<PlateMeasurem
     List<PlateMeasurement> findByPlateId(long plateId);
 
     PlateMeasurement findByPlateIdAndMeasurementId(long plateId, long measId);
+
+    PlateMeasurement findByPlateIdAndActive(long plateId, boolean active);
 }

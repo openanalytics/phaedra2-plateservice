@@ -110,6 +110,18 @@ public class PlateMeasurementService {
         }
     }
 
+    public PlateMeasurementDTO getActivePlateMeasurement(long plateId) {
+        long projectId = plateService.getProjectIdByPlateId(plateId);
+        projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
+
+        PlateMeasurement activePlateMeasurement = plateMeasurementRepository.findByPlateIdAndActive(plateId, true);
+        if (activePlateMeasurement != null) {
+            return mapToPlateMeasurementDTO(activePlateMeasurement);
+        } else {
+            return null;
+        }
+    }
+
     private PlateMeasurementDTO mapToPlateMeasurementDTO(PlateMeasurement plateMeasurement) {
         return modelMapper.map(plateMeasurement);
     }
