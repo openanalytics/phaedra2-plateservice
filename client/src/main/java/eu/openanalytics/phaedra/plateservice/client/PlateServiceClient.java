@@ -22,9 +22,12 @@ package eu.openanalytics.phaedra.plateservice.client;
 
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
 
 public interface PlateServiceClient {
 
     PlateDTO getPlate(long plateId, String... authToken) throws PlateUnresolvableException;
+
+    PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO, String... authToken) throws PlateUnresolvableException;
 
 }

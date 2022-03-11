@@ -24,6 +24,8 @@ import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
+import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +35,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Comparator;
+import java.util.Date;
 
 @Component
 public class HttpPlateServiceClient implements PlateServiceClient {
@@ -49,13 +52,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     public PlateDTO getPlate(long plateId, String... authToken) throws PlateUnresolvableException {
         // 1. get plate
         try {
-            String token = ArrayUtils.isNotEmpty(authToken) ? authToken[0] : null;
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
-            HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
-
-            var plate = restTemplate.exchange(UrlFactory.plate(plateId), HttpMethod.GET, httpEntity, PlateDTO.class);
-//            var plate = restTemplate.getForObject(UrlFactory.plate(plateId), PlateDTO.class);
+            var plate = restTemplate.exchange(UrlFactory.plate(plateId), HttpMethod.GET, new HttpEntity<String>(getAuthHeaters(authToken)), PlateDTO.class);
             if (plate.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
             }
@@ -68,4 +65,35 @@ public class HttpPlateServiceClient implements PlateServiceClient {
         }
     }
 
+    @Override
+    public PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO, String... authToken) throws PlateUnresolvableException {
+        try {
+            PlateDTO plateDTO = getPlate(resultSetDTO.getPlateId(), authToken);
+            PlateDTO.PlateDTOBuilder plateDTOBuilder = plateDTO.builder();
+
+            PlateDTO updated =  switch (resultSetDTO.getOutcome()) {
+                case SUCCESS -> plateDTOBuilder.calculationStatus(CalculationStatus.CALCULATION_OK).calculatedOn(new Date()).build();
+                case FAILURE -> plateDTOBuilder.calculationStatus(CalculationStatus.CALCULATION_ERROR).calculationError(resultSetDTO.getErrorsText()).calculatedOn(new Date()).build();
+                default -> plateDTOBuilder.calculationStatus(CalculationStatus.CALCULATION_NEEDED).build();
+            };
+
+            var response = restTemplate.exchange(UrlFactory.plate(updated.getId()), HttpMethod.PUT, new HttpEntity<>(updated, getAuthHeaters(authToken)), PlateDTO.class);
+            if (response.getStatusCode().isError()) {
+                throw new PlateUnresolvableException("Plate could not be converted");
+            }
+
+            return response.getBody();
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new PlateUnresolvableException("Plate not found");
+        } catch (HttpClientErrorException | PlateUnresolvableException ex) {
+            throw new PlateUnresolvableException("Error while fetching plate");
+        }
+    }
+
+    private HttpHeaders getAuthHeaters(String... authToken) {
+        String token = ArrayUtils.isNotEmpty(authToken) ? authToken[0] : null;
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
+        return httpHeaders;
+    }
 }
