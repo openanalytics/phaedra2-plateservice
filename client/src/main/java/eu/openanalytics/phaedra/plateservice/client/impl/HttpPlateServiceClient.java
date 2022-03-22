@@ -27,6 +27,8 @@ import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,6 +41,7 @@ import java.util.Date;
 
 @Component
 public class HttpPlateServiceClient implements PlateServiceClient {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final RestTemplate restTemplate;
 
@@ -52,6 +55,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     public PlateDTO getPlate(long plateId, String... authToken) throws PlateUnresolvableException {
         // 1. get plate
         try {
+            logger.info("Auth token: " + authToken);
             var plate = restTemplate.exchange(UrlFactory.plate(plateId), HttpMethod.GET, new HttpEntity<String>(getAuthHeaters(authToken)), PlateDTO.class);
             if (plate.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
@@ -68,6 +72,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     @Override
     public PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO, String... authToken) throws PlateUnresolvableException {
         try {
+            logger.info("Auth token: " + authToken);
             PlateDTO plateDTO = getPlate(resultSetDTO.getPlateId(), authToken);
             PlateDTO.PlateDTOBuilder plateDTOBuilder = plateDTO.builder();
 
