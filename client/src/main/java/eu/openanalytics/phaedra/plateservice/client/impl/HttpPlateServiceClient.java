@@ -55,7 +55,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     public PlateDTO getPlate(long plateId, String... authToken) throws PlateUnresolvableException {
         // 1. get plate
         try {
-            logger.info("Auth token: " + authToken);
+            logger.info("Auth token: " + authToken[0]);
             var plate = restTemplate.exchange(UrlFactory.plate(plateId), HttpMethod.GET, new HttpEntity<String>(getAuthHeaters(authToken)), PlateDTO.class);
             if (plate.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
@@ -72,17 +72,26 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     @Override
     public PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO, String... authToken) throws PlateUnresolvableException {
         try {
-            logger.info("Auth token: " + authToken);
+            logger.info("Auth token: " + authToken[0]);
             PlateDTO plateDTO = getPlate(resultSetDTO.getPlateId(), authToken);
             PlateDTO.PlateDTOBuilder plateDTOBuilder = plateDTO.builder();
 
-            PlateDTO updated =  switch (resultSetDTO.getOutcome()) {
-                case SUCCESS -> plateDTOBuilder.calculationStatus(CalculationStatus.CALCULATION_OK).calculatedOn(new Date()).build();
-                case FAILURE -> plateDTOBuilder.calculationStatus(CalculationStatus.CALCULATION_ERROR).calculationError(resultSetDTO.getErrorsText()).calculatedOn(new Date()).build();
-                default -> plateDTOBuilder.calculationStatus(CalculationStatus.CALCULATION_NEEDED).build();
+            switch (resultSetDTO.getOutcome()) {
+                case SUCCESS:
+                    plateDTO.setCalculationStatus(CalculationStatus.CALCULATION_OK);
+                    plateDTO.setCalculatedOn(new Date());
+                    break;
+                case FAILURE:
+                    plateDTO.setCalculationStatus(CalculationStatus.CALCULATION_ERROR);
+                    plateDTO.setCalculationError(resultSetDTO.getErrorsText());
+                    plateDTO.setCalculatedOn(new Date());
+                    break;
+                default:
+                    plateDTO.setCalculationStatus(CalculationStatus.CALCULATION_NEEDED);
+                    break;
             };
 
-            var response = restTemplate.exchange(UrlFactory.plate(updated.getId()), HttpMethod.PUT, new HttpEntity<>(updated, getAuthHeaters(authToken)), PlateDTO.class);
+            var response = restTemplate.exchange(UrlFactory.plate(plateDTO.getId()), HttpMethod.PUT, new HttpEntity<>(plateDTO, getAuthHeaters(authToken)), PlateDTO.class);
             if (response.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
             }
