@@ -74,7 +74,6 @@ public class HttpPlateServiceClient implements PlateServiceClient {
         try {
             logger.info("Auth token: " + authToken[0]);
             PlateDTO plateDTO = getPlate(resultSetDTO.getPlateId(), authToken);
-            PlateDTO.PlateDTOBuilder plateDTOBuilder = plateDTO.builder();
 
             switch (resultSetDTO.getOutcome()) {
                 case SUCCESS:
@@ -91,7 +90,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
                     break;
             };
 
-            var response = restTemplate.exchange(UrlFactory.plate(plateDTO.getId()), HttpMethod.PUT, new HttpEntity<>(plateDTO, getAuthHeaters(authToken)), PlateDTO.class);
+            var response = restTemplate.exchange(UrlFactory.plate(null), HttpMethod.PUT, new HttpEntity<>(plateDTO, getAuthHeaters(authToken)), PlateDTO.class);
             if (response.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
             }

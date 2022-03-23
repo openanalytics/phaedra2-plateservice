@@ -24,11 +24,14 @@ public class UrlFactory {
 
     private static final String PLATE_SERVICE = "http://phaedra-plate-service/phaedra/plate-service";
 
-    public static String plate(long plateId) {
-        return String.format("%s/plate/%s", PLATE_SERVICE, plateId);
+    public static String plate(Long plateId) {
+        if (plateId != null)
+            return String.format("%s/plate/%s", PLATE_SERVICE, plateId);
+        else
+            return String.format("%s/plate", PLATE_SERVICE);
     }
 
-    public static String wells(long plateId) {
+    public static String wells(Long plateId) {
         return String.format("%s/plate/%s/wells", PLATE_SERVICE, plateId);
     }
 
