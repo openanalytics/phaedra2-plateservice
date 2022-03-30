@@ -115,7 +115,7 @@ public class ExperimentService {
 	public List<ExperimentSummaryDTO> getExperimentSummariesByProjectId(long projectId) {
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 		return getExperimentByProjectId(projectId).stream().map(exp -> {
-			List<PlateDTO> plates = plateService.getPlatesByExperimentId(exp.getId(), false);
+			List<PlateDTO> plates = plateService.getPlatesByExperimentId(exp.getId());
 			ExperimentSummaryDTO summary = new ExperimentSummaryDTO();
 			summary.experimentId = exp.getId();
 			summary.nrPlates = plates.size();

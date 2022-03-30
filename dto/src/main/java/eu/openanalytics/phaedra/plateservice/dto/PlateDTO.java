@@ -20,7 +20,10 @@
  */
 package eu.openanalytics.phaedra.plateservice.dto;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import eu.openanalytics.phaedra.plateservice.enumartion.ApprovalStatus;
 import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
 import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
@@ -31,15 +34,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlateDTO {
+	
 	private Long id;
 	private String barcode;
 	private String description;
@@ -77,6 +78,4 @@ public class PlateDTO {
 	private String createdBy;
 	private Date updatedOn;
 	private String updatedBy;
-
-	private List<WellDTO> wells;
 }

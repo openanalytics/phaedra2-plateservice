@@ -20,12 +20,10 @@
  */
 package eu.openanalytics.phaedra.plateservice.client.impl;
 
-import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
-import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +34,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Comparator;
-import java.util.Date;
+import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
+import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
+import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
 
 @Component
 public class HttpPlateServiceClient implements PlateServiceClient {
@@ -45,15 +47,12 @@ public class HttpPlateServiceClient implements PlateServiceClient {
 
     private final RestTemplate restTemplate;
 
-    private static final Comparator<WellDTO> WELL_COMPARATOR = Comparator.comparing(WellDTO::getRow).thenComparing(WellDTO::getColumn);
-
     public HttpPlateServiceClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     @Override
     public PlateDTO getPlate(long plateId, String... authToken) throws PlateUnresolvableException {
-        // 1. get plate
         try {
             logger.info("Auth token: " + authToken[0]);
             var plate = restTemplate.exchange(UrlFactory.plate(plateId), HttpMethod.GET, new HttpEntity<String>(getAuthHeaters(authToken)), PlateDTO.class);
@@ -69,6 +68,23 @@ public class HttpPlateServiceClient implements PlateServiceClient {
         }
     }
 
+    @Override
+    public List<WellDTO> getWells(long plateId, String... authToken) throws PlateUnresolvableException {
+    	try {
+            logger.info("Auth token: " + authToken[0]);
+            var wells = restTemplate.exchange(UrlFactory.wells(plateId), HttpMethod.GET, new HttpEntity<String>(getAuthHeaters(authToken)), WellDTO[].class);
+            if (wells.getStatusCode().isError()) {
+                throw new PlateUnresolvableException("Plate could not be converted");
+            }
+
+            return Arrays.stream(wells.getBody()).toList();
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new PlateUnresolvableException("Plate not found");
+        } catch (HttpClientErrorException ex) {
+            throw new PlateUnresolvableException("Error while fetching plate");
+        }
+    }
+    
     @Override
     public PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO, String... authToken) throws PlateUnresolvableException {
         try {

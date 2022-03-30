@@ -99,7 +99,7 @@ public class PlateService {
 		// Automatically create the corresponding wells
 		wellService.createWells(plate);
 
-		return mapToPlateDTO(plate);
+		return modelMapper.map(plate, PlateDTO.class);
 	}
 
 	public PlateDTO updatePlate(PlateDTO plateDTO) {
@@ -121,23 +121,11 @@ public class PlateService {
 		plateRepository.deleteById(plateId);
 	}
 
-	public List<PlateDTO> getAllPlates() {
-		List<Plate> result = (List<Plate>) plateRepository.findAll();
-		return result.stream()
-				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
-				.map(this::mapToPlateDTO)
-				.toList();
-	}
-
 	public List<PlateDTO> getPlatesByExperimentId(long experimentId) {
-		return getPlatesByExperimentId(experimentId, true);
-	}
-
-	public List<PlateDTO> getPlatesByExperimentId(long experimentId, boolean includeWellDTOs) {
 		List<Plate> result = plateRepository.findByExperimentId(experimentId);
 		return result.stream()
 				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
-				.map(p -> (includeWellDTOs ? mapToPlateDTO(p) : modelMapper.map(p, PlateDTO.class)))
+				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.toList();
 	}
 
@@ -145,7 +133,7 @@ public class PlateService {
 		List<Plate> result = plateRepository.findByBarcode(barcode);
 		return result.stream()
 				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
-				.map(this::mapToPlateDTO)
+				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.toList();
 	}
 
@@ -153,7 +141,7 @@ public class PlateService {
 		Optional<Plate> result = plateRepository.findById(plateId);
 		return result
 				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
-				.map(this::mapToPlateDTO)
+				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.orElse(null);
 	}
 
@@ -207,13 +195,6 @@ public class PlateService {
 				wellSubstanceService.deleteWellSubstance(previousWellSubstance.getId());
 			}
 		}
-		plateDTO.setWells(wellService.updateWells(wells));
-	}
-
-	private PlateDTO mapToPlateDTO(Plate plate) {
-		var builder = modelMapper.map(plate, PlateDTO.PlateDTOBuilder.class);
-		builder.wells(wellService.getWellsByPlateId(plate.getId()));
-		return builder.build();
 	}
 
 	private void createNewWellSubstance(WellDTO wellDTO, WellTemplateDTO wellTemplateDTO) {

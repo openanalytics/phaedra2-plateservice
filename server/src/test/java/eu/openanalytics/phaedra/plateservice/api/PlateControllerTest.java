@@ -85,7 +85,6 @@ public class PlateControllerTest {
         PlateDTO plateDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateDTO.class);
         assertThat(plateDTO).isNotNull();
         assertThat(plateDTO.getId()).isEqualTo(1L);
-        assertThat(plateDTO.getWells().size()).isEqualTo(12);
     }
 
     @Test
@@ -273,35 +272,6 @@ public class PlateControllerTest {
     }
 
     @Test
-    public void plateAreWellsPresentTest() throws Exception {
-        PlateDTO plate = new PlateDTO();
-        plate.setRows(3);
-        plate.setColumns(4);
-        plate.setExperimentId(1000L);
-        plate.setSequence(1);
-
-        String requestBody = objectMapper.writeValueAsString(plate);
-        MvcResult mvcResult = this.mockMvc.perform(post("/plate").contentType(MediaType.APPLICATION_JSON).content(requestBody))
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        PlateDTO plateDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateDTO.class);
-        assertThat(plateDTO.getWells().size()).isEqualTo(12);
-
-        Long plateDTOId = plateDTO.getId();
-
-        MvcResult mvcResult2 = this.mockMvc.perform(get("/plate/{plateId}", plateDTOId))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        PlateDTO plateDTOGet = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), PlateDTO.class);
-        assertThat(plateDTOGet).isNotNull();
-        assertThat(plateDTOGet.getId()).isEqualTo(plateDTOId);
-        assertThat(plateDTOGet.getWells().size()).isEqualTo(12);
-    }
-
-    @Test
     public void plateMeasurementPostTest() throws Exception {
         PlateMeasurement plateMeasurement = new PlateMeasurement();
         plateMeasurement.setPlateId(1000L);
@@ -397,9 +367,6 @@ public class PlateControllerTest {
         PlateDTO plateDTO = objectMapper.readValue(mvcResult4.getResponse().getContentAsString(), PlateDTO.class);
         assertThat(plateDTO).isNotNull();
         assertThat(plateDTO.getId()).isEqualTo(plateId);
-        for (WellDTO w : plateDTO.getWells()) {
-            assertThat(w.getWellType()).isEqualTo("EMPTY");
-        }
     }
 
     @Test
@@ -477,21 +444,6 @@ public class PlateControllerTest {
         assertThat(plateDTO.getLinkStatus()).isEqualTo(LinkStatus.LINKED);
         assertThat(Long.parseLong(plateDTO.getLinkTemplateId())).isEqualTo(1L);
         assertThat(plateDTO.getLinkedOn()).isNotNull();
-        List<WellDTO> wellDTOS = plateDTO.getWells();
-        assertThat(wellDTOS.get(0).getWellType()).isEqualTo("HC");
-        assertThat(wellDTOS.get(0).getWellSubstance().getType()).isEqualTo("COMPOUND");
-        assertThat(wellDTOS.get(0).getWellSubstance().getConcentration()).isEqualTo(0.0);
-        assertThat(wellDTOS.get(1).getWellType()).isEqualTo("LC");
-        assertThat(wellDTOS.get(1).getWellSubstance().getName()).isEqualTo("test-name");
-        assertThat(wellDTOS.get(1).getWellSubstance().getConcentration()).isEqualTo(0.1);
-        assertThat(wellDTOS.get(2).getWellType()).isEqualTo("EMPTY");
-        assertThat(wellDTOS.get(2).getWellSubstance()).isNull();
-        assertThat(wellDTOS.get(3).getWellType()).isEqualTo("SAMPLE");
-        assertThat(wellDTOS.get(3).getWellSubstance().getType()).isEqualTo("COMPOUND");
-        assertThat(wellDTOS.get(4).getWellType()).isEqualTo("LC");
-        assertThat(wellDTOS.get(4).getWellSubstance().getName()).isEqualTo("test-name2");
-        assertThat(wellDTOS.get(5).getWellType()).isEqualTo("HC");
-        assertThat(wellDTOS.get(5).getWellSubstance().getConcentration()).isEqualTo(0.3);
 
         //Change again to test delete and edit functionality
         wellTemplateDTOS.get(0).setSubstanceName("qwerty"); //changed
@@ -516,13 +468,6 @@ public class PlateControllerTest {
         PlateDTO plateDTOChanged = objectMapper.readValue(changedWell1.getResponse().getContentAsString(), PlateDTO.class);
         assertThat(plateDTOChanged).isNotNull();
         assertThat(plateDTOChanged.getId()).isEqualTo(1L);
-        List<WellDTO> changedWellDTOS = plateDTOChanged.getWells();
-        assertThat(changedWellDTOS.get(0).getWellType()).isEqualTo("HC");
-        assertThat(changedWellDTOS.get(0).getWellSubstance().getName()).isEqualTo("qwerty");
-        assertThat(changedWellDTOS.get(0).getWellSubstance().getType()).isEqualTo("VIRUS");
-        assertThat(changedWellDTOS.get(0).getWellSubstance().getId()).isEqualTo(wellDTOS.get(0).getWellSubstance().getId());
-        assertThat(changedWellDTOS.get(1).getWellType()).isEqualTo("LC");
-        assertThat(changedWellDTOS.get(1).getWellSubstance()).isNull();
     }
 
 }

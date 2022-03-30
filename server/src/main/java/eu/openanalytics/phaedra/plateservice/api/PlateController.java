@@ -20,13 +20,8 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
-import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
-import eu.openanalytics.phaedra.plateservice.service.PlateService;
-import eu.openanalytics.phaedra.plateservice.service.WellService;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,7 +35,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
+import eu.openanalytics.phaedra.plateservice.service.PlateService;
+import eu.openanalytics.phaedra.plateservice.service.WellService;
 
 @RestController
 public class PlateController {
@@ -48,13 +48,11 @@ public class PlateController {
     private final PlateService plateService;
     private final WellService wellService;
     private final PlateMeasurementService plateMeasurementService;
-    private final MeasurementServiceClient measurementServiceClient;
 
-    public PlateController(PlateService plateService, WellService wellService, PlateMeasurementService plateMeasurementService, MeasurementServiceClient measurementServiceClient) {
+    public PlateController(PlateService plateService, WellService wellService, PlateMeasurementService plateMeasurementService) {
         this.plateService = plateService;
         this.wellService = wellService;
         this.plateMeasurementService = plateMeasurementService;
-        this.measurementServiceClient = measurementServiceClient;
     }
 
     @PostMapping(value = "/plate", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,15 +82,6 @@ public class PlateController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(value = "/plate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PlateDTO>> getPlates() {
-        List<PlateDTO> response = plateService.getAllPlates();
-        if (CollectionUtils.isNotEmpty(response))
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-
     @GetMapping(value = "/plate", params = {"experimentId"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PlateDTO>> getPlatesByExperiment(@RequestParam(required = false) long experimentId) {
         List<PlateDTO> response = plateService.getPlatesByExperimentId(experimentId);
@@ -111,7 +100,6 @@ public class PlateController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    // TODO remove this
     @GetMapping(value = "/plate/{plateId}/wells", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<WellDTO>> getWells(@PathVariable long plateId) {
         List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
@@ -120,31 +108,31 @@ public class PlateController {
     }
 
     @PostMapping(value = "/plate/{plateId}/measurement", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity addMeasurement(@PathVariable long plateId, @RequestBody PlateMeasurementDTO plateMeasurementDTO) {
+    public ResponseEntity<PlateMeasurementDTO> addMeasurement(@PathVariable long plateId, @RequestBody PlateMeasurementDTO plateMeasurementDTO) {
         PlateMeasurementDTO result = plateMeasurementService.addPlateMeasurement(plateMeasurementDTO);
         plateMeasurementService.setActivePlateMeasurement(plateMeasurementDTO);
-        return new ResponseEntity(result, HttpStatus.CREATED);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/plate/{plateId}/measurements", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PlateMeasurementDTO>> getPlateMeasurements(@PathVariable(name = "plateId") long plateId) {
         List<PlateMeasurementDTO> plateMeasurements = plateMeasurementService.getPlateMeasurements(plateId);
-        return new ResponseEntity(plateMeasurements, HttpStatus.OK);
+        return new ResponseEntity<>(plateMeasurements, HttpStatus.OK);
     }
 
     @GetMapping(value = "/plate/{plateId}/measurement/{measId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlateMeasurementDTO> getPlateMeasurementByMeasId(@PathVariable(name = "plateId") long plateId,
                                                                     @PathVariable(name = "measId") long measId) {
         PlateMeasurementDTO result = plateMeasurementService.getPlateMeasurementByMeasId(plateId, measId);
-        return new ResponseEntity(result, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping(value = "/plate/{plateId}/measurement/{measId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlateMeasurementDTO> setActiveMeasurement(@PathVariable(name = "plateId") long plateId,
 											   @PathVariable(name = "measId") long measId,
-                                                                    @RequestBody PlateMeasurementDTO plateMeasurementDTO) {
+                                               @RequestBody PlateMeasurementDTO plateMeasurementDTO) {
 		PlateMeasurementDTO result = plateMeasurementService.setActivePlateMeasurement(plateMeasurementDTO);
-		return new ResponseEntity(result, HttpStatus.OK);
+		return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping(value = "/plate/{plateId}/link/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
