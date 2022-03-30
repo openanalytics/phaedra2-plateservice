@@ -154,69 +154,6 @@ public class PlateControllerTest {
     }
 
     @Test
-    public void plateGetMultipleFoundTest() throws Exception {
-        //Check size of list
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        List<Plate> plates = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
-        assertThat(plates).isNotNull();
-        assertThat(plates.size()).isEqualTo(2);
-
-        //Add new plate
-        Plate plate = new Plate();
-        plate.setRows(3);
-        plate.setColumns(4);
-        plate.setExperimentId(1000L);
-        plate.setSequence(1);
-
-        String requestBody = objectMapper.writeValueAsString(plate);
-        this.mockMvc.perform(post("/plate").contentType(MediaType.APPLICATION_JSON).content(requestBody))
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        MvcResult mvcResult2 = this.mockMvc.perform(get("/plate"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        List<Plate> plates2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
-        assertThat(plates2).isNotNull();
-        assertThat(plates2.size()).isEqualTo(3);
-    }
-
-    @Test
-    public void plateGetMultipleNotFoundTest() throws Exception {
-        //Check size of list
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-        List<Plate> plates = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
-        assertThat(plates).isNotNull();
-        assertThat(plates.size()).isEqualTo(2);
-
-        //Delete plate
-        Long plateId = 1000L;
-        Long plateId2 = 2000L;
-        this.mockMvc.perform(delete("/plate/{plateId}", plateId))
-                .andDo(print())
-                .andExpect(status().isOk());
-        this.mockMvc.perform(delete("/plate/{plateId}", plateId2))
-                .andDo(print())
-                .andExpect(status().isOk());
-
-        MvcResult mvcResult2 = this.mockMvc.perform(get("/plate"))
-                .andDo(print())
-                .andExpect(status().isNotFound())
-                .andReturn();
-        List<Plate> plates2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
-        assertThat(plates2).isNotNull();
-        assertThat(plates2.size()).isEqualTo(0);
-    }
-
-    @Test
     public void getPlatesByExperimentFoundTest() throws Exception {
         Long experimentId = 1000L;
 
