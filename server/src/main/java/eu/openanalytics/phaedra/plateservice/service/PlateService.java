@@ -150,51 +150,57 @@ public class PlateService {
 		return plateRepository.findProjectIdByPlateId(plateId);
 	}
 
-	public PlateDTO linkPlate(long plateId, long plateTemplateId){
+	public PlateDTO linkPlate(long plateId, long plateTemplateId) {
+		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateId), ProjectAccessLevel.Write);
+
 		PlateDTO plateDTO = getPlateById(plateId);
-		//get plateTemplate and plate
-		PlateTemplateDTO plateTemplateDTO = this.plateTemplateService.getPlateTemplateById(plateTemplateId);
-		//Check if they exist
-		if (plateDTO==null || plateTemplateDTO==null)
+		PlateTemplateDTO plateTemplateDTO = plateTemplateService.getPlateTemplateById(plateTemplateId);
+		
+		// Validate the plate and template objects.
+		if (plateDTO == null || plateTemplateDTO == null)
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plate or template can not be found for these ids.");
-		//Check for same dimensions
-		if (plateDTO.getRows()!=plateTemplateDTO.getRows()||plateDTO.getColumns()!=plateTemplateDTO.getColumns())
+		if (plateDTO.getRows() != plateTemplateDTO.getRows() || plateDTO.getColumns() != plateTemplateDTO.getColumns())
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Plate or template have different dimensions.");
 
-		//Change wells
-		this.linkWithPlateTemplate(plateDTO,plateTemplateDTO);
+		// Perform the actual link by copying template information into the wells.
+		linkWithPlateTemplate(plateId, plateTemplateId);
 
-		//Set Link properties of plate
+		// Update the linkage information of plate
 		plateDTO.setLinkTemplateId(plateTemplateDTO.getId().toString());
 		plateDTO.setLinkSource("layout-template");
 		plateDTO.setLinkStatus(LinkStatus.LINKED);
 		plateDTO.setLinkedOn(new Date());
-
-		//Save in DB
 		return updatePlate(plateDTO);
 	}
 
-	private void linkWithPlateTemplate(PlateDTO plateDTO, PlateTemplateDTO plateTemplateDTO){
-		//Get wells
-		List<WellDTO> wells = wellService.getWellsByPlateId(plateDTO.getId());
-		List<WellTemplateDTO> wellTemplates  = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateDTO.getId());
-
-		for (int i = 0; i < wells.size(); i++){
+	private void linkWithPlateTemplate(long plateId, long plateTemplateId) {
+		List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
+		List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
+		List<WellTemplateDTO> wellTemplates  = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
+		
+		for (int i = 0; i < wells.size(); i++) {
+			WellDTO well = wells.get(i);
+			WellSubstanceDTO previousSubstance = wellSubstances.stream()
+					.filter(w -> w.getWellId() == well.getId())
+					.findAny().orElse(null);
+			
+			// Update wellType
 			wells.get(i).setWellType(wellTemplates.get(i).getWellType());
-			var previousWellSubstance = wellSubstanceService.getWellSubstanceByWellId(wells.get(i).getId());
-			//Do we need to create/update substance?
-			if (wellTemplates.get(i).getSubstanceType()!=null && !wellTemplates.get(i).getSubstanceType().equals("")){
-				if (previousWellSubstance==null){
-					createNewWellSubstance(wells.get(i),wellTemplates.get(i));
+			
+			// Update substance (if needed)
+			String newSubstanceType = wellTemplates.get(i).getSubstanceType();
+			if (newSubstanceType != null && !newSubstanceType.isEmpty()) {
+				if (previousSubstance == null) {
+					createNewWellSubstance(wells.get(i), wellTemplates.get(i));
 				} else {
-					updateExistingWellSubstance(previousWellSubstance, wellTemplates.get(i));
+					updateExistingWellSubstance(previousSubstance, wellTemplates.get(i));
 				}
-			}
-			//If no new substance, delete substance
-			else if (previousWellSubstance!=null){
-				wellSubstanceService.deleteWellSubstance(previousWellSubstance.getId());
+			} else if (previousSubstance != null) {
+				wellSubstanceService.deleteWellSubstance(previousSubstance.getId());
 			}
 		}
+		
+		wellService.updateWells(wells);
 	}
 
 	private void createNewWellSubstance(WellDTO wellDTO, WellTemplateDTO wellTemplateDTO) {
