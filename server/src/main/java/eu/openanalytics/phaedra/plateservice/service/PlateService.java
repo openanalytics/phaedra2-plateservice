@@ -151,7 +151,8 @@ public class PlateService {
 	}
 
 	public PlateDTO linkPlate(long plateId, long plateTemplateId) {
-		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateId), ProjectAccessLevel.Write);
+		Long projectId = getProjectIdByPlateId(plateId);
+		if (projectId != null) projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
 
 		PlateDTO plateDTO = getPlateById(plateId);
 		PlateTemplateDTO plateTemplateDTO = plateTemplateService.getPlateTemplateById(plateTemplateId);
