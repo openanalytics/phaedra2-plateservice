@@ -156,7 +156,7 @@ public class PlateService {
 
 		PlateDTO plateDTO = getPlateById(plateId);
 		PlateTemplateDTO plateTemplateDTO = plateTemplateService.getPlateTemplateById(plateTemplateId);
-		
+
 		// Validate the plate and template objects.
 		if (plateDTO == null || plateTemplateDTO == null)
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plate or template can not be found for these ids.");
@@ -178,16 +178,17 @@ public class PlateService {
 		List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
 		List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
 		List<WellTemplateDTO> wellTemplates  = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
-		
+
 		for (int i = 0; i < wells.size(); i++) {
 			WellDTO well = wells.get(i);
 			WellSubstanceDTO previousSubstance = wellSubstances.stream()
 					.filter(w -> w.getWellId() == well.getId())
 					.findAny().orElse(null);
-			
+
 			// Update wellType
-			wells.get(i).setWellType(wellTemplates.get(i).getWellType());
-			
+			if (!wellTemplates.get(i).isSkipped())
+				wells.get(i).setWellType(wellTemplates.get(i).getWellType());
+
 			// Update substance (if needed)
 			String newSubstanceType = wellTemplates.get(i).getSubstanceType();
 			if (newSubstanceType != null && !newSubstanceType.isEmpty()) {
@@ -200,7 +201,7 @@ public class PlateService {
 				wellSubstanceService.deleteWellSubstance(previousSubstance.getId());
 			}
 		}
-		
+
 		wellService.updateWells(wells);
 	}
 
