@@ -188,6 +188,8 @@ public class PlateService {
 			// Update wellType
 			if (!wellTemplates.get(i).isSkipped())
 				wells.get(i).setWellType(wellTemplates.get(i).getWellType());
+			else
+				wells.get(i).setWellType(null);
 
 			// Update substance (if needed)
 			String newSubstanceType = wellTemplates.get(i).getSubstanceType();
