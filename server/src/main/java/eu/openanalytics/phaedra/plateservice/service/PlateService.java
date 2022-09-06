@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import eu.openanalytics.phaedra.plateservice.model.Welltype;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -189,7 +191,7 @@ public class PlateService {
 			if (!wellTemplates.get(i).isSkipped())
 				wells.get(i).setWellType(wellTemplates.get(i).getWellType());
 			else
-				wells.get(i).setWellType(null);
+				wells.get(i).setWellType("EMPTY");
 
 			// Update substance (if needed)
 			String newSubstanceType = wellTemplates.get(i).getSubstanceType();
