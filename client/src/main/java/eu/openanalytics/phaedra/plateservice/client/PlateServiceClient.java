@@ -29,10 +29,10 @@ import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
 
 public interface PlateServiceClient {
 
-    PlateDTO getPlate(long plateId, String... authToken) throws PlateUnresolvableException;
+    PlateDTO getPlate(long plateId) throws PlateUnresolvableException;
     
-    List<WellDTO> getWells(long plateId, String... authToken) throws PlateUnresolvableException;
+    List<WellDTO> getWells(long plateId) throws PlateUnresolvableException;
 
-    PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO, String... authToken) throws PlateUnresolvableException;
+    PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO) throws PlateUnresolvableException;
 
 }
