@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
 import eu.openanalytics.phaedra.plateservice.model.Welltype;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
@@ -212,7 +213,7 @@ public class PlateService {
 	private void createNewWellSubstance(WellDTO wellDTO, WellTemplateDTO wellTemplateDTO) {
 		WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
 		wellSubstanceDTO.setWellId(wellDTO.getId());
-		wellSubstanceDTO.setType(wellTemplateDTO.getSubstanceType());
+		wellSubstanceDTO.setType(StringUtils.isBlank(wellTemplateDTO.getSubstanceType()) ? SubstanceType.COMPOUND.name() : wellTemplateDTO.getSubstanceType());
 		wellSubstanceDTO.setName(wellTemplateDTO.getSubstanceName());
 		wellSubstanceDTO.setConcentration(wellTemplateDTO.getConcentration());
 		wellSubstanceService.createWellSubstance(wellSubstanceDTO);
