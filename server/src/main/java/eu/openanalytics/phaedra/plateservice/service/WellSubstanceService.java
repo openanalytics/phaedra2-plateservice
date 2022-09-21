@@ -23,6 +23,8 @@ package eu.openanalytics.phaedra.plateservice.service;
 import java.util.List;
 import java.util.Optional;
 
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -66,10 +68,12 @@ public class WellSubstanceService {
 
     public WellSubstanceDTO createWellSubstance(WellSubstanceDTO wellSubstanceDTO) {
         WellSubstance wellSubstance = new WellSubstance();
-        modelMapper.typeMap(WellSubstanceDTO.class, WellSubstance.class)
-                .map(wellSubstanceDTO, wellSubstance);
+        wellSubstance.setId(wellSubstanceDTO.getId());
+        wellSubstance.setName(wellSubstanceDTO.getName());
+        wellSubstance.setType(EnumUtils.getEnumIgnoreCase(SubstanceType.class, wellSubstanceDTO.getType()));
+        wellSubstance.setConcentration(wellSubstanceDTO.getConcentration());
+        wellSubstance.setWellId(wellSubstanceDTO.getWellId());
         wellSubstance = wellSubstanceRepository.save(wellSubstance);
-
         return mapToWellSubstanceDTO(wellSubstance);
     }
 
@@ -79,8 +83,11 @@ public class WellSubstanceService {
 
     private WellSubstanceDTO mapToWellSubstanceDTO(WellSubstance wellSubstance) {
         WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
-        modelMapper.typeMap(WellSubstance.class, WellSubstanceDTO.class)
-                .map(wellSubstance, wellSubstanceDTO);
+        wellSubstanceDTO.setId(wellSubstance.getId());
+        wellSubstanceDTO.setName(wellSubstance.getName());
+        wellSubstanceDTO.setType(wellSubstance.getType().name());
+        wellSubstanceDTO.setConcentration(wellSubstance.getConcentration());
+        wellSubstanceDTO.setWellId(wellSubstance.getWellId());
         return wellSubstanceDTO;
     }
 

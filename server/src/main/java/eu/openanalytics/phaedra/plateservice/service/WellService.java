@@ -125,9 +125,14 @@ public class WellService {
 
     private Well mapToWell(WellDTO wellDTO) {
         Well well = new Well(wellDTO.getPlateId());
-        modelMapper.typeMap(WellDTO.class, Well.class)
-                .setPropertyCondition(Conditions.isNotNull())
-                .map(wellDTO, well);
+        well.setId(wellDTO.getId());
+        well.setWellType(wellDTO.getWellType());
+        well.setDescription(wellDTO.getDescription());
+        well.setRow(wellDTO.getRow());
+        well.setColumn(wellDTO.getColumn());
+        well.setCompoundId(wellDTO.getCompoundId());
+        well.setStatus(wellDTO.getStatus());
+        well.setPlateId(wellDTO.getPlateId());
         return well;
     }
 }
