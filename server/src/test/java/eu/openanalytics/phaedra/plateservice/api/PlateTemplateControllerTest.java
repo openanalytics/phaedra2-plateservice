@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -84,6 +85,23 @@ public class PlateTemplateControllerTest {
         assertThat(plateTemplateDTOResult).isNotNull();
         assertThat(plateTemplateDTOResult.getId()).isEqualTo(1L);
         assertThat(plateTemplateDTOResult.getWells().size()).isEqualTo(6);
+    }
+
+    @Test
+    public void createPlateTemplateTest() throws Exception {
+        String path = "src/test/resources/json/new_plate_template.json";
+        File file = new File(path);
+
+        PlateTemplateDTO newPlateTemplateDTO = this.objectMapper.readValue(file, PlateTemplateDTO.class);
+        assertThat(newPlateTemplateDTO).isNotNull();
+
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplateDTO);
+        MvcResult mvcResult = this.mockMvc.perform(post("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+
     }
 
     @Test
