@@ -1,0 +1,3080 @@
+{
+    "id": null,
+    "name": "NewPlateTemplate",
+    "rows": 16,
+    "columns": 24,
+    "wells": [
+        {
+            "column": 1,
+            "row": 1,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 2,
+            "row": 1,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 3,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 5,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 6,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 7,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 8,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "4.11E-03"
+        },
+        {
+            "column": 9,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 10,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 11,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 12,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "264869-3",
+            "concentration": "5.08E-05"
+        },
+        {
+            "column": 13,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 14,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 15,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 16,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 17,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 18,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 19,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 20,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 21,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 22,
+            "row": 1,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125349-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 23,
+            "row": 1,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 24,
+            "row": 1,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 1,
+            "row": 2,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 2,
+            "row": 2,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 3,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 4,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 5,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 6,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 7,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 8,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 9,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 10,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 11,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 12,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125465-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 13,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 14,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 15,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 16,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 17,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 18,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 19,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 20,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 21,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 22,
+            "row": 2,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1028046-3",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 23,
+            "row": 2,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 24,
+            "row": 2,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 1,
+            "row": 3,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 2,
+            "row": 3,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 3,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 5,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 6,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 7,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 8,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 9,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 10,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 11,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 12,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "498657-2",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 13,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 14,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 15,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 16,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 17,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 18,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 19,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 20,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 21,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 22,
+            "row": 3,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125350-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 23,
+            "row": 3,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 24,
+            "row": 3,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 1,
+            "row": 4,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 2,
+            "row": 4,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 3,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 4,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 5,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 6,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 7,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 8,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 9,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 10,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 11,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 12,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125507-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 13,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 14,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 15,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 16,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 17,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 18,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 19,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 20,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 21,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 22,
+            "row": 4,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117864-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 23,
+            "row": 4,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 24,
+            "row": 4,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 1,
+            "row": 5,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 2,
+            "row": 5,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 3,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 5,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 6,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 7,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 8,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 9,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 10,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 11,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 12,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "909327-3",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 13,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 14,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 15,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 16,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 17,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 18,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 19,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 20,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 21,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 22,
+            "row": 5,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "957395-5",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 23,
+            "row": 5,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 24,
+            "row": 5,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 1,
+            "row": 6,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 2,
+            "row": 6,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 3,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 4,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 5,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 6,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 7,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 8,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 9,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 10,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 11,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 12,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125538-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 13,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 14,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 15,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 16,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 17,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 18,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 19,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 20,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 21,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 22,
+            "row": 6,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124374-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 23,
+            "row": 6,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 24,
+            "row": 6,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 1,
+            "row": 7,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 2,
+            "row": 7,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 3,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 5,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 6,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 7,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 8,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 9,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 10,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 11,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 12,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "603016-5",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 13,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 14,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 15,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 16,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 17,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 18,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 19,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 20,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 21,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 22,
+            "row": 7,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1114606-2",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 23,
+            "row": 7,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 24,
+            "row": 7,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 1,
+            "row": 8,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 2,
+            "row": 8,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 3,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 4,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 5,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 6,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 7,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 8,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 9,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 10,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 11,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 12,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118435-4",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 13,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 14,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 15,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 16,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 17,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 18,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 19,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 20,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 21,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 22,
+            "row": 8,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119195-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 23,
+            "row": 8,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 24,
+            "row": 8,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 1,
+            "row": 9,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 2,
+            "row": 9,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 3,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 5,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 6,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 7,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 8,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 9,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 10,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 11,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 12,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "900683-2",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 13,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 14,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 15,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 16,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 17,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 18,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 19,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 20,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 21,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 22,
+            "row": 9,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1124940-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 23,
+            "row": 9,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 24,
+            "row": 9,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 1,
+            "row": 10,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 2,
+            "row": 10,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 3,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 4,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 5,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 6,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 7,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 8,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 9,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 10,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 11,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 12,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1116765-2",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 13,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 14,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 15,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "3.34E-01"
+        },
+        {
+            "column": 16,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 17,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "3.71E-02"
+        },
+        {
+            "column": 18,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "1.24E-02"
+        },
+        {
+            "column": 19,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 20,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 21,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "4.58E-04"
+        },
+        {
+            "column": 22,
+            "row": 10,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119154-1",
+            "concentration": "1.53E-05"
+        },
+        {
+            "column": 23,
+            "row": 10,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 24,
+            "row": 10,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 1,
+            "row": 11,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 2,
+            "row": 11,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 3,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 5,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 6,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 7,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 8,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 9,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 10,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 11,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 12,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118495-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 13,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 14,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 15,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 16,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 17,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 18,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 19,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 20,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 21,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 22,
+            "row": 11,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125539-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 23,
+            "row": 11,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 24,
+            "row": 11,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 1,
+            "row": 12,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 2,
+            "row": 12,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 3,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 4,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 5,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 6,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 7,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 8,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 9,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 10,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 11,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 12,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125463-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 13,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 14,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 15,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 16,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 17,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 18,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 19,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "4.11E-03"
+        },
+        {
+            "column": 20,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 21,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 22,
+            "row": 12,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125146-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 23,
+            "row": 12,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 24,
+            "row": 12,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 1,
+            "row": 13,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 2,
+            "row": 13,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 3,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 5,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 6,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 7,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 8,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 9,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 10,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 11,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 12,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1119280-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 13,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 14,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 15,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 16,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 17,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 18,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 19,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 20,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 21,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 22,
+            "row": 13,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125545-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 23,
+            "row": 13,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 24,
+            "row": 13,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 1,
+            "row": 14,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 2,
+            "row": 14,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 3,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 5,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 6,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 7,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 8,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 9,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 10,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 11,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 12,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1118497-2",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 13,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 14,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 15,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 16,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 17,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 18,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 19,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 20,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 21,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 22,
+            "row": 14,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125212-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 23,
+            "row": 14,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 24,
+            "row": 14,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 1,
+            "row": 15,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 2,
+            "row": 15,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 3,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 5,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 6,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 7,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 8,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "1.23E-03"
+        },
+        {
+            "column": 9,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "4.11E-03"
+        },
+        {
+            "column": 10,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 11,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 12,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1122312-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 13,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "1.50E+00"
+        },
+        {
+            "column": 14,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "5.00E-01"
+        },
+        {
+            "column": 15,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "1.67E-01"
+        },
+        {
+            "column": 16,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "5.56E-02"
+        },
+        {
+            "column": 17,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "1.85E-02"
+        },
+        {
+            "column": 18,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "6.17E-03"
+        },
+        {
+            "column": 19,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "2.06E-03"
+        },
+        {
+            "column": 20,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "6.86E-04"
+        },
+        {
+            "column": 21,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "2.29E-04"
+        },
+        {
+            "column": 22,
+            "row": 15,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125549-1",
+            "concentration": "7.62E-06"
+        },
+        {
+            "column": 23,
+            "row": 15,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 24,
+            "row": 15,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 1,
+            "row": 16,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 2,
+            "row": 16,
+            "wellType": "NC",
+            "substanceType": "Compound",
+            "substanceName": "000701-1",
+            "concentration": "0.0000003"
+        },
+        {
+            "column": 3,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 4,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 5,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 6,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 7,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 8,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 9,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 10,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 11,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 12,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1117337-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 13,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "3.00E+00"
+        },
+        {
+            "column": 14,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "1.00E+00"
+        },
+        {
+            "column": 15,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "3.33E-01"
+        },
+        {
+            "column": 16,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "1.11E-01"
+        },
+        {
+            "column": 17,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "3.70E-02"
+        },
+        {
+            "column": 18,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "1.23E-02"
+        },
+        {
+            "column": 19,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "4.12E-03"
+        },
+        {
+            "column": 20,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "1.37E-03"
+        },
+        {
+            "column": 21,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "4.57E-04"
+        },
+        {
+            "column": 22,
+            "row": 16,
+            "wellType": "SAMPLE",
+            "substanceType": "Compound",
+            "substanceName": "1125214-1",
+            "concentration": "1.52E-04"
+        },
+        {
+            "column": 23,
+            "row": 16,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        },
+        {
+            "column": 24,
+            "row": 16,
+            "wellType": "PC",
+            "substanceType": "Compound",
+            "substanceName": "000702-1",
+            "concentration": "0.000003"
+        }
+    ]
+}
