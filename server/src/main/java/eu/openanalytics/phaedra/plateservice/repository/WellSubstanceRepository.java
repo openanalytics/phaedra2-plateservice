@@ -32,8 +32,8 @@ import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
 public interface WellSubstanceRepository extends CrudRepository<WellSubstance, Long> {
 
     WellSubstance findByWellId(long wellId);
-    
-    @Query("select s.* from hca_well_substance s, hca_well w where s.well_id = w.id and w.plate_id = :plateId")
+
+    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId")
     List<WellSubstance> findByPlateId(long plateId);
 
 }

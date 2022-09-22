@@ -116,7 +116,7 @@ public class WellService {
         return wellRepository.findByPlateId(plateId).stream()
         		.map(well -> modelMapper.map(well, WellDTO.class))
         		.map(dto -> {
-        			dto.setWellSubstance(substances.stream().filter(s -> s.getWellId() == dto.getId()).findAny().orElse(null));
+        			dto.setWellSubstance(substances.stream().filter(s -> s.getWellId().longValue() == dto.getId().longValue()).findAny().orElse(null));
         			return dto;
         		})
         		.sorted(WELL_COMPARATOR)
