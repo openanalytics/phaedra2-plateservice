@@ -106,6 +106,17 @@ public class WellSubstanceController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping(value = "/well-substance", params = {"plateId", "substanceType", "substanceName"})
+    public ResponseEntity<List<WellSubstanceDTO>> getWellSubstances(@RequestParam(required = false) long plateId,
+                                                                    @RequestParam(required = false) String substanceName,
+                                                                    @RequestParam(required = false) SubstanceType substanceType) {
+        List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstancesByPlateIdAndNameAndType(plateId, substanceName, substanceType);
+        if (CollectionUtils.isNotEmpty(results))
+            return new ResponseEntity<>(results, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping(value = "/well-substance", params = {"plateId", "wellTypes"})
     public ResponseEntity<List<WellSubstanceDTO>> getWellSubstances(@RequestParam(required = false) Long plateId,
                                                                     @RequestParam(required = false) List<String> wellTypes) {
