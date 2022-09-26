@@ -86,15 +86,18 @@ public class WellSubstanceRepositoryTest {
 
     @Test
     public void testFindBySubstanceName() {
+        long plateId = 2000L;
         String substanceName = "000702-1";
 
-        List<WellSubstance> results = wellSubstanceRepository.findWellSubstanceByName(substanceName);
+        List<WellSubstance> results = wellSubstanceRepository.findWellSubstanceByPlateIdAndName(plateId, substanceName);
         assertThat(results).isNotNull().isNotEmpty().hasSize(32);
     }
 
     @Test
     public void testFindBySubstanceType() {
-        List<WellSubstance> results = wellSubstanceRepository.findWellSubstanceByType(SubstanceType.COMPOUND);
+        long plateId = 2000L;
+
+        List<WellSubstance> results = wellSubstanceRepository.findWellSubstanceByPlateIdAndType(plateId, SubstanceType.COMPOUND);
         assertThat(results).isNotNull().isNotEmpty().hasSize(384);
     }
 

@@ -98,15 +98,18 @@ public class WellSubstanceServiceTest {
 
     @Test
     public void testGetWellSubstancesByName() {
+        long plateId = 2000L;
         String substanceName = "000702-1";
 
-        List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstancesByName(substanceName);
+        List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstancesByPlateIdAndName(plateId, substanceName);
         assertThat(results).isNotNull().isNotEmpty().hasSize(32);
     }
 
     @Test
     public void testGetWellSubstancesByType() {
-        List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstancesByType(SubstanceType.COMPOUND);
+        long plateId = 2000L;
+
+        List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstancesByPlateIdAndType(plateId, SubstanceType.COMPOUND);
         assertThat(results).isNotNull().isNotEmpty().hasSize(384);
     }
 

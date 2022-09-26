@@ -68,6 +68,7 @@ public class WellSubstanceControllerTest {
     @Test
     public void getWellSubstanceByWellIdTest() throws Exception {
         Long wellId = 38748L;
+
         MvcResult mvcResult = this.mockMvc.perform(get("/well-substance").param("wellId", wellId.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -77,6 +78,7 @@ public class WellSubstanceControllerTest {
     @Test
     public void getWellSubstanceByPlateIdTest() throws Exception {
         Long plateId = 2000L;
+
         MvcResult mvcResult = this.mockMvc.perform(get("/well-substance")
                         .param("plateId", plateId.toString()))
                 .andDo(print())
@@ -90,9 +92,11 @@ public class WellSubstanceControllerTest {
     @Test
     public void getWellSubstanceByPlateIdAndWellTypesTest() throws Exception {
         Long plateId = 2000L;
+        String wellTypes = "LC,HC";
+
         MvcResult mvcResult = this.mockMvc.perform(get("/well-substance")
                         .param("plateId", plateId.toString())
-                        .param("wellTypes", "LC,HC"))
+                        .param("wellTypes", wellTypes))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -102,9 +106,12 @@ public class WellSubstanceControllerTest {
     }
 
     @Test
-    public void getWellSubstanceByName() throws Exception {
+    public void getWellSubstanceByPlateIdAndName() throws Exception {
+        Long plateId = 2000L;
         String substanceName = "000702-1";
+
         MvcResult mvcResult = this.mockMvc.perform(get("/well-substance")
+                        .param("plateId", plateId.toString())
                         .param("substanceName", substanceName))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -115,8 +122,11 @@ public class WellSubstanceControllerTest {
     }
 
     @Test
-    public void getWellSubstanceByType() throws Exception {
+    public void getWellSubstanceByPlateIdAndType() throws Exception {
+        Long plateId = 2000L;
+
         MvcResult mvcResult = this.mockMvc.perform(get("/well-substance")
+                        .param("plateId", plateId.toString())
                         .param("substanceType", SubstanceType.COMPOUND.name()))
                 .andDo(print())
                 .andExpect(status().isOk())

@@ -57,15 +57,15 @@ public class WellSubstanceService {
     			.toList();
     }
 
-    public List<WellSubstanceDTO> getWellSubstancesByName(String substanceName) {
-        return wellSubstanceRepository.findWellSubstanceByName(substanceName)
+    public List<WellSubstanceDTO> getWellSubstancesByPlateIdAndName(long plateId, String substanceName) {
+        return wellSubstanceRepository.findWellSubstanceByPlateIdAndName(plateId, substanceName)
                 .stream()
                 .map(this::mapToWellSubstanceDTO)
                 .toList();
     }
 
-    public List<WellSubstanceDTO> getWellSubstancesByType(SubstanceType substanceType) {
-        return wellSubstanceRepository.findWellSubstanceByType(substanceType)
+    public List<WellSubstanceDTO> getWellSubstancesByPlateIdAndType(long plateId, SubstanceType substanceType) {
+        return wellSubstanceRepository.findWellSubstanceByPlateIdAndType(plateId, substanceType)
                 .stream()
                 .map(this::mapToWellSubstanceDTO)
                 .toList();
