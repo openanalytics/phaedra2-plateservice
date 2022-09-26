@@ -20,8 +20,10 @@
  */
 package eu.openanalytics.phaedra.plateservice.repository;
 
+import java.util.Collection;
 import java.util.List;
 
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -33,7 +35,13 @@ public interface WellSubstanceRepository extends CrudRepository<WellSubstance, L
 
     WellSubstance findByWellId(long wellId);
 
+    List<WellSubstance> findWellSubstanceByName(String name);
+
+    List<WellSubstance> findWellSubstanceByType(SubstanceType type);
+
     @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId")
     List<WellSubstance> findByPlateId(long plateId);
+    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and w.welltype in (:wellTypes)")
+    List<WellSubstance> findByPlateIdAndWellType(long plateId, Collection<String> wellTypes);
 
 }

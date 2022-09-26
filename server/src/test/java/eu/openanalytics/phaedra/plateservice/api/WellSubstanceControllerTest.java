@@ -21,7 +21,11 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,6 +38,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -63,8 +70,60 @@ public class WellSubstanceControllerTest {
         Long wellId = 38748L;
         MvcResult mvcResult = this.mockMvc.perform(get("/well-substance").param("wellId", wellId.toString()))
                 .andDo(print())
-                .andExpect(status().is5xxServerError())
+                .andExpect(status().isOk())
                 .andReturn();
+    }
+
+    @Test
+    public void getWellSubstanceByPlateIdTest() throws Exception {
+        Long plateId = 2000L;
+        MvcResult mvcResult = this.mockMvc.perform(get("/well-substance")
+                        .param("plateId", plateId.toString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<WellSubstanceDTO> wellSubstanceDTOList = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertThat(wellSubstanceDTOList).isNotNull().isNotEmpty().hasSize(384);
+    }
+
+    @Test
+    public void getWellSubstanceByPlateIdAndWellTypesTest() throws Exception {
+        Long plateId = 2000L;
+        MvcResult mvcResult = this.mockMvc.perform(get("/well-substance")
+                        .param("plateId", plateId.toString())
+                        .param("wellTypes", "LC,HC"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<WellSubstanceDTO> wellSubstanceDTOList = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertThat(wellSubstanceDTOList).isNotNull().isNotEmpty().hasSize(64);
+    }
+
+    @Test
+    public void getWellSubstanceByName() throws Exception {
+        String substanceName = "000702-1";
+        MvcResult mvcResult = this.mockMvc.perform(get("/well-substance")
+                        .param("substanceName", substanceName))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<WellSubstanceDTO> wellSubstanceDTOList = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertThat(wellSubstanceDTOList).isNotNull().isNotEmpty().hasSize(32);
+    }
+
+    @Test
+    public void getWellSubstanceByType() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(get("/well-substance")
+                        .param("substanceType", SubstanceType.COMPOUND.name()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<WellSubstanceDTO> wellSubstanceDTOList = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertThat(wellSubstanceDTOList).isNotNull().isNotEmpty().hasSize(384);
     }
 
 }

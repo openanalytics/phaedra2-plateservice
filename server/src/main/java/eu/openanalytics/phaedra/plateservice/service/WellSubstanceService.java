@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.model.Welltype;
 import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -54,6 +55,27 @@ public class WellSubstanceService {
     			.stream()
     			.map(this::mapToWellSubstanceDTO)
     			.toList();
+    }
+
+    public List<WellSubstanceDTO> getWellSubstancesByName(String substanceName) {
+        return wellSubstanceRepository.findWellSubstanceByName(substanceName)
+                .stream()
+                .map(this::mapToWellSubstanceDTO)
+                .toList();
+    }
+
+    public List<WellSubstanceDTO> getWellSubstancesByType(SubstanceType substanceType) {
+        return wellSubstanceRepository.findWellSubstanceByType(substanceType)
+                .stream()
+                .map(this::mapToWellSubstanceDTO)
+                .toList();
+    }
+
+    public List<WellSubstanceDTO> getWellSubstanceByPlateIdAndWellTypes(long plateId, List<String> wellTypes) {
+        return wellSubstanceRepository.findByPlateIdAndWellType(plateId, wellTypes)
+                .stream()
+                .map(this::mapToWellSubstanceDTO)
+                .toList();
     }
 
     public void updateWellSubstance(WellSubstanceDTO wellSubstanceDTO) {
@@ -90,5 +112,4 @@ public class WellSubstanceService {
         wellSubstanceDTO.setWellId(wellSubstance.getWellId());
         return wellSubstanceDTO;
     }
-
 }
