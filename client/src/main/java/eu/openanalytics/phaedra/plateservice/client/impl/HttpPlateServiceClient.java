@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -44,7 +45,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
 
     private final RestTemplate restTemplate;
     private final IAuthorizationService authService;
-    
+
     public HttpPlateServiceClient(RestTemplate restTemplate, IAuthorizationService authService) {
         this.restTemplate = restTemplate;
         this.authService = authService;
@@ -80,7 +81,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
             throw new PlateUnresolvableException("Error while fetching plate");
         }
     }
-    
+
     @Override
     public PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO) throws PlateUnresolvableException {
         try {
@@ -113,7 +114,23 @@ public class HttpPlateServiceClient implements PlateServiceClient {
             throw new PlateUnresolvableException("Error while fetching plate");
         }
     }
-    
+
+    @Override
+    public List<WellSubstanceDTO> getWellSubstances(long plateId) throws PlateUnresolvableException {
+        try {
+            var wellSubstances = restTemplate.exchange(UrlFactory.wellSubstances(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), WellSubstanceDTO[].class);
+            if (wellSubstances.getStatusCode().isError()) {
+                throw new PlateUnresolvableException("Plate could not be converted");
+            }
+
+            return Arrays.stream(wellSubstances.getBody()).toList();
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new PlateUnresolvableException("Plate not found");
+        } catch (HttpClientErrorException ex) {
+            throw new PlateUnresolvableException("Error while fetching plate");
+        }
+    }
+
     private HttpHeaders makeHttpHeaders() {
     	HttpHeaders httpHeaders = new HttpHeaders();
         String bearerToken = authService.getCurrentBearerToken();
