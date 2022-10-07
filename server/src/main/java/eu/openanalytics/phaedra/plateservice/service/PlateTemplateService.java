@@ -71,12 +71,12 @@ public class PlateTemplateService {
         modelMapper.typeMap(PlateTemplateDTO.class, PlateTemplate.class)
                 .map(plateTemplateDTO, plateTemplate);
         plateTemplate = plateTemplateRepository.save(plateTemplate);
+        wellTemplateService.createEmptyWellTemplates(plateTemplate);
 
         //Add wellTemplates
         if (CollectionUtils.isNotEmpty(plateTemplateDTO.getWells()))
-            wellTemplateService.createWellTemplates(plateTemplate, plateTemplateDTO.getWells());
-        else
-            wellTemplateService.createEmptyWellTemplates(plateTemplate);
+            wellTemplateService.updateWellTemplates(plateTemplate, plateTemplateDTO.getWells());
+
 
         return mapToPlateTemplateDTO(plateTemplate);
     }

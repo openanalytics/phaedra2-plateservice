@@ -96,6 +96,7 @@ public class WellTemplateService {
                 WellTemplate wellTemplate = new WellTemplate(plateTemplate.getId());
                 wellTemplate.setRow(r);
                 wellTemplate.setColumn(c);
+                wellTemplate.setSkipped(true);
                 wellTemplates.add(wellTemplate);
             }
         }
@@ -139,4 +140,20 @@ public class WellTemplateService {
         return wellTemplateDTO;
     }
 
+    public void updateWellTemplates(PlateTemplate plateTemplate, List<WellTemplateDTO> wells) {
+        wells.stream().forEach(wtDTO -> {
+            WellTemplate wellTemplate = wellTemplateRepository.findWellTemplateByPlateTemplateIdAndRowAndColumn(plateTemplate.getId(), wtDTO.getRow(), wtDTO.getColumn());
+            if (wellTemplate != null) {
+                wtDTO.setId(wellTemplate.getId());
+                wtDTO.setPlateTemplateId(wellTemplate.getPlateTemplateId());
+                updateWellTemplate(wtDTO);
+//                wellTemplate.setWellType(wtDTO.getWellType());
+//                wellTemplate.setConcentration(wtDTO.getConcentration());
+//                wellTemplate.setSubstanceName(wtDTO.getSubstanceName());
+//                wellTemplate.setSubstanceType(wtDTO.getSubstanceType());
+//                wellTemplate.setSkipped(wtDTO.isSkipped());
+//                wellTemplateRepository.save(wellTemplate);
+            }
+        });
+    }
 }
