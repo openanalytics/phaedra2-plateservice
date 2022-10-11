@@ -23,6 +23,7 @@ package eu.openanalytics.phaedra.plateservice.enumartion;
 public enum CalculationStatus {
     CALCULATION_NEEDED(0),
     CALCULATION_OK(1),
+    CALCULATION_IN_PROGRESS(2),
     CALCULATION_NOT_POSSIBLE(-1),
     CALCULATION_ERROR(-2),
     ;
@@ -44,7 +45,4 @@ public enum CalculationStatus {
         return null;
     }
 
-//    public boolean matches(Plate plate) {
-//        return getCode() == plate.getCalculationStatus();
-//    }
 }

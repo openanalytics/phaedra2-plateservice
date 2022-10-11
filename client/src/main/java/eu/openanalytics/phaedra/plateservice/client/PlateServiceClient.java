@@ -26,7 +26,7 @@ import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableE
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
 
 public interface PlateServiceClient {
 
@@ -34,7 +34,7 @@ public interface PlateServiceClient {
 
     List<WellDTO> getWells(long plateId) throws PlateUnresolvableException;
 
-    PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO) throws PlateUnresolvableException;
+    PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws PlateUnresolvableException;
 
     List<WellSubstanceDTO> getWellSubstances(long plateId) throws PlateUnresolvableException;
 

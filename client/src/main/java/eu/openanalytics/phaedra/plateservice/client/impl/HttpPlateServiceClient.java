@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,8 +35,8 @@ import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
-import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Component
@@ -83,24 +82,12 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     }
 
     @Override
-    public PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO) throws PlateUnresolvableException {
+    public PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws PlateUnresolvableException {
         try {
-            PlateDTO plateDTO = getPlate(resultSetDTO.getPlateId());
-
-            switch (resultSetDTO.getOutcome()) {
-                case SUCCESS:
-                    plateDTO.setCalculationStatus(CalculationStatus.CALCULATION_OK);
-                    plateDTO.setCalculatedOn(new Date());
-                    break;
-                case FAILURE:
-                    plateDTO.setCalculationStatus(CalculationStatus.CALCULATION_ERROR);
-                    plateDTO.setCalculationError(resultSetDTO.getErrorsText());
-                    plateDTO.setCalculatedOn(new Date());
-                    break;
-                default:
-                    plateDTO.setCalculationStatus(CalculationStatus.CALCULATION_NEEDED);
-                    break;
-            };
+            PlateDTO plateDTO = getPlate(plateId);
+            plateDTO.setCalculationStatus(status);
+            if (details != null) plateDTO.setCalculationError(details);
+            plateDTO.setCalculatedOn(new Date());
 
             var response = restTemplate.exchange(UrlFactory.plate(null), HttpMethod.PUT, new HttpEntity<>(plateDTO, makeHttpHeaders()), PlateDTO.class);
             if (response.getStatusCode().isError()) {
