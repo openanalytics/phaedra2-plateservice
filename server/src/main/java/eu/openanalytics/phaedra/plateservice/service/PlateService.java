@@ -33,9 +33,14 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -56,6 +61,7 @@ public class PlateService {
 	private final PlateTemplateService plateTemplateService;
 	private final WellTemplateService wellTemplateService;
 	private final WellSubstanceService wellSubstanceService;
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
 			ProjectAccessService projectAccessService, IAuthorizationService authService,
@@ -108,8 +114,21 @@ public class PlateService {
 			p.setUpdatedBy(authService.getCurrentPrincipalName());
 			p.setUpdatedOn(new Date());
 			plateRepository.save(p);
+			logger.info("Plate with plateId " + p.getId() + " successfully updated!");
 		});
 		return plateDTO;
+	}
+
+	@KafkaListener(topics = "calculations", groupId = "plate-service")
+	public void onUpdatePlateCalculationStatus(PlateCalculationStatusDTO plateCalcStatusDTO, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String msgKey) {
+		if (msgKey.equals("updatePlateCalculationStatus")) {
+			logger.info("Set plate calculation status to " + plateCalcStatusDTO.getCalculationStatus().name() + " for plateId " + plateCalcStatusDTO.getPlateId());
+			PlateDTO plateDTO = getPlateById(plateCalcStatusDTO.getPlateId());
+			plateDTO.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
+			if (plateCalcStatusDTO.getDetails() != null) plateDTO.setCalculationError(plateCalcStatusDTO.getDetails());
+			plateDTO.setCalculatedOn(new Date());
+			updatePlate(plateDTO);
+		}
 	}
 
 	public void deletePlate(long plateId) {

@@ -38,6 +38,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -51,6 +52,7 @@ import javax.sql.DataSource;
 @EnableCaching
 @EnableWebSecurity
 @SpringBootApplication
+@EnableKafka
 @Import({MeasurementServiceClientAutoConfiguration.class})
 public class PlateServiceApplication {
 	private final ServletContext servletContext;
