@@ -122,12 +122,17 @@ public class PlateService {
 	@KafkaListener(topics = "calculations", groupId = "plate-service")
 	public void onUpdatePlateCalculationStatus(PlateCalculationStatusDTO plateCalcStatusDTO, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String msgKey) {
 		if (msgKey.equals("updatePlateCalculationStatus")) {
-			logger.info("Set plate calculation status to " + plateCalcStatusDTO.getCalculationStatus().name() + " for plateId " + plateCalcStatusDTO.getPlateId());
 			PlateDTO plateDTO = getPlateById(plateCalcStatusDTO.getPlateId());
-			plateDTO.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
-			if (plateCalcStatusDTO.getDetails() != null) plateDTO.setCalculationError(plateCalcStatusDTO.getDetails());
-			plateDTO.setCalculatedOn(new Date());
-			updatePlate(plateDTO);
+			if (plateDTO != null) {
+				logger.info("Set plate calculation status to " + plateCalcStatusDTO.getCalculationStatus().name() + " for plateId " + plateCalcStatusDTO.getPlateId());
+				plateDTO.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
+				if (plateCalcStatusDTO.getDetails() != null)
+					plateDTO.setCalculationError(plateCalcStatusDTO.getDetails());
+				plateDTO.setCalculatedOn(new Date());
+				updatePlate(plateDTO);
+			} else {
+				logger.error("No plate found with plateId  " + plateCalcStatusDTO.getPlateId());
+			}
 		}
 	}
 
