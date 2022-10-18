@@ -107,7 +107,7 @@ public class PlateService {
 	public PlateDTO updatePlate(PlateDTO plateDTO) {
 		Optional<Plate> plate = plateRepository.findById(plateDTO.getId());
 		plate.ifPresent(p -> {
-			projectAccessService.checkAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Write);
+//			projectAccessService.checkAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Write);
 			modelMapper.typeMap(PlateDTO.class, Plate.class)
 					.setPropertyCondition(Conditions.isNotNull())
 					.map(plateDTO, p);
