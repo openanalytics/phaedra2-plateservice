@@ -39,6 +39,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.listener.adapter.RecordFilterStrategy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -110,5 +111,11 @@ public class PlateServiceApplication {
 	@Bean
 	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
 		return AuthenticationConfigHelper.configure(http);
+	}
+
+	@Bean
+	public RecordFilterStrategy<String, Object> keyFilterStrategy() {
+		RecordFilterStrategy<String, Object> recordFilterStrategy = consumerRecord -> !(consumerRecord.key().equalsIgnoreCase("updatePlateCalculationStatus"));
+		return recordFilterStrategy;
 	}
 }

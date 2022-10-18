@@ -107,7 +107,7 @@ public class PlateService {
 	public PlateDTO updatePlate(PlateDTO plateDTO) {
 		Optional<Plate> plate = plateRepository.findById(plateDTO.getId());
 		plate.ifPresent(p -> {
-//			projectAccessService.checkAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Write);
+			projectAccessService.checkAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Write);
 			modelMapper.typeMap(PlateDTO.class, Plate.class)
 					.setPropertyCondition(Conditions.isNotNull())
 					.map(plateDTO, p);
@@ -119,17 +119,19 @@ public class PlateService {
 		return plateDTO;
 	}
 
-	@KafkaListener(topics = "calculations", groupId = "plate-service")
+	//TODO: Configure kafka consumer security
+	@KafkaListener(topics = "calculations", groupId = "plate-service", filter = "keyFilterStrategy")
 	public void onUpdatePlateCalculationStatus(PlateCalculationStatusDTO plateCalcStatusDTO, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String msgKey) {
 		if (msgKey.equals("updatePlateCalculationStatus")) {
-			PlateDTO plateDTO = getPlateById(plateCalcStatusDTO.getPlateId());
-			if (plateDTO != null) {
+			Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
+			if (result.isPresent()) {
 				logger.info("Set plate calculation status to " + plateCalcStatusDTO.getCalculationStatus().name() + " for plateId " + plateCalcStatusDTO.getPlateId());
-				plateDTO.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
+				Plate plate =  result.get();
+				plate.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
 				if (plateCalcStatusDTO.getDetails() != null)
-					plateDTO.setCalculationError(plateCalcStatusDTO.getDetails());
-				plateDTO.setCalculatedOn(new Date());
-				updatePlate(plateDTO);
+					plate.setCalculationError(plateCalcStatusDTO.getDetails());
+				plate.setCalculatedOn(new Date());
+				plateRepository.save(plate);
 			} else {
 				logger.error("No plate found with plateId  " + plateCalcStatusDTO.getPlateId());
 			}
@@ -160,7 +162,7 @@ public class PlateService {
 	public PlateDTO getPlateById(long plateId) {
 		Optional<Plate> result = plateRepository.findById(plateId);
 		return result
-//				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
+				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.orElse(null);
 	}
