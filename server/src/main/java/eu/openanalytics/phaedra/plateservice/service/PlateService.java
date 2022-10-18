@@ -160,7 +160,7 @@ public class PlateService {
 	public PlateDTO getPlateById(long plateId) {
 		Optional<Plate> result = plateRepository.findById(plateId);
 		return result
-				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
+//				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.orElse(null);
 	}
