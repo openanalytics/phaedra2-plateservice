@@ -17,3 +17,15 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: hca_plate
             validate: true
+  - changeSet:
+      id: 2
+      author: sberberovic
+      changes:
+        - dropNotNullConstraint:
+            columnName: name
+            tableName: hca_well_substance
+            schemaName: plates
+        - dropNotNullConstraint:
+            columnName: type
+            tableName: hca_well_substance
+            schemaName: plates

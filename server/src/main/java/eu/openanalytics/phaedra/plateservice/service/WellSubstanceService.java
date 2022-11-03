@@ -114,7 +114,7 @@ public class WellSubstanceService {
         WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
         wellSubstanceDTO.setId(wellSubstance.getId());
         wellSubstanceDTO.setName(wellSubstance.getName());
-        wellSubstanceDTO.setType(wellSubstance.getType().name());
+        wellSubstanceDTO.setType(wellSubstance.getType() != null ? wellSubstance.getType().name() : null);
         wellSubstanceDTO.setConcentration(wellSubstance.getConcentration());
         wellSubstanceDTO.setWellId(wellSubstance.getWellId());
         return wellSubstanceDTO;
