@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +116,23 @@ public class HttpPlateServiceClient implements PlateServiceClient {
         } catch (HttpClientErrorException.NotFound ex) {
             throw new PlateUnresolvableException("Plate not found");
         } catch (HttpClientErrorException | PlateUnresolvableException ex) {
+            throw new PlateUnresolvableException("Error while fetching plate");
+        }
+    }
+
+    @Override
+    public List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws PlateUnresolvableException {
+        try {
+            logger.info("Auth token: " + authToken[0]);
+            var plateMeasurements = restTemplate.exchange(UrlFactory.plateMeasurements(plateId), HttpMethod.GET, new HttpEntity<String>(getAuthHeaters(authToken)), PlateMeasurementDTO[].class);
+            if (plateMeasurements.getStatusCode().isError()) {
+                throw new PlateUnresolvableException("Plate could not be converted");
+            }
+
+            return Arrays.stream(plateMeasurements.getBody()).toList();
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new PlateUnresolvableException("Plate not found");
+        } catch (HttpClientErrorException ex) {
             throw new PlateUnresolvableException("Error while fetching plate");
         }
     }

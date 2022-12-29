@@ -24,6 +24,7 @@ import java.util.List;
 
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
 
@@ -34,5 +35,7 @@ public interface PlateServiceClient {
     List<WellDTO> getWells(long plateId, String... authToken) throws PlateUnresolvableException;
 
     PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO, String... authToken) throws PlateUnresolvableException;
+
+    List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws PlateUnresolvableException;
 
 }

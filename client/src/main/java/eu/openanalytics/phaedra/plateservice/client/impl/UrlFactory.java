@@ -35,4 +35,8 @@ public class UrlFactory {
         return String.format("%s/plate/%s/wells", PLATE_SERVICE, plateId);
     }
 
+    public static String plateMeasurements(Long plateId) {
+        return String.format("%s/plate/%s/measurements", PLATE_SERVICE, plateId);
+    }
+
 }
