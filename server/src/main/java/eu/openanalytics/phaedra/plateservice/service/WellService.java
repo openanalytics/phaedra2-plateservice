@@ -116,7 +116,7 @@ public class WellService {
         return wellRepository.findByPlateId(plateId).stream()
         		.map(well -> modelMapper.map(well, WellDTO.class))
         		.map(dto -> {
-        			dto.setWellSubstance(substances.stream().filter(s -> s.getWellId() == dto.getId()).findAny().orElse(null));
+        			dto.setWellSubstance(substances.stream().filter(s -> s.getWellId().longValue() == dto.getId().longValue()).findAny().orElse(null));
         			return dto;
         		})
         		.sorted(WELL_COMPARATOR)
@@ -125,9 +125,14 @@ public class WellService {
 
     private Well mapToWell(WellDTO wellDTO) {
         Well well = new Well(wellDTO.getPlateId());
-        modelMapper.typeMap(WellDTO.class, Well.class)
-                .setPropertyCondition(Conditions.isNotNull())
-                .map(wellDTO, well);
+        well.setId(wellDTO.getId());
+        well.setWellType(wellDTO.getWellType());
+        well.setDescription(wellDTO.getDescription());
+        well.setRow(wellDTO.getRow());
+        well.setColumn(wellDTO.getColumn());
+        well.setCompoundId(wellDTO.getCompoundId());
+        well.setStatus(wellDTO.getStatus());
+        well.setPlateId(wellDTO.getPlateId());
         return well;
     }
 }

@@ -134,7 +134,7 @@ public class WellTemplateServiceTest {
         PlateTemplate plateTemplate = plateTemplateRepository.findById(1000L).orElse(null);
         assertThat(plateTemplate).isNotNull();
         //Create all well templates
-        List<WellTemplateDTO> ret = wellTemplateService.createWellTemplates(plateTemplate);
+        List<WellTemplateDTO> ret = wellTemplateService.createEmptyWellTemplates(plateTemplate);
         assertThat(ret.size()).isEqualTo(6);
         List<WellTemplateDTO> wellTemplateDTOS2 = wellTemplateService.getWellTemplatesByPlateTemplateId(1000L);
         assertThat(wellTemplateDTOS2.size()).isEqualTo(6);

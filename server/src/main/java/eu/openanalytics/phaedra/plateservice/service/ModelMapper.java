@@ -21,9 +21,19 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
 import eu.openanalytics.phaedra.measservice.dto.MeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
+import org.apache.commons.lang3.EnumUtils;
+import org.modelmapper.Conditions;
+import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.convention.NameTransformers;
+import org.modelmapper.convention.NamingConventions;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,11 +42,18 @@ public class ModelMapper {
     private final org.modelmapper.ModelMapper modelMapper = new org.modelmapper.ModelMapper();
 
     public ModelMapper() {
+        Configuration builderConfiguration = modelMapper.getConfiguration().copy()
+                .setDestinationNameTransformer(NameTransformers.builder())
+                .setDestinationNamingConvention(NamingConventions.builder());
+
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
 
         modelMapper.createTypeMap(PlateMeasurementDTO.class, PlateMeasurement.class);
 
         modelMapper.createTypeMap(PlateMeasurement.class, PlateMeasurementDTO.class);
+
+		modelMapper.createTypeMap(Plate.class, PlateDTO.PlateDTOBuilder.class, builderConfiguration)
+				.setPropertyCondition(Conditions.isNotNull());
 
 
 //        modelMapper.validate();
@@ -75,5 +92,25 @@ public class ModelMapper {
 
     public PlateMeasurement map(PlateMeasurementDTO plateMeasurementDTO) {
         return modelMapper.map(plateMeasurementDTO, PlateMeasurement.class);
+    }
+
+    public WellSubstance map(WellSubstanceDTO wellSubstanceDTO) {
+        WellSubstance wellSubstance = new WellSubstance();
+        wellSubstance.setId(wellSubstanceDTO.getId());
+        wellSubstance.setType(EnumUtils.getEnumIgnoreCase(SubstanceType.class, wellSubstanceDTO.getType()));
+        wellSubstance.setName(wellSubstanceDTO.getName());
+        wellSubstance.setConcentration(wellSubstanceDTO.getConcentration());
+        wellSubstance.setWellId(wellSubstanceDTO.getWellId());
+        return wellSubstance;
+    }
+
+    public WellSubstanceDTO map(WellSubstance wellSubstance) {
+        WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
+        wellSubstanceDTO.setId(wellSubstance.getId());
+        wellSubstanceDTO.setType(wellSubstance.getType().name());
+        wellSubstanceDTO.setName(wellSubstance.getName());
+        wellSubstanceDTO.setConcentration(wellSubstance.getConcentration());
+        wellSubstanceDTO.setWellId(wellSubstance.getWellId());
+        return wellSubstanceDTO;
     }
 }

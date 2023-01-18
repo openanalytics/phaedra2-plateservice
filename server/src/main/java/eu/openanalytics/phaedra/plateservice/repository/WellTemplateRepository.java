@@ -31,4 +31,6 @@ import java.util.List;
 @Repository
 public interface WellTemplateRepository extends CrudRepository<WellTemplate, Long> {
     List<WellTemplate> findByPlateTemplateId(long plateTemplateId);
+
+    WellTemplate findWellTemplateByPlateTemplateIdAndRowAndColumn(long plateTemplateId, int row, int column);
 }

@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import static org.apache.commons.lang3.StringUtils.*;
 
 @Builder
 @Data
@@ -38,7 +39,7 @@ public class WellTemplateDTO {
     private Integer column;
     private Long plateTemplateId;
     private String wellType = "EMPTY";
-    private boolean skipped = true;
+    private boolean skipped = false;
     private String substanceName;
     private String substanceType;
     private double concentration;

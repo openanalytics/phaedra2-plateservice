@@ -23,6 +23,9 @@ package eu.openanalytics.phaedra.plateservice.service;
 import java.util.List;
 import java.util.Optional;
 
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.model.Welltype;
+import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -54,6 +57,34 @@ public class WellSubstanceService {
     			.toList();
     }
 
+    public List<WellSubstanceDTO> getWellSubstancesByPlateIdAndName(long plateId, String substanceName) {
+        return wellSubstanceRepository.findWellSubstanceByPlateIdAndName(plateId, substanceName)
+                .stream()
+                .map(this::mapToWellSubstanceDTO)
+                .toList();
+    }
+
+    public List<WellSubstanceDTO> getWellSubstancesByPlateIdAndType(long plateId, SubstanceType substanceType) {
+        return wellSubstanceRepository.findWellSubstanceByPlateIdAndType(plateId, substanceType)
+                .stream()
+                .map(this::mapToWellSubstanceDTO)
+                .toList();
+    }
+
+    public List<WellSubstanceDTO> getWellSubstancesByPlateIdAndNameAndType(long plateId, String substanceName, SubstanceType substanceType) {
+        return wellSubstanceRepository.findWellSubstanceByPlateIdAndNameAndType(plateId, substanceName, substanceType)
+                .stream()
+                .map(this::mapToWellSubstanceDTO)
+                .toList();
+    }
+
+    public List<WellSubstanceDTO> getWellSubstanceByPlateIdAndWellTypes(long plateId, List<String> wellTypes) {
+        return wellSubstanceRepository.findByPlateIdAndWellType(plateId, wellTypes)
+                .stream()
+                .map(this::mapToWellSubstanceDTO)
+                .toList();
+    }
+
     public void updateWellSubstance(WellSubstanceDTO wellSubstanceDTO) {
         Optional<WellSubstance> wellSubstance = wellSubstanceRepository.findById(wellSubstanceDTO.getId());
         wellSubstance.ifPresent(e -> {
@@ -66,10 +97,12 @@ public class WellSubstanceService {
 
     public WellSubstanceDTO createWellSubstance(WellSubstanceDTO wellSubstanceDTO) {
         WellSubstance wellSubstance = new WellSubstance();
-        modelMapper.typeMap(WellSubstanceDTO.class, WellSubstance.class)
-                .map(wellSubstanceDTO, wellSubstance);
+        wellSubstance.setId(wellSubstanceDTO.getId());
+        wellSubstance.setName(wellSubstanceDTO.getName());
+        wellSubstance.setType(EnumUtils.getEnumIgnoreCase(SubstanceType.class, wellSubstanceDTO.getType()));
+        wellSubstance.setConcentration(wellSubstanceDTO.getConcentration());
+        wellSubstance.setWellId(wellSubstanceDTO.getWellId());
         wellSubstance = wellSubstanceRepository.save(wellSubstance);
-
         return mapToWellSubstanceDTO(wellSubstance);
     }
 
@@ -79,9 +112,11 @@ public class WellSubstanceService {
 
     private WellSubstanceDTO mapToWellSubstanceDTO(WellSubstance wellSubstance) {
         WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
-        modelMapper.typeMap(WellSubstance.class, WellSubstanceDTO.class)
-                .map(wellSubstance, wellSubstanceDTO);
+        wellSubstanceDTO.setId(wellSubstance.getId());
+        wellSubstanceDTO.setName(wellSubstance.getName());
+        wellSubstanceDTO.setType(wellSubstance.getType() != null ? wellSubstance.getType().name() : null);
+        wellSubstanceDTO.setConcentration(wellSubstance.getConcentration());
+        wellSubstanceDTO.setWellId(wellSubstance.getWellId());
         return wellSubstanceDTO;
     }
-
 }

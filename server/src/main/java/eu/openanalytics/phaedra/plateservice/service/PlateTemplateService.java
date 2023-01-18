@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -70,9 +71,12 @@ public class PlateTemplateService {
         modelMapper.typeMap(PlateTemplateDTO.class, PlateTemplate.class)
                 .map(plateTemplateDTO, plateTemplate);
         plateTemplate = plateTemplateRepository.save(plateTemplate);
+        wellTemplateService.createEmptyWellTemplates(plateTemplate);
 
         //Add wellTemplates
-        wellTemplateService.createWellTemplates(plateTemplate);
+        if (CollectionUtils.isNotEmpty(plateTemplateDTO.getWells()))
+            wellTemplateService.updateWellTemplates(plateTemplate, plateTemplateDTO.getWells());
+
 
         return mapToPlateTemplateDTO(plateTemplate);
     }

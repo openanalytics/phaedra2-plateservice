@@ -20,32 +20,33 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
+import eu.openanalytics.phaedra.plateservice.dto.*;
+import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
-import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlateService {
@@ -60,6 +61,7 @@ public class PlateService {
 	private final PlateTemplateService plateTemplateService;
 	private final WellTemplateService wellTemplateService;
 	private final WellSubstanceService wellSubstanceService;
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
 			ProjectAccessService projectAccessService, IAuthorizationService authService,
@@ -112,8 +114,28 @@ public class PlateService {
 			p.setUpdatedBy(authService.getCurrentPrincipalName());
 			p.setUpdatedOn(new Date());
 			plateRepository.save(p);
+			logger.info("Plate with plateId " + p.getId() + " successfully updated!");
 		});
 		return plateDTO;
+	}
+
+	//TODO: Configure kafka consumer security
+	@KafkaListener(topics = "calculations", groupId = "plate-service", filter = "keyFilterStrategy")
+	public void onUpdatePlateCalculationStatus(PlateCalculationStatusDTO plateCalcStatusDTO, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String msgKey) {
+		if (msgKey.equals("updatePlateCalculationStatus")) {
+			Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
+			if (result.isPresent()) {
+				logger.info("Set plate calculation status to " + plateCalcStatusDTO.getCalculationStatus().name() + " for plateId " + plateCalcStatusDTO.getPlateId());
+				Plate plate =  result.get();
+				plate.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
+				if (plateCalcStatusDTO.getDetails() != null)
+					plate.setCalculationError(plateCalcStatusDTO.getDetails());
+				plate.setCalculatedOn(new Date());
+				plateRepository.save(plate);
+			} else {
+				logger.error("No plate found with plateId  " + plateCalcStatusDTO.getPlateId());
+			}
+		}
 	}
 
 	public void deletePlate(long plateId) {
@@ -156,7 +178,7 @@ public class PlateService {
 
 		PlateDTO plateDTO = getPlateById(plateId);
 		PlateTemplateDTO plateTemplateDTO = plateTemplateService.getPlateTemplateById(plateTemplateId);
-		
+
 		// Validate the plate and template objects.
 		if (plateDTO == null || plateTemplateDTO == null)
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plate or template can not be found for these ids.");
@@ -178,16 +200,19 @@ public class PlateService {
 		List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
 		List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
 		List<WellTemplateDTO> wellTemplates  = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
-		
+
 		for (int i = 0; i < wells.size(); i++) {
 			WellDTO well = wells.get(i);
 			WellSubstanceDTO previousSubstance = wellSubstances.stream()
 					.filter(w -> w.getWellId() == well.getId())
 					.findAny().orElse(null);
-			
+
 			// Update wellType
-			wells.get(i).setWellType(wellTemplates.get(i).getWellType());
-			
+			if (!wellTemplates.get(i).isSkipped())
+				wells.get(i).setWellType(wellTemplates.get(i).getWellType());
+			else
+				wells.get(i).setWellType("EMPTY");
+
 			// Update substance (if needed)
 			String newSubstanceType = wellTemplates.get(i).getSubstanceType();
 			if (newSubstanceType != null && !newSubstanceType.isEmpty()) {
@@ -200,14 +225,14 @@ public class PlateService {
 				wellSubstanceService.deleteWellSubstance(previousSubstance.getId());
 			}
 		}
-		
+
 		wellService.updateWells(wells);
 	}
 
 	private void createNewWellSubstance(WellDTO wellDTO, WellTemplateDTO wellTemplateDTO) {
 		WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
 		wellSubstanceDTO.setWellId(wellDTO.getId());
-		wellSubstanceDTO.setType(wellTemplateDTO.getSubstanceType());
+		wellSubstanceDTO.setType(StringUtils.isBlank(wellTemplateDTO.getSubstanceType()) ? SubstanceType.COMPOUND.name() : wellTemplateDTO.getSubstanceType());
 		wellSubstanceDTO.setName(wellTemplateDTO.getSubstanceName());
 		wellSubstanceDTO.setConcentration(wellTemplateDTO.getConcentration());
 		wellSubstanceService.createWellSubstance(wellSubstanceDTO);

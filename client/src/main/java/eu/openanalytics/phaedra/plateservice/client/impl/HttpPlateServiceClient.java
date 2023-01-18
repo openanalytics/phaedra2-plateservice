@@ -39,28 +39,28 @@ import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
-import eu.openanalytics.phaedra.resultdataservice.dto.ResultSetDTO;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Component
 public class HttpPlateServiceClient implements PlateServiceClient {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final RestTemplate restTemplate;
+    private final IAuthorizationService authService;
 
-    public HttpPlateServiceClient(RestTemplate restTemplate) {
+    public HttpPlateServiceClient(RestTemplate restTemplate, IAuthorizationService authService) {
         this.restTemplate = restTemplate;
+        this.authService = authService;
     }
 
     @Override
-    public PlateDTO getPlate(long plateId, String... authToken) throws PlateUnresolvableException {
+    public PlateDTO getPlate(long plateId) throws PlateUnresolvableException {
         try {
-            logger.info("Auth token: " + authToken[0]);
-            var plate = restTemplate.exchange(UrlFactory.plate(plateId), HttpMethod.GET, new HttpEntity<String>(getAuthHeaters(authToken)), PlateDTO.class);
+            var plate = restTemplate.exchange(UrlFactory.plate(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateDTO.class);
             if (plate.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
             }
-
             return plate.getBody();
         } catch (HttpClientErrorException.NotFound ex) {
             throw new PlateUnresolvableException("Plate not found");
@@ -70,10 +70,9 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     }
 
     @Override
-    public List<WellDTO> getWells(long plateId, String... authToken) throws PlateUnresolvableException {
+    public List<WellDTO> getWells(long plateId) throws PlateUnresolvableException {
     	try {
-            logger.info("Auth token: " + authToken[0]);
-            var wells = restTemplate.exchange(UrlFactory.wells(plateId), HttpMethod.GET, new HttpEntity<String>(getAuthHeaters(authToken)), WellDTO[].class);
+            var wells = restTemplate.exchange(UrlFactory.wells(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), WellDTO[].class);
             if (wells.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
             }
@@ -85,29 +84,16 @@ public class HttpPlateServiceClient implements PlateServiceClient {
             throw new PlateUnresolvableException("Error while fetching plate");
         }
     }
-    
+
     @Override
-    public PlateDTO updatePlateCalculationStatus(ResultSetDTO resultSetDTO, String... authToken) throws PlateUnresolvableException {
+    public PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws PlateUnresolvableException {
         try {
-            logger.info("Auth token: " + authToken[0]);
-            PlateDTO plateDTO = getPlate(resultSetDTO.getPlateId(), authToken);
+            PlateDTO plateDTO = getPlate(plateId);
+            plateDTO.setCalculationStatus(status);
+            if (details != null) plateDTO.setCalculationError(details);
+            plateDTO.setCalculatedOn(new Date());
 
-            switch (resultSetDTO.getOutcome()) {
-                case SUCCESS:
-                    plateDTO.setCalculationStatus(CalculationStatus.CALCULATION_OK);
-                    plateDTO.setCalculatedOn(new Date());
-                    break;
-                case FAILURE:
-                    plateDTO.setCalculationStatus(CalculationStatus.CALCULATION_ERROR);
-                    plateDTO.setCalculationError(resultSetDTO.getErrorsText());
-                    plateDTO.setCalculatedOn(new Date());
-                    break;
-                default:
-                    plateDTO.setCalculationStatus(CalculationStatus.CALCULATION_NEEDED);
-                    break;
-            };
-
-            var response = restTemplate.exchange(UrlFactory.plate(null), HttpMethod.PUT, new HttpEntity<>(plateDTO, getAuthHeaters(authToken)), PlateDTO.class);
+            var response = restTemplate.exchange(UrlFactory.plate(null), HttpMethod.PUT, new HttpEntity<>(plateDTO, makeHttpHeaders()), PlateDTO.class);
             if (response.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
             }
@@ -137,10 +123,26 @@ public class HttpPlateServiceClient implements PlateServiceClient {
         }
     }
 
-    private HttpHeaders getAuthHeaters(String... authToken) {
-        String token = ArrayUtils.isNotEmpty(authToken) ? authToken[0] : null;
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
-        return httpHeaders;
+    @Override
+    public List<WellSubstanceDTO> getWellSubstances(long plateId) throws PlateUnresolvableException {
+        try {
+            var wellSubstances = restTemplate.exchange(UrlFactory.wellSubstances(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), WellSubstanceDTO[].class);
+            if (wellSubstances.getStatusCode().isError()) {
+                throw new PlateUnresolvableException("Plate could not be converted");
+            }
+
+            return Arrays.stream(wellSubstances.getBody()).toList();
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new PlateUnresolvableException("Plate not found");
+        } catch (HttpClientErrorException ex) {
+            throw new PlateUnresolvableException("Error while fetching plate");
+        }
+    }
+
+    private HttpHeaders makeHttpHeaders() {
+    	HttpHeaders httpHeaders = new HttpHeaders();
+        String bearerToken = authService.getCurrentBearerToken();
+    	if (bearerToken != null) httpHeaders.set(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", bearerToken));
+    	return httpHeaders;
     }
 }

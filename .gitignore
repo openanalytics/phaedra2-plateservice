@@ -39,3 +39,4 @@ target/
 /server/phaedra2-plateservice-server.iml
 
 .DS_Store
+/dto/phaedra2-plateservice-dto.iml

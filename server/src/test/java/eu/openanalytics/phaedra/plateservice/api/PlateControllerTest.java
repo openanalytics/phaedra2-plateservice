@@ -407,4 +407,18 @@ public class PlateControllerTest {
         assertThat(plateDTOChanged.getId()).isEqualTo(1L);
     }
 
+    @Test
+    public void getWellByPlateIdTest() throws Exception {
+        long plateId = 2000L;
+
+        MvcResult mvcResult = this.mockMvc.perform(get("/plate/{plateId}/wells", plateId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        List<WellDTO> wellDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        assertThat(wellDTOs).isNotNull();
+        assertThat(wellDTOs.size()).isEqualTo(384);
+    }
+
 }

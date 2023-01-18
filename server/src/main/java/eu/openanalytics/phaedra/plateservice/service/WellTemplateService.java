@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,27 @@ public class WellTemplateService {
         return mapToWellTemplateDTO(wellTemplate);
     }
 
-    public List<WellTemplateDTO> createWellTemplates(PlateTemplate plateTemplate) {
+    public List<WellTemplateDTO> createWellTemplates(PlateTemplate plateTemplate, List<WellTemplateDTO> wellTemplateDTOs) {
+        authService.performOwnershipCheck(plateTemplate.getCreatedBy());
+
+//        .map(well -> modelMapper.map(well, WellDTO.class))
+//                .map(dto -> {
+//                    dto.setWellSubstance(substances.stream().filter(s -> s.getWellId().longValue() == dto.getId().longValue()).findAny().orElse(null));
+//                    return dto;
+//                })
+//                .sorted(WELL_COMPARATOR)
+//                .toList();
+
+        List<WellTemplate> wellTemplates = wellTemplateDTOs.stream().map(wellDTO -> modelMapper.map(wellDTO, WellTemplate.class))
+                .map(well -> {
+                    well.setPlateTemplateId(plateTemplate.getId());
+                    return well;
+                }).toList();
+
+        wellTemplateRepository.saveAll(wellTemplates);
+        return wellTemplates.stream().map(this::mapToWellTemplateDTO).collect(Collectors.toList());
+    }
+    public List<WellTemplateDTO> createEmptyWellTemplates(PlateTemplate plateTemplate) {
     	authService.performOwnershipCheck(plateTemplate.getCreatedBy());
 
         List<WellTemplate> wellTemplates = new ArrayList<>(plateTemplate.getRows()*plateTemplate.getColumns());
@@ -75,6 +96,7 @@ public class WellTemplateService {
                 WellTemplate wellTemplate = new WellTemplate(plateTemplate.getId());
                 wellTemplate.setRow(r);
                 wellTemplate.setColumn(c);
+                wellTemplate.setSkipped(true);
                 wellTemplates.add(wellTemplate);
             }
         }
@@ -118,4 +140,20 @@ public class WellTemplateService {
         return wellTemplateDTO;
     }
 
+    public void updateWellTemplates(PlateTemplate plateTemplate, List<WellTemplateDTO> wells) {
+        wells.stream().forEach(wtDTO -> {
+            WellTemplate wellTemplate = wellTemplateRepository.findWellTemplateByPlateTemplateIdAndRowAndColumn(plateTemplate.getId(), wtDTO.getRow(), wtDTO.getColumn());
+            if (wellTemplate != null) {
+                wtDTO.setId(wellTemplate.getId());
+                wtDTO.setPlateTemplateId(wellTemplate.getPlateTemplateId());
+                updateWellTemplate(wtDTO);
+//                wellTemplate.setWellType(wtDTO.getWellType());
+//                wellTemplate.setConcentration(wtDTO.getConcentration());
+//                wellTemplate.setSubstanceName(wtDTO.getSubstanceName());
+//                wellTemplate.setSubstanceType(wtDTO.getSubstanceType());
+//                wellTemplate.setSkipped(wtDTO.isSkipped());
+//                wellTemplateRepository.save(wellTemplate);
+            }
+        });
+    }
 }

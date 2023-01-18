@@ -38,6 +38,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.listener.adapter.RecordFilterStrategy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -51,6 +53,7 @@ import javax.sql.DataSource;
 @EnableCaching
 @EnableWebSecurity
 @SpringBootApplication
+@EnableKafka
 @Import({MeasurementServiceClientAutoConfiguration.class})
 public class PlateServiceApplication {
 	private final ServletContext servletContext;
@@ -96,7 +99,7 @@ public class PlateServiceApplication {
 
 	@Bean
 	public OpenAPI customOpenAPI() {
-		Server server = new Server().url(servletContext.getContextPath()).description("Default Server URL");
+		Server server = new Server().url((environment.getProperty("API_URL"))).description("Default Server URL");
 		return new OpenAPI().addServersItem(server);
 	}
 
@@ -108,5 +111,11 @@ public class PlateServiceApplication {
 	@Bean
 	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
 		return AuthenticationConfigHelper.configure(http);
+	}
+
+	@Bean
+	public RecordFilterStrategy<String, Object> keyFilterStrategy() {
+		RecordFilterStrategy<String, Object> recordFilterStrategy = consumerRecord -> !(consumerRecord.key().equalsIgnoreCase("updatePlateCalculationStatus"));
+		return recordFilterStrategy;
 	}
 }
