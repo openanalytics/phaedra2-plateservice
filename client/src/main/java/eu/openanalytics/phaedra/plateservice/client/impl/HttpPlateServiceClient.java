@@ -109,8 +109,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     @Override
     public List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws PlateUnresolvableException {
         try {
-            logger.info("Auth token: " + authToken[0]);
-            var plateMeasurements = restTemplate.exchange(UrlFactory.plateMeasurements(plateId), HttpMethod.GET, new HttpEntity<String>(getAuthHeaters(authToken)), PlateMeasurementDTO[].class);
+            var plateMeasurements = restTemplate.exchange(UrlFactory.plateMeasurements(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()),PlateMeasurementDTO[].class);
             if (plateMeasurements.getStatusCode().isError()) {
                 throw new PlateUnresolvableException("Plate could not be converted");
             }
