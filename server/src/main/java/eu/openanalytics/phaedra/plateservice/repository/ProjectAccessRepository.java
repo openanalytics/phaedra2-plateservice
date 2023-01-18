@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -31,5 +31,5 @@ import eu.openanalytics.phaedra.plateservice.model.ProjectAccess;
 public interface ProjectAccessRepository extends CrudRepository<ProjectAccess, Long> {
 
 	List<ProjectAccess> findByProjectId(Long projectId);
-	
+
 }

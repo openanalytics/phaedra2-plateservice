@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -39,6 +39,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
@@ -61,11 +62,13 @@ public class PlateService {
 	private final PlateTemplateService plateTemplateService;
 	private final WellTemplateService wellTemplateService;
 	private final WellSubstanceService wellSubstanceService;
+
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
-			ProjectAccessService projectAccessService, IAuthorizationService authService,
-			PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService) {
+						ProjectAccessService projectAccessService, IAuthorizationService authService,
+						PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService, KafkaTemplate<String, Object> kafkaTemplate) {
 
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
@@ -75,6 +78,7 @@ public class PlateService {
 		this.plateTemplateService = plateTemplateService;
 		this.wellTemplateService = wellTemplateService;
 		this.wellSubstanceService = wellSubstanceService;
+		this.kafkaTemplate = kafkaTemplate;
 
 		// TODO move to dedicated ModelMapper service
 		Configuration builderConfiguration = modelMapper.getConfiguration().copy()

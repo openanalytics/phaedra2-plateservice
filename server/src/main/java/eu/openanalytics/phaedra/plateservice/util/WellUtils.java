@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -34,7 +34,7 @@ public class WellUtils {
 		if (w1.getRow() == w2.getRow()) return Integer.compare(w1.getColumn(), w2.getColumn());
 		return Integer.compare(w1.getRow(), w2.getRow());
 	};
-	
+
 	public static <T extends Well> Optional<T> findWell(Collection<T> wells, int row, int column) {
 		return wells.stream().filter(w -> w.getRow() == row && w.getColumn() == column).findAny();
 	}

@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -33,7 +33,7 @@ import eu.openanalytics.phaedra.plateservice.model.Experiment;
 public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
 
 	List<Experiment> findByProjectId(long projectId);
-	
+
 	@Query("delete from hca_experiment e where e.project_id = :projectId")
 	void deleteByProjectId(@Param("projectId") long projectId);
 }
