@@ -51,6 +51,8 @@ import java.util.Optional;
 
 @Service
 public class PlateService {
+	public static final String PLATE_TOPIC = "plate-topic";
+	public static final String PLATE_CALCULATION_EVENT = "plateCalculationEvent";
 	private final ModelMapper modelMapper = new ModelMapper();
 
 	private final PlateRepository plateRepository;
@@ -198,6 +200,15 @@ public class PlateService {
 		plateDTO.setLinkStatus(LinkStatus.LINKED);
 		plateDTO.setLinkedOn(new Date());
 		return updatePlate(plateDTO);
+	}
+
+	/**
+	 * Initiate plate calculation
+	 * @param plateCalculationDTO
+	 */
+	public void calculatePlate(CalculationRequestDTO plateCalculationDTO) {
+		logger.info("Initiate plate calculation for plateId " + plateCalculationDTO.getPlateId());
+		kafkaTemplate.send(PLATE_TOPIC, PLATE_CALCULATION_EVENT, plateCalculationDTO);
 	}
 
 	private void linkWithPlateTemplate(long plateId, long plateTemplateId) {
