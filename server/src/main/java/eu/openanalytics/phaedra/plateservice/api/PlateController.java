@@ -22,7 +22,7 @@ package eu.openanalytics.phaedra.plateservice.api;
 
 import java.util.List;
 
-import eu.openanalytics.phaedra.plateservice.dto.CalculationRequestDTO;
+import eu.openanalytics.phaedra.commons.dto.CalculationRequestDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
