@@ -40,7 +40,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
-@SpringBootTest
+@SpringBootTest("spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration")
 @Sql({"/jdbc/test-data.sql"})
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class PlateTemplateRepositoryTest {

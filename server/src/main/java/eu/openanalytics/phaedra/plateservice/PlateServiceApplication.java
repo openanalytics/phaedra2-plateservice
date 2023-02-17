@@ -112,10 +112,4 @@ public class PlateServiceApplication {
 	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
 		return AuthenticationConfigHelper.configure(http);
 	}
-
-	@Bean
-	public RecordFilterStrategy<String, Object> keyFilterStrategy() {
-		RecordFilterStrategy<String, Object> recordFilterStrategy = consumerRecord -> !(consumerRecord.key().equalsIgnoreCase("updatePlateCalculationStatus"));
-		return recordFilterStrategy;
-	}
 }

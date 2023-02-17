@@ -39,10 +39,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -66,12 +62,14 @@ public class PlateService {
 	private final WellTemplateService wellTemplateService;
 	private final WellSubstanceService wellSubstanceService;
 
-	private final KafkaTemplate<String, Object> kafkaTemplate;
+	private final KafkaProducerService kafkaProducerService;
+
+
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
 						ProjectAccessService projectAccessService, IAuthorizationService authService,
-						PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService, KafkaTemplate<String, Object> kafkaTemplate) {
+						PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService, KafkaProducerService kafkaProducerService) {
 
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
@@ -81,7 +79,7 @@ public class PlateService {
 		this.plateTemplateService = plateTemplateService;
 		this.wellTemplateService = wellTemplateService;
 		this.wellSubstanceService = wellSubstanceService;
-		this.kafkaTemplate = kafkaTemplate;
+		this.kafkaProducerService = kafkaProducerService;
 
 		// TODO move to dedicated ModelMapper service
 		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
@@ -124,25 +122,6 @@ public class PlateService {
 			logger.info("Plate with plateId " + p.getId() + " successfully updated!");
 		});
 		return plateDTO;
-	}
-
-	//TODO: Configure kafka consumer security
-	@KafkaListener(topics = "calculations", groupId = "plate-service", filter = "keyFilterStrategy")
-	public void onUpdatePlateCalculationStatus(PlateCalculationStatusDTO plateCalcStatusDTO, @Header(KafkaHeaders.RECEIVED_MESSAGE_KEY) String msgKey) {
-		if (msgKey.equals("updatePlateCalculationStatus")) {
-			Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
-			if (result.isPresent()) {
-				logger.info("Set plate calculation status to " + plateCalcStatusDTO.getCalculationStatus().name() + " for plateId " + plateCalcStatusDTO.getPlateId());
-				Plate plate =  result.get();
-				plate.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
-				if (plateCalcStatusDTO.getDetails() != null)
-					plate.setCalculationError(plateCalcStatusDTO.getDetails());
-				plate.setCalculatedOn(new Date());
-				plateRepository.save(plate);
-			} else {
-				logger.error("No plate found with plateId  " + plateCalcStatusDTO.getPlateId());
-			}
-		}
 	}
 
 	public void deletePlate(long plateId) {
@@ -209,7 +188,7 @@ public class PlateService {
 	 */
 	public void calculatePlate(CalculationRequestDTO plateCalculationDTO) {
 		logger.info("Initiate plate calculation for plateId " + plateCalculationDTO.getPlateId());
-		kafkaTemplate.send(PLATE_TOPIC, PLATE_CALCULATION_EVENT, plateCalculationDTO);
+		kafkaProducerService.initiateCalculation(plateCalculationDTO);
 	}
 
 	private void linkWithPlateTemplate(long plateId, long plateTemplateId) {
