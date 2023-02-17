@@ -47,19 +47,17 @@ public class KafkaConsumerService {
     @KafkaListener(topics = KafkaConfig.PLATE_TOPIC, groupId = "plate-service", filter = "keyFilterStrategy")
     public void onUpdatePlateCalculationStatus(PlateCalculationStatusDTO plateCalcStatusDTO, @Header(KafkaHeaders.RECEIVED_KEY) String msgKey) {
         logger.info("plate-service: receiving message on event " + msgKey);
-        if (msgKey.equals(KafkaConfig.PLATE_CALCULATION_EVENT)) {
-            Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
-            if (result.isPresent()) {
-                logger.info("Set plate calculation status to " + plateCalcStatusDTO.getCalculationStatus().name() + " for plateId " + plateCalcStatusDTO.getPlateId());
-                Plate plate =  result.get();
-                plate.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
-                if (plateCalcStatusDTO.getDetails() != null)
-                    plate.setCalculationError(plateCalcStatusDTO.getDetails());
-                plate.setCalculatedOn(new Date());
-                plateRepository.save(plate);
-            } else {
-                logger.error("No plate found with plateId  " + plateCalcStatusDTO.getPlateId());
-            }
+        Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
+        if (result.isPresent()) {
+            logger.info("Set plate calculation status to " + plateCalcStatusDTO.getCalculationStatus().name() + " for plateId " + plateCalcStatusDTO.getPlateId());
+            Plate plate = result.get();
+            plate.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
+            if (plateCalcStatusDTO.getDetails() != null)
+                plate.setCalculationError(plateCalcStatusDTO.getDetails());
+            plate.setCalculatedOn(new Date());
+            plateRepository.save(plate);
+        } else {
+            logger.error("No plate found with plateId  " + plateCalcStatusDTO.getPlateId());
         }
     }
 }
