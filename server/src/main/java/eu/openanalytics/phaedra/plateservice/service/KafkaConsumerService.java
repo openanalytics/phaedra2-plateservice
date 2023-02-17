@@ -36,13 +36,18 @@ import java.util.Date;
 import java.util.Optional;
 @Service
 public class KafkaConsumerService {
-    @Autowired
-    private PlateRepository plateRepository;
+    private final PlateRepository plateRepository;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    public KafkaConsumerService(PlateRepository plateRepository) {
+        this.plateRepository = plateRepository;
+    }
+
     //TODO: Configure kafka consumer security
     @KafkaListener(topics = KafkaConfig.PLATE_TOPIC, groupId = "plate-service", filter = "keyFilterStrategy")
     public void onUpdatePlateCalculationStatus(PlateCalculationStatusDTO plateCalcStatusDTO, @Header(KafkaHeaders.RECEIVED_KEY) String msgKey) {
+        logger.info("plaste-service: receiving message on event " + msgKey);
         if (msgKey.equals(KafkaConfig.PLATE_CALCULATION_EVENT)) {
             Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
             if (result.isPresent()) {
