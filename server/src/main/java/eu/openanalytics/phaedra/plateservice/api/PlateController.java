@@ -22,7 +22,6 @@ package eu.openanalytics.phaedra.plateservice.api;
 
 import java.util.List;
 
-import eu.openanalytics.phaedra.commons.dto.CalculationRequestDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -140,11 +139,5 @@ public class PlateController {
     public ResponseEntity<PlateDTO> linkPlate(@PathVariable long plateId, @PathVariable long plateTemplateId) {
         PlateDTO plateDTO = plateService.linkPlate(plateId,plateTemplateId);
         return new ResponseEntity<>(plateDTO, HttpStatus.OK);
-    }
-
-    @PutMapping(value ="/plate/{plateId}/calculate")
-    public ResponseEntity calculatePlate(@PathVariable long plateId, @RequestBody CalculationRequestDTO plateCalculationDTO) {
-        plateService.calculatePlate(plateCalculationDTO);
-        return new ResponseEntity(HttpStatus.OK);
     }
 }

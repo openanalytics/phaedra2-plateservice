@@ -20,14 +20,10 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.commons.dto.CalculationRequestDTO;
-import eu.openanalytics.phaedra.plateservice.dto.*;
-import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
-import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -42,9 +38,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class PlateService {
@@ -62,14 +67,11 @@ public class PlateService {
 	private final WellTemplateService wellTemplateService;
 	private final WellSubstanceService wellSubstanceService;
 
-	private final KafkaProducerService kafkaProducerService;
-
-
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
 						ProjectAccessService projectAccessService, IAuthorizationService authService,
-						PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService, KafkaProducerService kafkaProducerService) {
+						PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService) {
 
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
@@ -79,7 +81,6 @@ public class PlateService {
 		this.plateTemplateService = plateTemplateService;
 		this.wellTemplateService = wellTemplateService;
 		this.wellSubstanceService = wellSubstanceService;
-		this.kafkaProducerService = kafkaProducerService;
 
 		// TODO move to dedicated ModelMapper service
 		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
@@ -180,15 +181,6 @@ public class PlateService {
 		plateDTO.setLinkStatus(LinkStatus.LINKED);
 		plateDTO.setLinkedOn(new Date());
 		return updatePlate(plateDTO);
-	}
-
-	/**
-	 * Initiate plate calculation
-	 * @param plateCalculationDTO
-	 */
-	public void calculatePlate(CalculationRequestDTO plateCalculationDTO) {
-		logger.info("Initiate plate calculation for plateId " + plateCalculationDTO.getPlateId());
-		kafkaProducerService.initiateCalculation(plateCalculationDTO);
 	}
 
 	private void linkWithPlateTemplate(long plateId, long plateTemplateId) {
