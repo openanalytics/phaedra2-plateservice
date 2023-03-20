@@ -20,63 +20,66 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
-import eu.openanalytics.phaedra.plateservice.service.WellTemplateService;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import org.apache.commons.collections4.CollectionUtils;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
 
 @RestController
+@RequestMapping("/platetemplates")
 public class PlateTemplateController {
 
     private final PlateTemplateService plateTemplateService;
-    private final WellTemplateService wellTemplateService;
 
-    public PlateTemplateController(PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService) {
+    public PlateTemplateController(PlateTemplateService plateTemplateService) {
         this.plateTemplateService = plateTemplateService;
-        this.wellTemplateService = wellTemplateService;
     }
 
-    @PostMapping(value = "/plate-template", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<PlateTemplateDTO> createPlateTemplate(@RequestBody PlateTemplateDTO plateTemplateDTO) {
         PlateTemplateDTO result = plateTemplateService.createPlateTemplate(plateTemplateDTO);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/plate-template", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updatePlate(@RequestBody PlateTemplateDTO plateTemplateDTO) {
+    @PutMapping(value = "/{plateTemplateId}")
+    public ResponseEntity<Void> updatePlate(@PathVariable long plateTemplateId, @RequestBody PlateTemplateDTO plateTemplateDTO) {
+    	plateTemplateDTO.setId(plateTemplateId);
         plateTemplateService.updatePlateTemplate(plateTemplateDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/plate-template/{plateTemplateId}")
+    @DeleteMapping(value = "/{plateTemplateId}")
     public ResponseEntity<Void> deletePlate(@PathVariable long plateTemplateId) {
         plateTemplateService.deletePlateTemplate(plateTemplateId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-    @GetMapping(value = "/plate-template/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlateTemplateDTO> getPlateTemplate(@PathVariable long plateTemplateId) {
         PlateTemplateDTO response = plateTemplateService.getPlateTemplateById(plateTemplateId);
-        if (response != null)
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        if (response == null) {
+        	return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } else {
+        	return new ResponseEntity<>(response, HttpStatus.OK);
+        }
     }
 
-    @GetMapping(value = "/plate-templates", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public ResponseEntity<List<PlateTemplateDTO>> getPlateTemplates() {
         List<PlateTemplateDTO> result = plateTemplateService.getAllPlateTemplates();
-        if (CollectionUtils.isNotEmpty(result))
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }

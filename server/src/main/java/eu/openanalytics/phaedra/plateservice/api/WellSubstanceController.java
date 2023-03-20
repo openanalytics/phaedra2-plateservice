@@ -20,10 +20,8 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import eu.openanalytics.phaedra.plateservice.service.WellSubstanceService;
-import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
-import org.apache.commons.collections4.CollectionUtils;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,14 +30,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.Max;
-import java.util.List;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.service.WellSubstanceService;
 
-//@CrossOrigin(origins = "http://localhost:3131", maxAge = 3600)
 @RestController
+@RequestMapping("/wellsubstances")
 public class WellSubstanceController {
 
     private WellSubstanceService wellSubstanceService;
@@ -48,82 +48,69 @@ public class WellSubstanceController {
         this.wellSubstanceService = wellSubstanceService;
     }
 
-    @PostMapping("/well-substance")
+    @PostMapping
     public ResponseEntity<WellSubstanceDTO> createWellSubstance(@RequestBody WellSubstanceDTO wellSubstanceDTO) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @PutMapping("/well-substance")
-    public ResponseEntity<WellSubstanceDTO> updateWellSubstance(@RequestBody WellSubstanceDTO wellSubstanceDTO) {
+    @PutMapping("/{wellSubstanceId}")
+    public ResponseEntity<WellSubstanceDTO> updateWellSubstance(@PathVariable long wellSubstanceId, @RequestBody WellSubstanceDTO wellSubstanceDTO) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @DeleteMapping("/well-substance/id")
-    public ResponseEntity<WellSubstanceDTO> deleteWellSubstance(@PathVariable long id) {
+    @DeleteMapping("/{wellSubstanceId}")
+    public ResponseEntity<WellSubstanceDTO> deleteWellSubstance(@PathVariable long wellSubstanceId) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping("/well-substance")
+    @GetMapping
     public ResponseEntity<List<WellSubstanceDTO>> getWellSubstances() {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping(value = "/well-substance", params = {"wellId"})
+    @GetMapping(params = {"wellId"})
     public ResponseEntity<WellSubstanceDTO> getWellSubstance(@RequestParam(required = false) long wellId) {
         WellSubstanceDTO result = wellSubstanceService.getWellSubstanceByWellId(wellId);
-        if (result != null)
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if (result == null) {
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else {
+        	return new ResponseEntity<>(result, HttpStatus.OK);
+        }
     }
 
-    @GetMapping(value = "/well-substance", params = {"plateId"})
+    @GetMapping(params = {"plateId"})
     public ResponseEntity<List<WellSubstanceDTO>> getWellSubstances(@RequestParam(required = false) long plateId) {
         List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstancesByPlateId(plateId);
-        if (CollectionUtils.isNotEmpty(results))
-            return new ResponseEntity<>(results, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/well-substance", params = {"plateId", "substanceName"})
+    @GetMapping(params = {"plateId", "substanceName"})
     public ResponseEntity<List<WellSubstanceDTO>> getWellSubstances(@RequestParam(required = false) long plateId,
                                                                     @RequestParam(required = false) String substanceName) {
         List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstancesByPlateIdAndName(plateId, substanceName);
-        if (CollectionUtils.isNotEmpty(results))
-            return new ResponseEntity<>(results, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/well-substance", params = {"plateId", "substanceType"})
+    @GetMapping(params = {"plateId", "substanceType"})
     public ResponseEntity<List<WellSubstanceDTO>> getWellSubstances(@RequestParam(required = false) long plateId,
                                                                     @RequestParam(required = false) SubstanceType substanceType) {
         List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstancesByPlateIdAndType(plateId, substanceType);
-        if (CollectionUtils.isNotEmpty(results))
-            return new ResponseEntity<>(results, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/well-substance", params = {"plateId", "substanceType", "substanceName"})
+    @GetMapping(params = {"plateId", "substanceType", "substanceName"})
     public ResponseEntity<List<WellSubstanceDTO>> getWellSubstances(@RequestParam(required = false) long plateId,
                                                                     @RequestParam(required = false) String substanceName,
                                                                     @RequestParam(required = false) SubstanceType substanceType) {
         List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstancesByPlateIdAndNameAndType(plateId, substanceName, substanceType);
-        if (CollectionUtils.isNotEmpty(results))
-            return new ResponseEntity<>(results, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(results, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/well-substance", params = {"plateId", "wellTypes"})
+    @GetMapping(params = {"plateId", "wellTypes"})
     public ResponseEntity<List<WellSubstanceDTO>> getWellSubstances(@RequestParam(required = false) Long plateId,
                                                                     @RequestParam(required = false) List<String> wellTypes) {
         List<WellSubstanceDTO> results = wellSubstanceService.getWellSubstanceByPlateIdAndWellTypes(plateId, wellTypes);
-        if (CollectionUtils.isNotEmpty(results))
-            return new ResponseEntity<>(results, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(results, HttpStatus.OK);
     }
 }

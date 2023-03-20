@@ -36,8 +36,7 @@ public class UrlFactory {
     }
 
     public static String wellSubstances(Long plateId) {
-//        https://phaedra.poc.openanalytics.io/phaedra/api/v1/plate-service/well-substance?plateId=184
-        return String.format("%s/well-substance?plateId=%s", PLATE_SERVICE, plateId);
+        return String.format("%s/wellsubstances?plateId=%s", PLATE_SERVICE, plateId);
     }
 
     public static String plateMeasurements(Long plateId) {
