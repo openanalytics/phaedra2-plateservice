@@ -48,7 +48,7 @@ public class KafkaConsumerService {
         this.plateRepository = plateRepository;
     }
 
-    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID, filter = "keyFilterStrategy")
+    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID)
     public void onUpdatePlateCalculationStatus(PlateCalculationStatusDTO plateCalcStatusDTO, @Header(KafkaHeaders.RECEIVED_KEY) String msgKey) {
     	if (!EVENT_UPDATE_PLATE_STATUS.equals(msgKey)) return;
     	
