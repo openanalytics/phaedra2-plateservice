@@ -25,7 +25,3 @@ logging:
   file:
     name: /var/log/plateservice.log
 
-eureka:
-  client:
-    enabled: true
-
