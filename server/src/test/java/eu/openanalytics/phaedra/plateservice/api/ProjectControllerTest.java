@@ -157,7 +157,7 @@ public class ProjectControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(get("/projects"))
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andReturn();
         List<ProjectDTO> projectDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         assertThat(projectDTO).isEmpty();

@@ -173,7 +173,7 @@ public class PlateControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(get("/plates/").param("experimentId", experimentId.toString()))
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andReturn();
 
         List<Plate> plates2 = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
@@ -200,7 +200,7 @@ public class PlateControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(get("/plates").param("barcode", barcode))
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andReturn();
 
         List<PlateDTO> plateDTOs = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);

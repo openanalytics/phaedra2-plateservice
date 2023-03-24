@@ -168,7 +168,7 @@ public class PlateTemplateControllerTest {
     @Test
     public void plateTemplateGetMultipleFoundTest() throws Exception{
         //Check size of list
-        MvcResult mvcResult = this.mockMvc.perform(get("/platetemplatess"))
+        MvcResult mvcResult = this.mockMvc.perform(get("/platetemplates"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -189,7 +189,7 @@ public class PlateTemplateControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        MvcResult mvcResult2 = this.mockMvc.perform(get("/platetemplatess"))
+        MvcResult mvcResult2 = this.mockMvc.perform(get("/platetemplates"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -201,7 +201,7 @@ public class PlateTemplateControllerTest {
     @Test
     public void plateTemplateGetMultipleNotFoundTest() throws Exception{
         //Check size of list
-        MvcResult mvcResult = this.mockMvc.perform(get("/platetemplatess"))
+        MvcResult mvcResult = this.mockMvc.perform(get("/platetemplates"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -216,7 +216,7 @@ public class PlateTemplateControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        MvcResult mvcResult2 = this.mockMvc.perform(get("/platetemplatess"))
+        MvcResult mvcResult2 = this.mockMvc.perform(get("/platetemplates"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
