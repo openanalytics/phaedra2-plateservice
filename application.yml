@@ -1,3 +1,0 @@
-DB_URL: jdbc:postgresql://localhost:5432/phaedra2?currentSchema=plates
-DB_USER: phaedra2
-DB_PASSWORD: phaedra2
