@@ -71,7 +71,7 @@ public class ProjectControllerTest {
         project.setName("Test");
 
         String requestBody = objectMapper.writeValueAsString(project);
-        MvcResult mvcResult = this.mockMvc.perform(post("/project").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/projects").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -85,7 +85,7 @@ public class ProjectControllerTest {
     @Test
     public void projectPutTest() throws Exception {
         Long projectId = 1000L;
-        MvcResult mvcResult = this.mockMvc.perform(get("/project/{projectId}", projectId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/projects/{projectId}", projectId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -97,11 +97,11 @@ public class ProjectControllerTest {
         projectDTO.setName("changed");
 
         String requestBody = objectMapper.writeValueAsString(projectDTO);
-        this.mockMvc.perform(put("/project").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        this.mockMvc.perform(put("/projects/{projectId}", projectId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        mvcResult = this.mockMvc.perform(get("/project/{projectId}", projectDTO.getId()))
+        mvcResult = this.mockMvc.perform(get("/projects/{projectId}", projectDTO.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -112,11 +112,11 @@ public class ProjectControllerTest {
     @Test
     public void projectDeleteAndGetNotFoundTest() throws Exception {
         Long projectId = 1000L;
-        this.mockMvc.perform(delete("/project/{projectId}", projectId))
+        this.mockMvc.perform(delete("/projects/{projectId}", projectId))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/project/{projectId}", projectId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/projects/{projectId}", projectId))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -126,7 +126,7 @@ public class ProjectControllerTest {
     @Test
     public void projectGetOneFoundTest() throws Exception {
         Long projectId = 1000L;
-        MvcResult mvcResult = this.mockMvc.perform(get("/project/{projectId}", projectId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/projects/{projectId}", projectId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -151,7 +151,7 @@ public class ProjectControllerTest {
     public void projectsGetNoneFound() throws Exception {
         //Delete only project
         Long projectId = 1000L;
-        this.mockMvc.perform(delete("/project/{projectId}", projectId))
+        this.mockMvc.perform(delete("/projects/{projectId}", projectId))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -166,7 +166,7 @@ public class ProjectControllerTest {
     @Test
     public void projectGetExperiments() throws Exception {
         Long projectId = 1000L;
-        MvcResult mvcResult = this.mockMvc.perform(get("/project/{projectId}/experiments",projectId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/projects/{projectId}/experiments",projectId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -178,7 +178,7 @@ public class ProjectControllerTest {
     @Test
     public void projectGetExperimentSummaries() throws Exception {
         Long projectId = 1000L;
-        MvcResult mvcResult = this.mockMvc.perform(get("/project/{projectId}/experimentsummaries",projectId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/projects/{projectId}/experimentsummaries",projectId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();

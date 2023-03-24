@@ -75,7 +75,7 @@ public class ExperimentControllerTest {
         experiment.setProjectId(1000L);
 
         String requestBody = objectMapper.writeValueAsString(experiment);
-        MvcResult mvcResult = this.mockMvc.perform(post("/experiment").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/experiments").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -90,7 +90,7 @@ public class ExperimentControllerTest {
     @Test
     public void experimentPutTest() throws Exception {
         Long experimentId = 1000L;
-        MvcResult mvcResult = this.mockMvc.perform(get("/experiment/{experimentId}", experimentId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/experiments/{experimentId}", experimentId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -102,11 +102,11 @@ public class ExperimentControllerTest {
         experimentDTO.setName("changed");
 
         String requestBody = objectMapper.writeValueAsString(experimentDTO);
-        this.mockMvc.perform(put("/experiment").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        this.mockMvc.perform(put("/experiments/{experimentId}", experimentId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        mvcResult = this.mockMvc.perform(get("/experiment/{experimentId}", experimentDTO.getId()))
+        mvcResult = this.mockMvc.perform(get("/experiments/{experimentId}", experimentDTO.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -117,11 +117,11 @@ public class ExperimentControllerTest {
     @Test
     public void projectDeleteAndGetNotFoundTest() throws Exception {
         Long experimentId = 1000L;
-        this.mockMvc.perform(delete("/experiment/{experimentId}", experimentId))
+        this.mockMvc.perform(delete("/experiments/{experimentId}", experimentId))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/experiment/{experimentId}", experimentId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/experiments/{experimentId}", experimentId))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -131,7 +131,7 @@ public class ExperimentControllerTest {
     @Test
     public void experimentGetOneFoundTest() throws Exception {
         Long experimentId = 1000L;
-        MvcResult mvcResult = this.mockMvc.perform(get("/experiment/{experimentId}", experimentId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/experiments/{experimentId}", experimentId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -143,7 +143,7 @@ public class ExperimentControllerTest {
 
     @Test
     public void experimentsGetOneFound() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(get("/experiment"))
+        MvcResult mvcResult = this.mockMvc.perform(get("/experiments"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -156,11 +156,11 @@ public class ExperimentControllerTest {
     public void experimentsGetNoneFound() throws Exception {
         //Delete only project
         Long experimentId = 1000L;
-        this.mockMvc.perform(delete("/experiment/{experimentId}", experimentId))
+        this.mockMvc.perform(delete("/experiments/{experimentId}", experimentId))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/experiment"))
+        MvcResult mvcResult = this.mockMvc.perform(get("/experiments"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();

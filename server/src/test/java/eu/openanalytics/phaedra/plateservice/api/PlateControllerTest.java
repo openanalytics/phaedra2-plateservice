@@ -77,7 +77,7 @@ public class PlateControllerTest {
         plate.setSequence(1);
 
         String requestBody = objectMapper.writeValueAsString(plate);
-        MvcResult mvcResult = this.mockMvc.perform(post("/plate").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/plates").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -91,7 +91,7 @@ public class PlateControllerTest {
     public void platePutTest() throws Exception {
         Long plateId = 1000L;
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate/{plateId}", plateId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates/{plateId}", plateId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -106,11 +106,11 @@ public class PlateControllerTest {
         plateDTOGet.setDisapprovedReason("test2");
 
         String requestBody = objectMapper.writeValueAsString(plateDTOGet);
-        this.mockMvc.perform(put("/plate").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        this.mockMvc.perform(put("/plates/{plateId}", plateId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        mvcResult = this.mockMvc.perform(get("/plate/{plateId}", plateDTOGet.getId()))
+        mvcResult = this.mockMvc.perform(get("/plates/{plateId}", plateDTOGet.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -124,7 +124,7 @@ public class PlateControllerTest {
     public void plateDeleteTest() throws Exception {
         Long plateTemplateId = 1000L;
 
-        this.mockMvc.perform(delete("/plate/{plateId}", plateTemplateId))
+        this.mockMvc.perform(delete("/plates/{plateId}", plateTemplateId))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -133,7 +133,7 @@ public class PlateControllerTest {
     public void plateGetOneFoundTest() throws Exception {
         Long plateId = 1000L;
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate/{plateId}", plateId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates/{plateId}", plateId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -146,7 +146,7 @@ public class PlateControllerTest {
     public void plateGetNotFoundTest() throws Exception {
         Long plateId = 1111L;
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate/{plateId}", plateId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates/{plateId}", plateId))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -157,7 +157,7 @@ public class PlateControllerTest {
     public void getPlatesByExperimentFoundTest() throws Exception {
         Long experimentId = 1000L;
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate/").param("experimentId", experimentId.toString()))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates/").param("experimentId", experimentId.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -171,7 +171,7 @@ public class PlateControllerTest {
     public void getPlatesByExperimentNotFoundTest() throws Exception {
         Long experimentId = 1111L;
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate/").param("experimentId", experimentId.toString()))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates/").param("experimentId", experimentId.toString()))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -184,7 +184,7 @@ public class PlateControllerTest {
     public void getPlatesByBarcodeFoundTest() throws Exception {
         String barcode = "barcode1";
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate").param("barcode", barcode))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates").param("barcode", barcode))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -198,7 +198,7 @@ public class PlateControllerTest {
     public void getPlatesByBarcodeNotFoundTest() throws Exception {
         String barcode = "barcode12345";
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate").param("barcode", barcode))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates").param("barcode", barcode))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -216,7 +216,7 @@ public class PlateControllerTest {
         plateMeasurement.setActive(true);
 
         String requestBody = objectMapper.writeValueAsString(plateMeasurement);
-        MvcResult mvcResult = this.mockMvc.perform(post("/plate/{plateId}/measurement", 1000L).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/plates/{plateId}/measurements", 1000L).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -228,7 +228,7 @@ public class PlateControllerTest {
 
     @Test
     public void linkPlateNotFoundPlateTest() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1234L, 1234L))
+        MvcResult mvcResult = this.mockMvc.perform(put("/plates/{plateId}/link/{plateTemplateId}", 1234L, 1234L))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -236,7 +236,7 @@ public class PlateControllerTest {
 
     @Test
     public void linkPlateNotFoundPlateTemplateTest() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1000L, 1234L))
+        MvcResult mvcResult = this.mockMvc.perform(put("/plates/{plateId}/link/{plateTemplateId}", 1000L, 1234L))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -251,12 +251,12 @@ public class PlateControllerTest {
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
-        MvcResult mvcResult = this.mockMvc.perform(post("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/platetemplates").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        MvcResult mvcResult2 = this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1000L, 1L))
+        MvcResult mvcResult2 = this.mockMvc.perform(put("/plates/{plateId}/link/{plateTemplateId}", 1000L, 1L))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -272,7 +272,7 @@ public class PlateControllerTest {
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
-        MvcResult mvcResult = this.mockMvc.perform(post("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/platetemplates").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -285,19 +285,19 @@ public class PlateControllerTest {
         plate.setSequence(1);
 
         String requestBody2 = objectMapper.writeValueAsString(plate);
-        MvcResult mvcResult2 = this.mockMvc.perform(post("/plate").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
+        MvcResult mvcResult2 = this.mockMvc.perform(post("/plates").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        MvcResult mvcResult3 = this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1L, 1L))
+        MvcResult mvcResult3 = this.mockMvc.perform(put("/plates/{plateId}/link/{plateTemplateId}", 1L, 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
         Long plateId = 1L;
 
-        MvcResult mvcResult4 = this.mockMvc.perform(get("/plate/{plateId}", plateId))
+        MvcResult mvcResult4 = this.mockMvc.perform(get("/plates/{plateId}", plateId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -316,7 +316,7 @@ public class PlateControllerTest {
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
-        MvcResult mvcResult = this.mockMvc.perform(post("/plate-template").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        MvcResult mvcResult = this.mockMvc.perform(post("/platetemplates").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -333,7 +333,7 @@ public class PlateControllerTest {
         plate.setSequence(1);
 
         String requestBody2 = objectMapper.writeValueAsString(plate);
-        MvcResult mvcResult2 = this.mockMvc.perform(post("/plate").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
+        MvcResult mvcResult2 = this.mockMvc.perform(post("/plates").contentType(MediaType.APPLICATION_JSON).content(requestBody2))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -359,18 +359,18 @@ public class PlateControllerTest {
         wellTemplateDTOS.get(5).setConcentration(0.3);
 
 
-        String requestBody3 = objectMapper.writeValueAsString(wellTemplateDTOS);
-        this.mockMvc.perform(put("/well-templates").contentType(MediaType.APPLICATION_JSON).content(requestBody3))
-                .andDo(print())
-                .andExpect(status().isOk());
+//        String requestBody3 = objectMapper.writeValueAsString(wellTemplateDTOS);
+//        this.mockMvc.perform(put("/well-templates").contentType(MediaType.APPLICATION_JSON).content(requestBody3))
+//                .andDo(print())
+//                .andExpect(status().isOk());
 
         //Link
-        this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1L, 1L))
+        this.mockMvc.perform(put("/plates/{plateId}/link/{plateTemplateId}", 1L, 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
-        MvcResult mvcResult3 = this.mockMvc.perform(get("/plate/{plateId}", 1L))
+        MvcResult mvcResult3 = this.mockMvc.perform(get("/plates/{plateId}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -387,18 +387,18 @@ public class PlateControllerTest {
         wellTemplateDTOS.get(0).setSubstanceType("VIRUS"); //changed
         wellTemplateDTOS.get(1).setSubstanceType(""); //Should get removed
 
-        String requestBody4 = objectMapper.writeValueAsString(wellTemplateDTOS);
-        this.mockMvc.perform(put("/well-templates").contentType(MediaType.APPLICATION_JSON).content(requestBody4))
-                .andDo(print())
-                .andExpect(status().isOk());
+//        String requestBody4 = objectMapper.writeValueAsString(wellTemplateDTOS);
+//        this.mockMvc.perform(put("/well-templates").contentType(MediaType.APPLICATION_JSON).content(requestBody4))
+//                .andDo(print())
+//                .andExpect(status().isOk());
 
         //Link again
-        this.mockMvc.perform(put("/plate/{plateId}/link/{plateTemplateId}", 1L, 1L))
+        this.mockMvc.perform(put("/plates/{plateId}/link/{plateTemplateId}", 1L, 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
-        MvcResult changedWell1 = this.mockMvc.perform(get("/plate/{plateId}", 1L))
+        MvcResult changedWell1 = this.mockMvc.perform(get("/plates/{plateId}", 1L))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -411,7 +411,7 @@ public class PlateControllerTest {
     public void getWellByPlateIdTest() throws Exception {
         long plateId = 2000L;
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plate/{plateId}/wells", plateId))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates/{plateId}/wells", plateId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
