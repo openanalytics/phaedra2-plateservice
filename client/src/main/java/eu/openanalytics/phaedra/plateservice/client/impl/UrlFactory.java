@@ -26,13 +26,13 @@ public class UrlFactory {
 
     public static String plate(Long plateId) {
         if (plateId != null)
-            return String.format("%s/plate/%s", PLATE_SERVICE, plateId);
+            return String.format("%s/plates/%s", PLATE_SERVICE, plateId);
         else
-            return String.format("%s/plate", PLATE_SERVICE);
+            return String.format("%s/plates", PLATE_SERVICE);
     }
 
     public static String wells(Long plateId) {
-        return String.format("%s/plate/%s/wells", PLATE_SERVICE, plateId);
+        return String.format("%s/plates/%s/wells", PLATE_SERVICE, plateId);
     }
 
     public static String wellSubstances(Long plateId) {
@@ -40,7 +40,7 @@ public class UrlFactory {
     }
 
     public static String plateMeasurements(Long plateId) {
-        return String.format("%s/plate/%s/measurements", PLATE_SERVICE, plateId);
+        return String.format("%s/plates/%s/measurements", PLATE_SERVICE, plateId);
     }
 
 }
