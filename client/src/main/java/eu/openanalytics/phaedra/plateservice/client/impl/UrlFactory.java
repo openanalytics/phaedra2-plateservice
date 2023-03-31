@@ -22,7 +22,7 @@ package eu.openanalytics.phaedra.plateservice.client.impl;
 
 public class UrlFactory {
 
-    private static final String PLATE_SERVICE = "http://phaedra-plate-service/phaedra/plate-service";
+    private static final String PLATE_SERVICE = "http://phaedra-plate-service:8080/phaedra/plate-service";
 
     public static String plate(Long plateId) {
         if (plateId != null)
