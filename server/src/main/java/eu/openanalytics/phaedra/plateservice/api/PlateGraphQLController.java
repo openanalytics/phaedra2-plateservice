@@ -18,7 +18,7 @@ public class PlateGraphQLController {
     }
 
     @QueryMapping
-    public List<PlateMeasurementDTO> plateMeasurements(@Argument Long plateId, @Argument Boolean active) {
+    public List<PlateMeasurementDTO> plateMeasurements(@Argument Long plateId, @Argument boolean active) {
         if (active) {
             return plateMeasurementService.getPlateMeasurements(plateId);
         } else {

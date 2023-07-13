@@ -1,5 +1,5 @@
 type Query {
-    plateMeasurements: [PlateMeasurementDTO]
+    plateMeasurements(plateId: ID, active: Boolean): [PlateMeasurementDTO]
 }
 
 type PlateMeasurementDTO {
