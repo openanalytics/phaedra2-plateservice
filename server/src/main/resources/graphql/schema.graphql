@@ -1,0 +1,20 @@
+type Query {
+    plateMeasurements: [PlateMeasurementDTO]
+}
+
+type PlateMeasurementDTO {
+    """Plate information"""
+    plateId: Int
+    barcode: String
+    rows: Int
+    columns: Int
+
+    """Linked Measurement information"""
+    measurementId: Int
+    source: String
+    active: Boolean
+    wellColumns: [String]
+    subWellColumns: [String]
+    imageChannels: [String]
+}
+
