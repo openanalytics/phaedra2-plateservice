@@ -16,7 +16,7 @@
     <name>phaedra2-plateservice</name>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>16</java.version>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
     </properties>
 
