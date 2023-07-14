@@ -1,5 +1,88 @@
-type Query {
-    plateMeasurements(plateId: ID, active: Boolean): [PlateMeasurementDTO]
+type ExperimentDTO {
+    id: ID
+    name: String
+    description: String
+    status: String
+    projectId: Int
+    multiploMethod: String
+    multiploParameter: String
+    createdOn: Int
+    createdBy: String
+    updatedOn: Int
+    updatedBy: String
+}
+
+enum LinkStatus {
+    NOT_LINKED
+    LINKED
+}
+
+enum CalculationStatus {
+    CALCULATION_NEEDED
+    CALCULATION_OK
+    CALCULATION_IN_PROGRESS
+    CALCULATION_NOT_POSSIBLE
+    CALCULATION_ERROR
+}
+
+enum ValidationStatus {
+    VALIDATION_NOT_SET
+    VALIDATION_NOT_NEEDED
+    VALIDATED
+    INVALIDATED
+}
+
+enum ApprovalStatus {
+    APPROVAL_NOT_SET
+    APPROVAL_NOT_NEEDED
+    APPROVED
+    DISAPPROVED
+}
+
+enum UploadStatus {
+    UPLOAD_NOT_SET
+    UPLOAD_NOT_NEEDED
+    UPLOADED
+}
+
+type PlateDTO {
+    id: ID
+    barcode: String
+    description: String
+    experimentId: Int
+
+    rows: Int
+    columns: Int
+    sequence: Int
+
+    linkStatus: LinkStatus
+    linkSource: String
+    linkTemplateId: String
+    linkedOn: Int
+
+    calculationStatus: CalculationStatus
+    calculationError: String
+    calculatedBy: String
+    calculatedOn: Int
+
+    validationStatus: ValidationStatus
+    validatedBy: String
+    validatedOn: Int
+    invalidatedReason: String
+
+    approvalStatus: ApprovalStatus
+    approvedBy: String
+    approvedOn: Int
+    disapprovedReason: String
+
+    uploadStatus: UploadStatus
+    uploadedBy: String
+    uploadedOn: Int
+
+    createdOn: Int
+    createdBy: String
+    updatedOn: Int
+    updatedBy: String
 }
 
 type PlateMeasurementDTO {
@@ -18,3 +101,10 @@ type PlateMeasurementDTO {
     imageChannels: [String]
 }
 
+type Query {
+    plateMeasurements(plateId: ID, active: Boolean): [PlateMeasurementDTO]
+    experiments: [ExperimentDTO]
+    experimentById(experimentId: ID): ExperimentDTO
+    plates: [PlateDTO]
+    plateById(plateId: ID): PlateDTO
+}
