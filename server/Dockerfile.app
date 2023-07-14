@@ -8,4 +8,4 @@ RUN useradd -c 'phaedra user' -m -d /home/$USER -s /bin/nologin $USER
 WORKDIR /opt/phaedra
 USER $USER
 
-CMD ["java", "-jar", "/opt/phaedra/service.jar", "--spring.jmx.enabled=false"]
+CMD ["java", "-jar", "/opt/phaedra/service.jar", "--spring.jmx.enabled=false", "--spring.graphql.graphiql.enabled=true"]
