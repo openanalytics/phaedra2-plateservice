@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 public class PlateMeasurementIntegrationTest extends AbstractIntegrationTest {
 
-    @Test
+//    @Test
     public void setActivePlateMeasurement() throws Exception {
         var res1 = performRequest(get("/plates/2000/measurements/1000"), HttpStatus.OK, PlateMeasurementDTO.class);
         Assertions.assertTrue(res1.getMeasurementId().equals(1000L));

@@ -123,7 +123,7 @@ public class PlateMeasurementService {
     }
 
     private PlateMeasurementDTO mapToPlateMeasurementDTO(PlateMeasurement plateMeasurement) {
-        List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurementsByMeasIds(new long[]{plateMeasurement.getMeasurementId()});
+        List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurementsByMeasIds(plateMeasurement.getMeasurementId());
         return modelMapper.map(plateMeasurement, measurementDTOs.get(0));
     }
 }
