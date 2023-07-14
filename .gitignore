@@ -40,3 +40,4 @@ target/
 
 .DS_Store
 /dto/phaedra2-plateservice-dto.iml
+/server/src/main/resources/db/changelog/liquibase.properties
