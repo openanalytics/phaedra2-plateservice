@@ -105,6 +105,6 @@ type Query {
     plateMeasurements(plateId: ID, active: Boolean): [PlateMeasurementDTO]
     experiments: [ExperimentDTO]
     experimentById(experimentId: ID): ExperimentDTO
-    plates: [PlateDTO]
+    plates(experimentId: ID): [PlateDTO]
     plateById(plateId: ID): PlateDTO
 }
