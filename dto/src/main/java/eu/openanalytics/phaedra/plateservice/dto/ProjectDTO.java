@@ -38,5 +38,6 @@ public class ProjectDTO {
     private Date updatedOn = new Date();
     private String updatedBy;
 
+    private List<String> tags;
     private List<ExperimentDTO> experiments;
 }

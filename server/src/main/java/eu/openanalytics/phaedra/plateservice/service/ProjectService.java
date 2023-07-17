@@ -20,20 +20,22 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.model.Project;
+import eu.openanalytics.phaedra.plateservice.repository.ProjectRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import eu.openanalytics.phaedra.plateservice.model.Project;
-import eu.openanalytics.phaedra.plateservice.repository.ProjectRepository;
-import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -45,13 +47,17 @@ public class ProjectService {
 	private final ProjectAccessService projectAccessService;
 	private final IAuthorizationService authService;
 
+	private final MetadataServiceClient metadataServiceClient;
+
+
 	public ProjectService(ProjectRepository projectRepository, ExperimentService experimentService,
-			ProjectAccessService projectAccessService, IAuthorizationService authService) {
+						  ProjectAccessService projectAccessService, IAuthorizationService authService, MetadataServiceClient metadataServiceClient) {
 
 		this.projectRepository = projectRepository;
 		this.experimentService = experimentService;
 		this.projectAccessService = projectAccessService;
 		this.authService = authService;
+		this.metadataServiceClient = metadataServiceClient;
 	}
 
 	public ProjectDTO createProject(ProjectDTO projectDTO) {

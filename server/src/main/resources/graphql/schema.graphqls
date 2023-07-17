@@ -9,6 +9,7 @@ type ProjectDTO {
     updatedOn: Date
     updatedBy: String
 
+    tags: [String]
     experiments: [ExperimentDTO]
 }
 

@@ -22,6 +22,7 @@ package eu.openanalytics.phaedra.plateservice;
 
 import javax.sql.DataSource;
 
+import eu.openanalytics.phaedra.metadataservice.client.config.MetadataServiceClientAutoConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -53,9 +54,10 @@ import io.swagger.v3.oas.models.servers.Server;
 @EnableWebSecurity
 @SpringBootApplication
 @EnableKafka
-@Import({MeasurementServiceClientAutoConfiguration.class})
+@Import({MeasurementServiceClientAutoConfiguration.class,
+		MetadataServiceClientAutoConfiguration.class,})
 public class PlateServiceApplication {
-	
+
 	private final Environment environment;
 
 	public PlateServiceApplication(Environment environment) {
