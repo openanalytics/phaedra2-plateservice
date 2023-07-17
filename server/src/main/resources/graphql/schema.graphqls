@@ -1,3 +1,5 @@
+scalar Date
+
 type ExperimentDTO {
     id: ID
     name: String
@@ -6,9 +8,9 @@ type ExperimentDTO {
     projectId: Int
     multiploMethod: String
     multiploParameter: String
-    createdOn: Int
+    createdOn: Date
     createdBy: String
-    updatedOn: Int
+    updatedOn: Date
     updatedBy: String
 }
 
@@ -58,30 +60,30 @@ type PlateDTO {
     linkStatus: LinkStatus
     linkSource: String
     linkTemplateId: String
-    linkedOn: Int
+    linkedOn: Date
 
     calculationStatus: CalculationStatus
     calculationError: String
     calculatedBy: String
-    calculatedOn: Int
+    calculatedOn: Date
 
     validationStatus: ValidationStatus
     validatedBy: String
-    validatedOn: Int
+    validatedOn: Date
     invalidatedReason: String
 
     approvalStatus: ApprovalStatus
     approvedBy: String
-    approvedOn: Int
+    approvedOn: Date
     disapprovedReason: String
 
     uploadStatus: UploadStatus
     uploadedBy: String
-    uploadedOn: Int
+    uploadedOn: Date
 
-    createdOn: Int
+    createdOn: Date
     createdBy: String
-    updatedOn: Int
+    updatedOn: Date
     updatedBy: String
 }
 
