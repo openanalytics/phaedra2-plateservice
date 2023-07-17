@@ -18,15 +18,19 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.plateservice.scalars;
+package eu.openanalytics.phaedra.plateservice.config;
 
-import graphql.schema.GraphQLScalarType;
+import eu.openanalytics.phaedra.plateservice.scalars.Scalars;
+import graphql.schema.idl.RuntimeWiring;
+import org.springframework.graphql.execution.RuntimeWiringConfigurer;
+import org.springframework.stereotype.Component;
 
-public class Scalars {
-    public static GraphQLScalarType dateType() {
-        return GraphQLScalarType.newScalar()
-                .name("Date")
-                .description("Java util Date as scalar.")
-                .coercing(new DateScalar()).build();
+@Component
+public class PostsRuntimeWiring implements RuntimeWiringConfigurer {
+    @Override
+    public void configure(RuntimeWiring.Builder builder) {
+        builder
+                .scalar(Scalars.dateType())
+                .build();
     }
 }
