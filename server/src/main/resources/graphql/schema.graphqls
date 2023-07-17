@@ -1,5 +1,17 @@
 scalar Date
 
+type ProjectDTO {
+    id: ID
+    name: String
+    description: String
+    createdOn: Date
+    createdBy: String
+    updatedOn: Date
+    updatedBy: String
+
+    experiments: [ExperimentDTO]
+}
+
 type ExperimentDTO {
     id: ID
     name: String
@@ -109,4 +121,7 @@ type Query {
     experimentById(experimentId: ID): ExperimentDTO
     plates(experimentId: ID): [PlateDTO]
     plateById(plateId: ID): PlateDTO
+    getProjects: [ProjectDTO]
+    getProjectsById(projectId: ID): ProjectDTO
+    getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
 }

@@ -21,9 +21,10 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
-import eu.openanalytics.phaedra.plateservice.service.PlateService;
+import eu.openanalytics.phaedra.plateservice.service.ProjectService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
@@ -35,33 +36,37 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-public class ExperimentGraphQLController {
+public class ProjectGraphQLController {
 
+	private final ProjectService projectService;
 	private final ExperimentService experimentService;
-	private final PlateService plateService;
 
-	public ExperimentGraphQLController(ExperimentService experimentService, PlateService plateService) {
+	public ProjectGraphQLController(ProjectService projectService, ExperimentService experimentService) {
+		this.projectService = projectService;
 		this.experimentService = experimentService;
-		this.plateService = plateService;
 	}
 
 	@QueryMapping
-	public List<ExperimentDTO> experiments() {
-		return experimentService.getAllExperiments();
+	public List<ProjectDTO> getProjects() {
+		return projectService.getAllProjects();
+	}
+
+
+	@QueryMapping
+	public ProjectDTO getProjectById(@Argument long projectId) {
+		ProjectDTO result = projectService.getProjectById(projectId);
+		result.setExperiments(experimentService.getExperimentByProjectId(projectId));
+		return result;
 	}
 
 	@QueryMapping
-	public ExperimentDTO experimentById(@Argument long experimentId) {
-		return experimentService.getExperimentById(experimentId);
+	public List<ExperimentDTO> getExperimentsByProjectId(@Argument long projectId) {
+		return experimentService.getExperimentByProjectId(projectId);
 	}
 
 	@QueryMapping
-	public List<PlateDTO> plates(@Argument long experimentId) {
-		return plateService.getPlatesByExperimentId(experimentId);
+	public List<ExperimentSummaryDTO> getExperimentSummaries(@PathVariable long projectId) {
+		return experimentService.getExperimentSummariesByProjectId(projectId);
 	}
 
-	@QueryMapping
-	public PlateDTO plateById(@Argument long plateId) {
-		return plateService.getPlateById(plateId);
-	}
 }
