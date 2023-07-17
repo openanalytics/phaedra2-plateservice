@@ -55,7 +55,8 @@ public class ProjectGraphQLController {
 	@QueryMapping
 	public ProjectDTO getProjectById(@Argument long projectId) {
 		ProjectDTO result = projectService.getProjectById(projectId);
-		result.setExperiments(experimentService.getExperimentByProjectId(projectId));
+		if (result != null)
+			result.setExperiments(experimentService.getExperimentByProjectId(projectId));
 		return result;
 	}
 

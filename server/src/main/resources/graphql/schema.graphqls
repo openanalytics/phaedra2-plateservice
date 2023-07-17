@@ -122,6 +122,6 @@ type Query {
     plates(experimentId: ID): [PlateDTO]
     plateById(plateId: ID): PlateDTO
     getProjects: [ProjectDTO]
-    getProjectsById(projectId: ID): ProjectDTO
+    getProjectById(projectId: ID): ProjectDTO
     getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
 }
