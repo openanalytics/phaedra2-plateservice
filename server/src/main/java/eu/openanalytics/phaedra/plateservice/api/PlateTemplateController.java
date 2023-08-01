@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
@@ -76,10 +77,15 @@ public class PlateTemplateController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<PlateTemplateDTO>> getPlateTemplates() {
-        List<PlateTemplateDTO> result = plateTemplateService.getAllPlateTemplates();
+    @GetMapping(params = {"name"})
+    public ResponseEntity<List<PlateTemplateDTO>> getPlateTemplatesByName(@RequestParam(required = false) String name) {
+        List<PlateTemplateDTO> result = plateTemplateService.getPlateTemplatesByName(name);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<List<PlateTemplateDTO>> getPlateTemplates() {
+    	List<PlateTemplateDTO> result = plateTemplateService.getAllPlateTemplates();
+    	return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

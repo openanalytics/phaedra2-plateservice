@@ -50,4 +50,8 @@ public class UrlFactory {
     public static String platesByBarcode(String barcode) {
     	return String.format("%s/plates?barcode=%s", PLATE_SERVICE, barcode);
     }
+    
+    public static String plateTemplatesByName(String name) {
+    	return String.format("%s/platetemplates?name=%s", PLATE_SERVICE, name);
+    }
 }

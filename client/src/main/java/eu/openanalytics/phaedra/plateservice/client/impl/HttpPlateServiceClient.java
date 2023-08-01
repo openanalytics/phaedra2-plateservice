@@ -36,6 +36,7 @@ import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableE
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
@@ -145,6 +146,12 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     @Override
     public List<PlateDTO> getPlatesByBarcode(String barcode) {
     	var response = restTemplate.exchange(UrlFactory.platesByBarcode(barcode), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateDTO[].class);
+    	return Arrays.stream(response.getBody()).toList();
+    }
+    
+    @Override
+    public List<PlateTemplateDTO> getPlateTemplatesByName(String name) {
+    	var response = restTemplate.exchange(UrlFactory.plateTemplatesByName(name), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateTemplateDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
     }
     

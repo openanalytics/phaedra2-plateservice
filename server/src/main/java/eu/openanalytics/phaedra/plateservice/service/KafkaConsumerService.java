@@ -90,8 +90,8 @@ public class KafkaConsumerService {
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID, filter = "reqPlateMeasLinkFilter")
     public void reqPlateMeasLink(String message) {
     	logger.debug("Received kafka event: " + EVENT_REQ_PLATE_MEAS_LINK);
-    	Long plateId = JsonPath.read(message, "$['plateId']");
-    	Long measId = JsonPath.read(message, "$['measurementId']");
+    	Long plateId = JsonPath.read(message, "$.plateId");
+    	Long measId = JsonPath.read(message, "$.measurementId");
     	
     	PlateMeasurementDTO linkRequest = PlateMeasurementDTO.builder()
     			.active(true)
@@ -111,8 +111,8 @@ public class KafkaConsumerService {
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID, filter = "reqPlateDefLinkFilter")
     public void reqPlateDefLink(String message) {
     	logger.debug("Received kafka event: " + EVENT_REQ_PLATE_DEF_LINK);
-    	Long plateId = JsonPath.read(message, "$['plateId']");
-    	Long templateId = JsonPath.read(message, "$['templateId']");
+    	Long plateId = JsonPath.read(message, "$.plateId");
+    	Long templateId = JsonPath.read(message, "$.templateId");
     	plateService.linkPlate(plateId, templateId);
     }
 }

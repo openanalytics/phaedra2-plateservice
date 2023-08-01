@@ -111,6 +111,15 @@ public class PlateTemplateService {
                 .map(this::mapToPlateTemplateDTO)
                 .collect(Collectors.toList());
     }
+    
+    public List<PlateTemplateDTO> getPlateTemplatesByName(String name) {
+    	authService.performAccessCheck(p -> authService.hasUserAccess());
+
+        List<PlateTemplate> plateTemplates = (List<PlateTemplate>) plateTemplateRepository.findByName(name);
+        return plateTemplates.stream()
+                .map(this::mapToPlateTemplateDTO)
+                .collect(Collectors.toList());
+    }
 
     public PlateTemplateDTO getPlateTemplateById(long plateTemplateId) {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
