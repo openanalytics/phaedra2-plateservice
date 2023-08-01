@@ -20,21 +20,24 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import com.google.common.primitives.Longs;
-import eu.openanalytics.phaedra.measservice.dto.MeasurementDTO;
-import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
-import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
-import eu.openanalytics.phaedra.plateservice.repository.PlateMeasurementRepository;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.google.common.primitives.Longs;
+
+import eu.openanalytics.phaedra.measservice.dto.MeasurementDTO;
+import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
+import eu.openanalytics.phaedra.plateservice.repository.PlateMeasurementRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class PlateMeasurementService {
@@ -44,23 +47,29 @@ public class PlateMeasurementService {
     private final ModelMapper modelMapper;
     private final PlateService plateService;
     private final ProjectAccessService projectAccessService;
+    private final IAuthorizationService authService;
 
     public PlateMeasurementService(PlateMeasurementRepository plateMeasurementRepository,
     		MeasurementServiceClient measurementServiceClient, ModelMapper modelMapper,
-    		PlateService plateService, ProjectAccessService projectAccessService) {
+    		PlateService plateService, ProjectAccessService projectAccessService,
+    		IAuthorizationService authService) {
 
         this.plateMeasurementRepository = plateMeasurementRepository;
         this.measurementServiceClient = measurementServiceClient;
         this.modelMapper = modelMapper;
         this.plateService = plateService;
         this.projectAccessService = projectAccessService;
+        this.authService = authService;
     }
 
     public PlateMeasurementDTO addPlateMeasurement(PlateMeasurementDTO plateMeasurementDTO) {
     	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
 
-        PlateMeasurement plateMeasurement = modelMapper.map(plateMeasurementDTO);
+    	plateMeasurementDTO.setLinkedBy(authService.getCurrentPrincipalName());
+    	plateMeasurementDTO.setLinkedOn(new Date());
+    	
+    	PlateMeasurement plateMeasurement = modelMapper.map(plateMeasurementDTO);
         plateMeasurement = plateMeasurementRepository.save(plateMeasurement);
 
         return modelMapper.map(plateMeasurement);

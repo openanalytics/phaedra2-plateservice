@@ -31,6 +31,8 @@ public class KafkaConfig {
 	
     public static final String TOPIC_PLATES = "plates";
 
-    public static final String EVENT_UPDATE_PLATE_STATUS = "requestPlateCalculationStatusUpdate";
+    public static final String EVENT_REQ_PLATE_STATUS_UPDATE = "requestPlateCalculationStatusUpdate";
+    public static final String EVENT_REQ_PLATE_MEAS_LINK = "requestPlateMeasurementLink";
+    public static final String EVENT_REQ_PLATE_DEF_LINK = "requestPlateDefinitionLink";
 
 }
