@@ -20,8 +20,10 @@
  */
 package eu.openanalytics.phaedra.plateservice.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.listener.adapter.RecordFilterStrategy;
 
 @Configuration
 @EnableKafka
@@ -35,4 +37,18 @@ public class KafkaConfig {
     public static final String EVENT_REQ_PLATE_MEAS_LINK = "requestPlateMeasurementLink";
     public static final String EVENT_REQ_PLATE_DEF_LINK = "requestPlateDefinitionLink";
 
+    @Bean
+    public RecordFilterStrategy<String, Object> reqPlateCalculationStatusUpdateFilter() {
+        return rec -> !(rec.key().equalsIgnoreCase(EVENT_REQ_PLATE_STATUS_UPDATE));
+    }
+    
+    @Bean
+    public RecordFilterStrategy<String, Object> reqPlateMeasLinkFilter() {
+        return rec -> !(rec.key().equalsIgnoreCase(EVENT_REQ_PLATE_MEAS_LINK));
+    }
+    
+    @Bean
+    public RecordFilterStrategy<String, Object> reqPlateDefLinkFilter() {
+        return rec -> !(rec.key().equalsIgnoreCase(EVENT_REQ_PLATE_DEF_LINK));
+    }
 }
