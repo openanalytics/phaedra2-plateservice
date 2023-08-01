@@ -31,6 +31,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.adapter.RecordFilterStrategy;
@@ -46,17 +47,16 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 @Service
 public class KafkaConsumerService {
 	
-    private final PlateRepository plateRepository;
-    private final PlateService plateService;
-    private final PlateMeasurementService plateMeasurementService;
+	@Autowired
+    private PlateRepository plateRepository;
+	
+	@Autowired
+    private PlateService plateService;
+	
+	@Autowired
+    private PlateMeasurementService plateMeasurementService;
     
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    public KafkaConsumerService(PlateRepository plateRepository, PlateService plateService, PlateMeasurementService plateMeasurementService) {
-        this.plateRepository = plateRepository;
-        this.plateService = plateService;
-        this.plateMeasurementService = plateMeasurementService;
-    }
 
     @Bean
     public RecordFilterStrategy<String, Object> reqPlateCalculationStatusUpdateFilter() {
