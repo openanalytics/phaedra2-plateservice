@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -44,21 +45,20 @@ public class WellTemplateService {
     private static final ModelMapper modelMapper = new ModelMapper();
     private static final Comparator<WellTemplateDTO> WELL_TEMPLATE_DTO_COMPARATOR = Comparator.comparing(WellTemplateDTO::getRow).thenComparing(WellTemplateDTO::getColumn);
 
+    private final PlateTemplateRepository plateTemplateRepository;
     private final WellTemplateRepository wellTemplateRepository;
-    private final PlateTemplateService plateTemplateService;
 
 	private final IAuthorizationService authService;
 
-    public WellTemplateService(WellTemplateRepository wellTemplateRepository, PlateTemplateService plateTemplateService, IAuthorizationService authService) {
+    public WellTemplateService(WellTemplateRepository wellTemplateRepository, PlateTemplateRepository plateTemplateRepository, IAuthorizationService authService) {
     	this.wellTemplateRepository = wellTemplateRepository;
-    	this.plateTemplateService = plateTemplateService;
+    	this.plateTemplateRepository = plateTemplateRepository;
         this.authService = authService;
     }
 
     public WellTemplateDTO createWellTemplate(WellTemplateDTO wellTemplateDTO) {
-    	Optional.ofNullable(plateTemplateService.getPlateTemplateById(wellTemplateDTO.getPlateTemplateId()))
-    			.map(PlateTemplateDTO::getCreatedBy)
-    			.ifPresent(creator -> authService.performOwnershipCheck(creator));
+    	plateTemplateRepository.findById(wellTemplateDTO.getPlateTemplateId())
+    			.ifPresent(wellTemplate -> authService.performOwnershipCheck(wellTemplate.getCreatedBy()));
 
         WellTemplate wellTemplate = new WellTemplate(wellTemplateDTO.getPlateTemplateId());
         modelMapper.typeMap(WellTemplateDTO.class, WellTemplate.class)
@@ -96,7 +96,8 @@ public class WellTemplateService {
                 WellTemplate wellTemplate = new WellTemplate(plateTemplate.getId());
                 wellTemplate.setRow(r);
                 wellTemplate.setColumn(c);
-                wellTemplate.setSkipped(true);
+                wellTemplate.setSkipped(false);
+                wellTemplate.setWellType("EMPTY");
                 wellTemplates.add(wellTemplate);
             }
         }
@@ -105,9 +106,8 @@ public class WellTemplateService {
     }
 
     public void updateWellTemplate(WellTemplateDTO wellTemplateDTO) {
-    	Optional.ofNullable(plateTemplateService.getPlateTemplateById(wellTemplateDTO.getPlateTemplateId()))
-			.map(PlateTemplateDTO::getCreatedBy)
-			.ifPresent(creator -> authService.performOwnershipCheck(creator));
+        plateTemplateRepository.findById(wellTemplateDTO.getPlateTemplateId())
+                .ifPresent(wellTemplate -> authService.performOwnershipCheck(wellTemplate.getCreatedBy()));
 
         Optional<WellTemplate> wellTemplate = wellTemplateRepository.findById(wellTemplateDTO.getId());
         wellTemplate.ifPresent( w -> {
@@ -140,6 +140,17 @@ public class WellTemplateService {
         return wellTemplateDTO;
     }
 
+    public void updateWellTemplates(List<WellTemplateDTO> wellTemplates) {
+        wellTemplates.stream().forEach(wtDTO -> {
+            WellTemplate wellTemplate = wellTemplateRepository.findWellTemplateByPlateTemplateIdAndRowAndColumn(wtDTO.getPlateTemplateId(), wtDTO.getRow(), wtDTO.getColumn());
+            if (wellTemplate != null) {
+                wtDTO.setId(wellTemplate.getId());
+                wtDTO.setPlateTemplateId(wellTemplate.getPlateTemplateId());
+                updateWellTemplate(wtDTO);
+            }
+        });
+    }
+
     public void updateWellTemplates(PlateTemplate plateTemplate, List<WellTemplateDTO> wells) {
         wells.stream().forEach(wtDTO -> {
             WellTemplate wellTemplate = wellTemplateRepository.findWellTemplateByPlateTemplateIdAndRowAndColumn(plateTemplate.getId(), wtDTO.getRow(), wtDTO.getColumn());
@@ -147,12 +158,6 @@ public class WellTemplateService {
                 wtDTO.setId(wellTemplate.getId());
                 wtDTO.setPlateTemplateId(wellTemplate.getPlateTemplateId());
                 updateWellTemplate(wtDTO);
-//                wellTemplate.setWellType(wtDTO.getWellType());
-//                wellTemplate.setConcentration(wtDTO.getConcentration());
-//                wellTemplate.setSubstanceName(wtDTO.getSubstanceName());
-//                wellTemplate.setSubstanceType(wtDTO.getSubstanceType());
-//                wellTemplate.setSkipped(wtDTO.isSkipped());
-//                wellTemplateRepository.save(wellTemplate);
             }
         });
     }

@@ -73,9 +73,9 @@ public class PlateTemplateService {
         plateTemplate = plateTemplateRepository.save(plateTemplate);
         wellTemplateService.createEmptyWellTemplates(plateTemplate);
 
-        //Add wellTemplates
-        if (CollectionUtils.isNotEmpty(plateTemplateDTO.getWells()))
-            wellTemplateService.updateWellTemplates(plateTemplate, plateTemplateDTO.getWells());
+//        //Add wellTemplates
+//        if (CollectionUtils.isNotEmpty(plateTemplateDTO.getWells()))
+//            wellTemplateService.updateWellTemplates(plateTemplate, plateTemplateDTO.getWells());
 
 
         return mapToPlateTemplateDTO(plateTemplate);
@@ -92,7 +92,11 @@ public class PlateTemplateService {
                     .setPropertyCondition(Conditions.isNotNull())
                     .map(plateTemplateDTO, p);
             plateTemplateRepository.save(p);
+
+            wellTemplateService.updateWellTemplates(plateTemplateDTO.getWells());
         });
+
+
     }
 
     public void deletePlateTemplate(long plateTemplateId) {
