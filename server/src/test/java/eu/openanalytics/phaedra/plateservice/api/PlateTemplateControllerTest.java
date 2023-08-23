@@ -112,7 +112,7 @@ public class PlateTemplateControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        PlateTemplate plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
+        PlateTemplateDTO plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
         assertThat(plateTemplate).isNotNull();
         assertThat(plateTemplate.getId()).isEqualTo(plateTemplateId);
 
@@ -128,7 +128,7 @@ public class PlateTemplateControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        PlateTemplate updatedPlateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
+        PlateTemplateDTO updatedPlateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
         assertThat(updatedPlateTemplate.getCreatedBy()).isEqualTo(newCreatedBy);
     }
 

@@ -22,9 +22,11 @@ package eu.openanalytics.phaedra.plateservice.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,7 @@ public class PlateTemplateServiceTest {
     private IAuthorizationService authService = AuthorizationServiceFactory.create();
 
     private PlateTemplateService plateTemplateService;
+    private WellTemplateService wellTemplateService;
 
     @Container
     private static JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer("postgres:13-alpine")
@@ -76,7 +79,7 @@ public class PlateTemplateServiceTest {
 
     @BeforeEach
     void before() {
-        WellTemplateService wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService, this.authService);
+        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateRepository, this.authService);
         this.plateTemplateService = new PlateTemplateService(this.plateTemplateRepository, wellTemplateService, this.authService);
     }
 
@@ -123,7 +126,7 @@ public class PlateTemplateServiceTest {
         assertThat(new Date(res2.getCreatedOn().getTime())).isEqualTo(res.getCreatedOn());
         assertThat(res2.getName()).isEqualTo("Test");
 
-        PlateTemplateDTO updatedPlateTemplateDTO = PlateTemplateDTO.builder().id(res.getId()).rows(2).columns(3).createdOn(new Date()).createdBy("smarien").name("Test2").build();
+        PlateTemplateDTO updatedPlateTemplateDTO = PlateTemplateDTO.builder().id(res.getId()).rows(2).columns(3).createdOn(new Date()).createdBy("smarien").name("Test2").wells(res.getWells()).build();
         plateTemplateService.updatePlateTemplate(updatedPlateTemplateDTO);
 
         PlateTemplateDTO res3 = plateTemplateService.getPlateTemplateById(res.getId());

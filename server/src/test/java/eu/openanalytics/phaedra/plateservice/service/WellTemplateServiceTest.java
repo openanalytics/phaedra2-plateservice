@@ -86,7 +86,7 @@ public class WellTemplateServiceTest {
 
     @BeforeEach
     void before() {
-        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateService, this.authService);
+        this.wellTemplateService = new WellTemplateService(this.wellTemplateRepository, this.plateTemplateRepository, this.authService);
     }
 
     @Test
@@ -128,15 +128,17 @@ public class WellTemplateServiceTest {
     public void createWellTemplatesTest(){
         //This test also tests getWelltemplateByPlateTemplateId
         //Check if the plateTemplate has no wellTemplates assigned
-        List<WellTemplateDTO> wellTemplateDTOS = wellTemplateService.getWellTemplatesByPlateTemplateId(1000L);
+        long plateTemplateId = 1001L;
+
+        List<WellTemplateDTO> wellTemplateDTOS = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
         assertThat(wellTemplateDTOS.size()).isEqualTo(0);
         //Find the plateTemplate in the repo
-        PlateTemplate plateTemplate = plateTemplateRepository.findById(1000L).orElse(null);
+        PlateTemplate plateTemplate = plateTemplateRepository.findById(plateTemplateId).orElse(null);
         assertThat(plateTemplate).isNotNull();
         //Create all well templates
         List<WellTemplateDTO> ret = wellTemplateService.createEmptyWellTemplates(plateTemplate);
         assertThat(ret.size()).isEqualTo(6);
-        List<WellTemplateDTO> wellTemplateDTOS2 = wellTemplateService.getWellTemplatesByPlateTemplateId(1000L);
+        List<WellTemplateDTO> wellTemplateDTOS2 = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
         assertThat(wellTemplateDTOS2.size()).isEqualTo(6);
     }
 

@@ -1585,6 +1585,19 @@ values (2000,2000,false, 'sberberovic', null);
 insert into plates.hca_plate_template(id,name,description,rows,columns,created_on,created_by,updated_on,updated_by)
 values (1000,null,null,2,3,'2021-10-01 07:36:17.854','smarien',null,null);
 
+insert into plates.hca_well_template(id,description,row,"column",well_type,skipped,plate_template_id,substance_name,substance_type,concentration)
+values(10000,null,1,1,'SAMPLE',false,1000,'GalG264869-3','Compound',0.111);
+insert into plates.hca_well_template(id,description,row,"column",well_type,skipped,plate_template_id,substance_name,substance_type,concentration)
+values(10001, null, 1, 2, 'SAMPLE', false, 1000, 'GalG264869-3', 'Compound', 0.000457);
+insert into plates.hca_well_template(id,description,row,"column",well_type,skipped,plate_template_id,substance_name,substance_type,concentration)
+values(10002, null, 1, 3, 'SAMPLE', false, 1000, 'GalG264869-3', 'Compound', 0.000152);
+insert into plates.hca_well_template(id,description,row,"column",well_type,skipped,plate_template_id,substance_name,substance_type,concentration)
+values(10003, null, 2, 1, 'SAMPLE', false, 1000, 'GalG1125349-1', 'Compound', 1.5);
+insert into plates.hca_well_template(id,description,row,"column",well_type,skipped,plate_template_id,substance_name,substance_type,concentration)
+values(10004, null, 2, 2, 'SAMPLE', false, 1000, 'GalG264869-3', 'Compound', 0.0123);
+insert into plates.hca_well_template(id,description,row,"column",well_type,skipped,plate_template_id,substance_name,substance_type,concentration)
+values(10005, null, 2, 3, 'SAMPLE', false, 1000, 'GalG264869-3', 'Compound', 0.00137);
+
 insert into plates.hca_plate_template(id,name,description,rows,columns,created_on,created_by,updated_on,updated_by)
 values(56, 'ImportFromFile2', null, 16, 24, '2022-09-20 07:53:49.801', 'sberberovic', null, null);
 
@@ -2356,6 +2369,9 @@ insert into plates.hca_well_template(id,description,row,"column",well_type,skipp
 values(9779, null, 13, 2, 'LC', false, 56, 'GalG000701-1', 'Compound', 3e-07);
 insert into plates.hca_well_template(id,description,row,"column",well_type,skipped,plate_template_id,substance_name,substance_type,concentration)
 values(9791, null, 13, 14, 'SAMPLE', false, 56, 'GalG1125545-1', 'Compound', 0.5);
+
+insert into plates.hca_plate_template(id,name,description,rows,columns,created_on,created_by,updated_on,updated_by)
+values (1001,null,null,2,3,'2021-10-01 07:36:17.854','smarien',null,null);
 
 insert into plates.hca_well_substance(id,type,name,concentration,well_id)
 values(1577,'COMPOUND','000702-1',3e-06,38587);
