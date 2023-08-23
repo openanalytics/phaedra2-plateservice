@@ -23,8 +23,10 @@ package eu.openanalytics.phaedra.plateservice.client;
 import java.util.List;
 
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
@@ -41,4 +43,9 @@ public interface PlateServiceClient {
 
     List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws PlateUnresolvableException;
 
+    List<ExperimentDTO> getExperiments(long projectId);
+    
+    List<PlateDTO> getPlatesByBarcode(String barcode);
+    
+    List<PlateTemplateDTO> getPlateTemplatesByName(String name);
 }

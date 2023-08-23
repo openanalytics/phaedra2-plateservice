@@ -20,7 +20,8 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.EVENT_UPDATE_PLATE_STATUS;
+import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.EVENT_REQ_PLATE_DEF_LINK;
+import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.EVENT_REQ_PLATE_MEAS_LINK;
 import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.GROUP_ID;
 import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.TOPIC_PLATES;
 
@@ -30,11 +31,12 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
+import com.jayway.jsonpath.JsonPath;
+
 import eu.openanalytics.phaedra.plateservice.dto.PlateCalculationStatusDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 
@@ -42,20 +44,23 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 public class KafkaConsumerService {
 	
     private final PlateRepository plateRepository;
+    private final PlateService plateService;
+    private final PlateMeasurementService plateMeasurementService;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public KafkaConsumerService(PlateRepository plateRepository) {
+    public KafkaConsumerService(PlateRepository plateRepository, PlateService plateService, PlateMeasurementService plateMeasurementService) {
         this.plateRepository = plateRepository;
+        this.plateService = plateService;
+        this.plateMeasurementService = plateMeasurementService;
     }
-
-    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID)
-    public void onUpdatePlateCalculationStatus(PlateCalculationStatusDTO plateCalcStatusDTO, @Header(KafkaHeaders.RECEIVED_KEY) String msgKey) {
-    	if (!EVENT_UPDATE_PLATE_STATUS.equals(msgKey)) return;
-    	
-        logger.info("plate-service: receiving message on event " + msgKey);
+    
+    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID, filter = "reqPlateCalculationStatusUpdateFilter")
+    public void reqPlateCalculationStatusUpdate(PlateCalculationStatusDTO plateCalcStatusDTO) {
         Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
         if (result.isPresent()) {
-            logger.info("Set plate calculation status to " + plateCalcStatusDTO.getCalculationStatus().name() + " for plateId " + plateCalcStatusDTO.getPlateId());
+        	logger.debug(String.format("Setting plate calculation status to %s for plateId %d", 
+        			plateCalcStatusDTO.getCalculationStatus().name(), plateCalcStatusDTO.getPlateId()));
+        	
             Plate plate = result.get();
             plate.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
             if (plateCalcStatusDTO.getDetails() != null) {
@@ -66,5 +71,29 @@ public class KafkaConsumerService {
         } else {
             logger.error("No plate found with plateId  " + plateCalcStatusDTO.getPlateId());
         }
+    }
+    
+    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID, filter = "reqPlateMeasLinkFilter")
+    public void reqPlateMeasLink(String message) {
+    	logger.debug("Received kafka event: " + EVENT_REQ_PLATE_MEAS_LINK);
+    	Long plateId = JsonPath.read(message, "$.plateId");
+    	Long measId = JsonPath.read(message, "$.measurementId");
+    	
+    	PlateMeasurementDTO linkRequest = PlateMeasurementDTO.builder()
+    			.active(true)
+    			.plateId(plateId)
+    			.measurementId(measId)
+    			.build();
+    	
+    	PlateMeasurementDTO plateMeasLink = plateMeasurementService.addPlateMeasurement(linkRequest);
+        plateMeasurementService.setActivePlateMeasurement(plateMeasLink);
+    }
+    
+    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID, filter = "reqPlateDefLinkFilter")
+    public void reqPlateDefLink(String message) {
+    	logger.debug("Received kafka event: " + EVENT_REQ_PLATE_DEF_LINK);
+    	Long plateId = JsonPath.read(message, "$.plateId");
+    	Long templateId = JsonPath.read(message, "$.templateId");
+    	plateService.linkPlate(plateId, templateId);
     }
 }

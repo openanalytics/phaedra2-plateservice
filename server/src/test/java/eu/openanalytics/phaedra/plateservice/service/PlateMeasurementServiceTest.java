@@ -20,10 +20,8 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.repository.PlateMeasurementRepository;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +35,12 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.repository.PlateMeasurementRepository;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
+import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Testcontainers
 @SpringBootTest
@@ -55,6 +58,8 @@ public class PlateMeasurementServiceTest {
     private PlateService plateService;
     @Autowired
     private ProjectAccessService projectAccessService;
+
+    private IAuthorizationService authService = AuthorizationServiceFactory.create();
 
     PlateMeasurementService plateMeasurementService;
 
@@ -75,7 +80,7 @@ public class PlateMeasurementServiceTest {
     @BeforeEach
     void before() {
         this.plateMeasurementService = new PlateMeasurementService(plateMeasurementRepository, measurementServiceClient,
-                modelMapper, plateService, projectAccessService);
+                modelMapper, plateService, projectAccessService, authService);
     }
 
     @Test

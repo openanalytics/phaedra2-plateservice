@@ -20,11 +20,16 @@
  */
 package eu.openanalytics.phaedra.plateservice.repository;
 
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 
 @Repository
 public interface PlateTemplateRepository extends CrudRepository<PlateTemplate,Long> {
 
+	public List<PlateTemplate> findByName(String name);
+	
 }

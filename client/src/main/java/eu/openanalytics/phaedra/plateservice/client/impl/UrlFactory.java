@@ -43,4 +43,15 @@ public class UrlFactory {
         return String.format("%s/plates/%s/measurements", PLATE_SERVICE, plateId);
     }
 
+    public static String experiments(Long projectId) {
+    	return String.format("%s/project/%s/experiments", PLATE_SERVICE, projectId);
+    }
+    
+    public static String platesByBarcode(String barcode) {
+    	return String.format("%s/plates?barcode=%s", PLATE_SERVICE, barcode);
+    }
+    
+    public static String plateTemplatesByName(String name) {
+    	return String.format("%s/platetemplates?name=%s", PLATE_SERVICE, name);
+    }
 }
