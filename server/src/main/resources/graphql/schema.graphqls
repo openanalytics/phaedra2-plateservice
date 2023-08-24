@@ -140,6 +140,7 @@ type PlateTemplateDTO {
     updatedOn: Date
     updatedBy: String
     wells: [WellTemplateDTO]
+    tags: [String]
 }
 
 type Query {
