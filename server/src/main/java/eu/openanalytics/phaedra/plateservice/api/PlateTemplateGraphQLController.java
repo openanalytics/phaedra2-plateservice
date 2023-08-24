@@ -28,11 +28,13 @@ import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/platetemplates")
@@ -53,7 +55,7 @@ public class PlateTemplateGraphQLController {
             // Add tags
             result.stream().forEach(plateTemplateDTO -> {
                 List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PLATE_TEMPLATE, plateTemplateDTO.getId());
-                plateTemplateDTO.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+                plateTemplateDTO.setTags(projectTags.stream().map(TagDTO::getTag).collect(toList()));
             });
         }
         return result;
@@ -65,7 +67,7 @@ public class PlateTemplateGraphQLController {
         if (Objects.nonNull(result)) {
             // Add tags
             List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PLATE_TEMPLATE, result.getId());
-            result.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+            result.setTags(projectTags.stream().map(TagDTO::getTag).collect(toList()));
         }
         return result;
     }
