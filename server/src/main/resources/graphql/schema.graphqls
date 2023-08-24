@@ -116,6 +116,32 @@ type PlateMeasurementDTO {
     imageChannels: [String]
 }
 
+type WellTemplateDTO {
+     id: ID
+     description: String
+     row: Int
+     column: Int
+     plateTemplateId: ID
+     wellType: String
+     skipped: Boolean
+     substanceName: String
+     substanceType: String
+     concentration: Float
+}
+
+type PlateTemplateDTO {
+    id: ID
+    name: String
+    description: String
+    rows: Int
+    columns: Int
+    createdOn: Date
+    createdBy: String
+    updatedOn: Date
+    updatedBy: String
+    wells: [WellTemplateDTO]
+}
+
 type Query {
     plateMeasurements(plateId: ID, active: Boolean): [PlateMeasurementDTO]
     experiments: [ExperimentDTO]
@@ -125,4 +151,6 @@ type Query {
     getProjects: [ProjectDTO]
     getProjectById(projectId: ID): ProjectDTO
     getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
+    getPlateTemplates: [PlateTemplateDTO]
+    getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
 }
