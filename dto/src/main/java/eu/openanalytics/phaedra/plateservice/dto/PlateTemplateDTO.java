@@ -45,4 +45,5 @@ public class PlateTemplateDTO {
     private Date updatedOn;
     private String updatedBy;
     private List<WellTemplateDTO> wells;
+    private List<String> tags;
 }

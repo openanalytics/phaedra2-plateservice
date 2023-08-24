@@ -20,34 +20,53 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/platetemplates")
 public class PlateTemplateGraphQLController {
 
     private final PlateTemplateService plateTemplateService;
+    private final MetadataServiceClient metadataServiceClient;
 
-    public PlateTemplateGraphQLController(PlateTemplateService plateTemplateService) {
+    public PlateTemplateGraphQLController(PlateTemplateService plateTemplateService, MetadataServiceClient metadataServiceClient) {
         this.plateTemplateService = plateTemplateService;
+        this.metadataServiceClient = metadataServiceClient;
     }
 
     @QueryMapping
     List<PlateTemplateDTO> getPlateTemplates() {
-        return plateTemplateService.getAllPlateTemplates();
+        List<PlateTemplateDTO> result = plateTemplateService.getAllPlateTemplates();
+        if (CollectionUtils.isNotEmpty(result)) {
+            // Add tags
+            result.stream().forEach(plateTemplateDTO -> {
+                List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PLATE_TEMPLATE, plateTemplateDTO.getId());
+                plateTemplateDTO.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+            });
+        }
+        return result;
     }
 
     @QueryMapping
     PlateTemplateDTO getPlateTemplateById(@Argument Long plateTemplateId) {
-        return plateTemplateService.getPlateTemplateById(plateTemplateId);
+        PlateTemplateDTO result = plateTemplateService.getPlateTemplateById(plateTemplateId);
+        if (Objects.nonNull(result)) {
+            // Add tags
+            List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PLATE_TEMPLATE, result.getId());
+            result.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+        }
+        return result;
     }
 }
