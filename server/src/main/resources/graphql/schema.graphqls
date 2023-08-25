@@ -135,7 +135,7 @@ type WellDTO {
     wellType: String
     status: WellStatus
     description: String
-    wellSubstance: [WellSubstanceDTO]
+    wellSubstance: WellSubstanceDTO
 }
 
 type WellSubstanceDTO {
