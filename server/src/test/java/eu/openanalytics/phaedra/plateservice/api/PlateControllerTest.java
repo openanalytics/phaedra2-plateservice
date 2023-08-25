@@ -27,6 +27,8 @@ import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.plateservice.dto.*;
 import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -244,10 +246,12 @@ public class PlateControllerTest {
 
     @Test
     public void linkPlateWrongDimensionsTest() throws Exception {
-        PlateTemplate newPlateTemplate = new PlateTemplate();
-        newPlateTemplate.setRows(22);
-        newPlateTemplate.setColumns(33);
-        newPlateTemplate.setCreatedOn(new Date());
+        String createdOn = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SS");
+
+        PlateTemplateDTO newPlateTemplate = new PlateTemplateDTO();
+        newPlateTemplate.setRows(2);
+        newPlateTemplate.setColumns(3);
+        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS"));
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
@@ -265,10 +269,12 @@ public class PlateControllerTest {
     @Test
     public void linkPlateSimpleTest() throws Exception {
         //Add template
-        PlateTemplate newPlateTemplate = new PlateTemplate();
+        String createdOn = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SS");
+
+        PlateTemplateDTO newPlateTemplate = new PlateTemplateDTO();
         newPlateTemplate.setRows(2);
         newPlateTemplate.setColumns(3);
-        newPlateTemplate.setCreatedOn(new Date());
+        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS"));
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
@@ -309,10 +315,12 @@ public class PlateControllerTest {
     @Test
     public void linkPlateHardTest() throws Exception {
         //Add template
-        PlateTemplate newPlateTemplate = new PlateTemplate();
+        String createdOn = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SS");
+
+        PlateTemplateDTO newPlateTemplate = new PlateTemplateDTO();
         newPlateTemplate.setRows(2);
         newPlateTemplate.setColumns(3);
-        newPlateTemplate.setCreatedOn(new Date());
+        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS"));
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
