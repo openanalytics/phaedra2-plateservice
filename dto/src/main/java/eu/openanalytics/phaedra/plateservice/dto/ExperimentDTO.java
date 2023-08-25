@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -42,4 +43,5 @@ public class ExperimentDTO {
 	private String createdBy;
 	private Date updatedOn;
 	private String updatedBy;
+	private List<String> tags;
 }

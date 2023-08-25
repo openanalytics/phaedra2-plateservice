@@ -1,32 +1,5 @@
 scalar Date
 
-type ProjectDTO {
-    id: ID
-    name: String
-    description: String
-    createdOn: Date
-    createdBy: String
-    updatedOn: Date
-    updatedBy: String
-
-    tags: [String]
-    experiments: [ExperimentDTO]
-}
-
-type ExperimentDTO {
-    id: ID
-    name: String
-    description: String
-    status: String
-    projectId: Int
-    multiploMethod: String
-    multiploParameter: String
-    createdOn: Date
-    createdBy: String
-    updatedOn: Date
-    updatedBy: String
-}
-
 enum LinkStatus {
     NOT_LINKED
     LINKED
@@ -59,6 +32,59 @@ enum UploadStatus {
     UPLOAD_NOT_NEEDED
     UPLOADED
 }
+
+enum WellStatus {
+    ACCEPTED_DEFAULT
+    ACCEPTED
+    REJECTED_PLATEPREP
+    REJECTED_DATACAPTURE
+    REJECTED_PHAEDRA
+    REJECTED_OUTLIER_PHAEDRA_MANUAL
+    REJECTED_OUTLIER_PHAEDRA_AUTO
+}
+
+enum ProjectAccessLevel {
+    Read
+    Write
+    Admin
+}
+
+type ProjectDTO {
+    id: ID
+    name: String
+    description: String
+    createdOn: Date
+    createdBy: String
+    updatedOn: Date
+    updatedBy: String
+
+    tags: [String]
+}
+
+type ProjectAccessDTO {
+    id: ID
+    projectId: ID
+    teamName: String
+    accessLevel: ProjectAccessLevel
+}
+
+type ExperimentDTO {
+    id: ID
+    name: String
+    description: String
+    status: String
+    projectId: Int
+    multiploMethod: String
+    multiploParameter: String
+    createdOn: Date
+    createdBy: String
+    updatedOn: Date
+    updatedBy: String
+
+    tags: [String]
+}
+
+
 
 type PlateDTO {
     id: ID
@@ -98,6 +124,26 @@ type PlateDTO {
     createdBy: String
     updatedOn: Date
     updatedBy: String
+
+    tags: [String]
+}
+type WellDTO {
+    id: ID
+    plateId: ID
+    row: Int
+    column: Int
+    wellType: String
+    status: WellStatus
+    description: String
+    wellSubstance: [WellSubstanceDTO]
+}
+
+type WellSubstanceDTO {
+    id: ID
+    wellId: ID
+    type: String
+    name: String
+    concentration: Float
 }
 
 type PlateMeasurementDTO {
@@ -144,14 +190,17 @@ type PlateTemplateDTO {
 }
 
 type Query {
-    plateMeasurements(plateId: ID, active: Boolean): [PlateMeasurementDTO]
-    experiments: [ExperimentDTO]
-    experimentById(experimentId: ID): ExperimentDTO
-    plates(experimentId: ID): [PlateDTO]
-    plateById(plateId: ID): PlateDTO
     getProjects: [ProjectDTO]
     getProjectById(projectId: ID): ProjectDTO
+    getProjectAccess(projectId: ID): [ProjectAccessDTO]
+    getExperiments: [ExperimentDTO]
     getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
+    getExperimentById(experimentId: ID): ExperimentDTO
+    getPlatesByExperimentId(experimentId: ID): [PlateDTO]
+    getPlatesByBarcode(barcode: String): [PlateDTO]
+    getPlateById(plateId: ID): PlateDTO
+    getPlateWells(plateId: ID): [WellDTO]
+    getPlateMeasurements(plateId: ID, active: Boolean): [PlateMeasurementDTO]
     getPlateTemplates: [PlateTemplateDTO]
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
 }

@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.phaedra.plateservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -39,5 +38,4 @@ public class ProjectDTO {
     private String updatedBy;
 
     private List<String> tags;
-    private List<ExperimentDTO> experiments;
 }

@@ -130,7 +130,7 @@ public class WellService {
         well.setDescription(wellDTO.getDescription());
         well.setRow(wellDTO.getRow());
         well.setColumn(wellDTO.getColumn());
-        well.setCompoundId(wellDTO.getCompoundId());
+//        well.setCompoundId(wellDTO.getCompoundId());
         well.setStatus(wellDTO.getStatus());
         well.setPlateId(wellDTO.getPlateId());
         return well;

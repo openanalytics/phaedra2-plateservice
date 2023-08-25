@@ -23,16 +23,14 @@ package eu.openanalytics.phaedra.plateservice.api;
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
-import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectAccessDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
-import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
+import eu.openanalytics.phaedra.plateservice.service.ProjectAccessService;
 import eu.openanalytics.phaedra.plateservice.service.ProjectService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,13 +39,13 @@ import java.util.stream.Collectors;
 public class ProjectGraphQLController {
 
     private final ProjectService projectService;
-    private final ExperimentService experimentService;
+    private final ProjectAccessService projectAccessService;
     private final MetadataServiceClient metadataServiceClient;
 
-    public ProjectGraphQLController(ProjectService projectService, ExperimentService experimentService,
-									MetadataServiceClient metadataServiceClient) {
+    public ProjectGraphQLController(ProjectService projectService, ProjectAccessService projectAccessService,
+                                    MetadataServiceClient metadataServiceClient) {
         this.projectService = projectService;
-        this.experimentService = experimentService;
+        this.projectAccessService = projectAccessService;
         this.metadataServiceClient = metadataServiceClient;
     }
 
@@ -69,9 +67,6 @@ public class ProjectGraphQLController {
     public ProjectDTO getProjectById(@Argument long projectId) {
         ProjectDTO result = projectService.getProjectById(projectId);
         if (result != null) {
-            // Add experiments
-            result.setExperiments(experimentService.getExperimentByProjectId(projectId));
-
             // Add tags
             List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PROJECT, result.getId());
             result.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
@@ -81,13 +76,7 @@ public class ProjectGraphQLController {
     }
 
     @QueryMapping
-    public List<ExperimentDTO> getExperimentsByProjectId(@Argument long projectId) {
-        return experimentService.getExperimentByProjectId(projectId);
+    public List<ProjectAccessDTO> getProjectAccess(@Argument long projectId) {
+        return projectAccessService.getProjectAccessForProject(projectId);
     }
-
-    @QueryMapping
-    public List<ExperimentSummaryDTO> getExperimentSummaries(@PathVariable long projectId) {
-        return experimentService.getExperimentSummariesByProjectId(projectId);
-    }
-
 }
