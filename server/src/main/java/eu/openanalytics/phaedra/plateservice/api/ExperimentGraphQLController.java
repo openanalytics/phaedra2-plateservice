@@ -20,38 +20,69 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class ExperimentGraphQLController {
 
 	private final ExperimentService experimentService;
+	private final MetadataServiceClient metadataServiceClient;
 
-	public ExperimentGraphQLController(ExperimentService experimentService) {
+	public ExperimentGraphQLController(ExperimentService experimentService, MetadataServiceClient metadataServiceClient) {
 		this.experimentService = experimentService;
+		this.metadataServiceClient = metadataServiceClient;
 	}
 
 	@QueryMapping
 	public List<ExperimentDTO> getExperiments() {
-		return experimentService.getAllExperiments();
+		List<ExperimentDTO> result = experimentService.getAllExperiments();
+		if (CollectionUtils.isNotEmpty(result)) {
+			// Add tags
+			result.stream().forEach(experimentDTO -> {
+				List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, experimentDTO.getId());
+				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+			});
+		}
+		return result;
 	}
 
 	@QueryMapping
 	public ExperimentDTO getExperimentById(@Argument long experimentId) {
-		return experimentService.getExperimentById(experimentId);
+		ExperimentDTO result = experimentService.getExperimentById(experimentId);
+		if (result != null) {
+			// Add tags
+			List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, result.getId());
+			result.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+		}
+
+		return result;
 	}
 
 	@QueryMapping
 	public List<ExperimentDTO> getExperimentsByProjectId(@Argument long projectId) {
-		return experimentService.getExperimentByProjectId(projectId);
+		List<ExperimentDTO> result = experimentService.getExperimentByProjectId(projectId);
+		if (CollectionUtils.isNotEmpty(result)) {
+			// Add tags
+			result.stream().forEach(experimentDTO -> {
+				List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, experimentDTO.getId());
+				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+			});
+		}
+		return result;
 	}
 
 	@QueryMapping
