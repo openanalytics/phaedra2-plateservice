@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.config;
 
-import eu.openanalytics.phaedra.plateservice.scalars.Scalars;
+import eu.openanalytics.phaedra.util.scalars.Scalars;
 import graphql.schema.idl.RuntimeWiring;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 import org.springframework.stereotype.Component;
