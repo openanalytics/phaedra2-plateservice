@@ -47,17 +47,17 @@ pipeline {
             }
         }
 
-//        stage('Test') {
-//            steps {
-//                container('builder') {
-//                    withDockerRegistry([credentialsId: "oa-sa-jenkins-registry", url: "https://registry.openanalytics.eu"]) {
-//                		configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
-//                    		sh "mvn -s \$MAVEN_SETTINGS_RSB test ${env.MVN_ARGS} ${env.MVN_EXLCUDE_PARENT}"
-//                		}
-//    				}
-//                }
-//            }
-//        }
+        stage('Test') {
+            steps {
+                container('builder') {
+                    withDockerRegistry([credentialsId: "oa-sa-jenkins-registry", url: "https://registry.openanalytics.eu"]) {
+                		configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
+                    		sh "mvn -s \$MAVEN_SETTINGS_RSB test ${env.MVN_ARGS} ${env.MVN_EXLCUDE_PARENT}"
+                		}
+    				}
+                }
+            }
+        }
 
         stage("Deploy to Nexus") {
             steps {

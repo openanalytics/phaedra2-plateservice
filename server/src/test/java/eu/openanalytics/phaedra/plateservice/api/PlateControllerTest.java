@@ -20,25 +20,24 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Date;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.openanalytics.phaedra.plateservice.dto.*;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
+import eu.openanalytics.phaedra.plateservice.service.KafkaProducerService;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -47,23 +46,21 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Date;
+import java.util.List;
 
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Testcontainers
 @SpringBootTest
+@DirtiesContext
 @Sql({"/jdbc/test-data.sql"})
 @AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(locations = "classpath:application-test.properties")
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 public class PlateControllerTest {
 
     @Autowired
@@ -72,6 +69,12 @@ public class PlateControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
+
+    @Value("${test.topic}")
+    private String topic;
+
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
         registry.add("DB_URL", Containers.postgreSQLContainer::getJdbcUrl);
@@ -79,7 +82,7 @@ public class PlateControllerTest {
         registry.add("DB_PASSWORD", Containers.postgreSQLContainer::getPassword);
     }
 
-//    @Test
+    @Test
     public void platePostTest() throws Exception {
         Plate plate = new Plate();
         plate.setRows(3);
@@ -98,7 +101,7 @@ public class PlateControllerTest {
         assertThat(plateDTO.getId()).isEqualTo(1L);
     }
 
-//    @Test
+    @Test
     public void platePutTest() throws Exception {
         Long plateId = 1000L;
 
@@ -131,7 +134,7 @@ public class PlateControllerTest {
         assertThat(plateDTO.getDisapprovedReason()).isEqualTo("test2");
     }
 
-//    @Test
+    @Test
     public void plateDeleteTest() throws Exception {
         Long plateTemplateId = 1000L;
 
@@ -219,7 +222,7 @@ public class PlateControllerTest {
         assertThat(plateDTOs).isEmpty();
     }
 
-//    @Test
+    @Test
     public void plateMeasurementPostTest() throws Exception {
         PlateMeasurement plateMeasurement = new PlateMeasurement();
         plateMeasurement.setPlateId(1000L);
@@ -275,7 +278,7 @@ public class PlateControllerTest {
                 .andReturn();
     }
 
-//    @Test
+    @Test
     public void linkPlateSimpleTest() throws Exception {
         //Add template
         String createdOn = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SS");
@@ -321,7 +324,7 @@ public class PlateControllerTest {
         assertThat(plateDTO.getId()).isEqualTo(plateId);
     }
 
-//    @Test
+    @Test
     public void linkPlateHardTest() throws Exception {
         //Add template
         String createdOn = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SS");
