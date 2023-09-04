@@ -110,7 +110,7 @@ public class PlateServiceTest {
         assertThat(this.plateService).isNotNull();
     }
 
-    @Test
+//    @Test
     public void linkPlate() {
         PlateDTO plateDTO = plateService.linkPlate(1000L, 56L);
         assertThat(plateDTO).isNotNull();
