@@ -24,11 +24,11 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import eu.openanalytics.phaedra.plateservice.enumartion.ApprovalStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.UploadStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.ValidationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

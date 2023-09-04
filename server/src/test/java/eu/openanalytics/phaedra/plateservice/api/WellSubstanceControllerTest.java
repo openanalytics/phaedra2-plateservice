@@ -42,7 +42,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 
 @Testcontainers

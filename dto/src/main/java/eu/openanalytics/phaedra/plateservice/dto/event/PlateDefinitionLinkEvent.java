@@ -18,33 +18,24 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.plateservice.enumartion;
+package eu.openanalytics.phaedra.plateservice.dto.event;
 
-public enum ValidationStatus {
-    VALIDATION_NOT_SET(0),
-    VALIDATION_NOT_NEEDED(1),
-    VALIDATED(2),
-    INVALIDATED(-1),
-    ;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-    private int code;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    ValidationStatus(int code) {
-        this.code = code;
-    }
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class PlateDefinitionLinkEvent {
 
-    public int getCode() {
-        return code;
-    }
-
-    public static ValidationStatus getByCode(int code) {
-        for (ValidationStatus s: ValidationStatus.values()) {
-            if (s.getCode() == code) return s;
-        }
-        return null;
-    }
-
-//    public boolean matches(Plate plate) {
-//        return getCode() == plate.getValidationStatus();
-//    }
+	private Long plateId;
+	private Long plateTemplateId;
+	private LinkOutcome outcome;
+	
 }

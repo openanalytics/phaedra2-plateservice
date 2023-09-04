@@ -23,7 +23,6 @@ package eu.openanalytics.phaedra.plateservice.service;
 import java.util.List;
 import java.util.Optional;
 
-import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
 import eu.openanalytics.phaedra.plateservice.model.Welltype;
 import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Conditions;
@@ -33,6 +32,7 @@ import org.springframework.stereotype.Service;
 import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
 import eu.openanalytics.phaedra.plateservice.repository.WellSubstanceRepository;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
 
 @Service
 public class WellSubstanceService {

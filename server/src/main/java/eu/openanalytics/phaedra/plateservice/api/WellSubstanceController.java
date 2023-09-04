@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
 import eu.openanalytics.phaedra.plateservice.service.WellSubstanceService;
 
 @RestController

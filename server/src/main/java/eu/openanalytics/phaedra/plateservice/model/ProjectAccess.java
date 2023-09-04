@@ -26,7 +26,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

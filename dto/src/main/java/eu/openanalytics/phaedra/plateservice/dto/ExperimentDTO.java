@@ -21,7 +21,8 @@
 package eu.openanalytics.phaedra.plateservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import eu.openanalytics.phaedra.plateservice.enumartion.ExperimentStatus;
+
+import eu.openanalytics.phaedra.plateservice.enumeration.ExperimentStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

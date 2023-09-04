@@ -20,12 +20,13 @@
  */
 package eu.openanalytics.phaedra.plateservice.model;
 
-import eu.openanalytics.phaedra.plateservice.enumartion.WellStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+
+import eu.openanalytics.phaedra.plateservice.enumeration.WellStatus;
 
 import javax.validation.constraints.NotNull;
 

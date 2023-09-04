@@ -18,29 +18,32 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.plateservice.dto;
+package eu.openanalytics.phaedra.plateservice.enumeration;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+public enum UploadStatus {
+    UPLOAD_NOT_SET(0),
+    UPLOAD_NOT_NEEDED(1),
+    UPLOADED(2),
+    ;
 
-import eu.openanalytics.phaedra.plateservice.enumeration.WellStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+    private int code;
 
-@Builder
-@Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@AllArgsConstructor
-@NoArgsConstructor
-public class WellDTO {
-	private Long id;
-	private Long plateId;
-	private Integer row;
-	private Integer column;
-	private String wellType;
-	private WellStatus status;
-//	private Long compoundId; // TODO remove?
-	private String description;
-	private WellSubstanceDTO wellSubstance;
+    UploadStatus(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public static UploadStatus getByCode(int code) {
+        for (UploadStatus s: UploadStatus.values()) {
+            if (s.getCode() == code) return s;
+        }
+        return null;
+    }
+
+//    public boolean matches(Plate plate) {
+//        return getCode() == plate.getUploadStatus();
+//    }
 }

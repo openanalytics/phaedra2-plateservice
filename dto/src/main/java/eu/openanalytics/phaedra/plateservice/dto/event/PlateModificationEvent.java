@@ -18,11 +18,24 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.plateservice.enumartion;
+package eu.openanalytics.phaedra.plateservice.dto.event;
 
-public enum SubstanceType {
-    COMPOUND,
-    VIRUS,
-    OLIGO,
-    LOT
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class PlateModificationEvent {
+
+	private PlateDTO plate;
+	private PlateModificationEventType type;
+	
 }

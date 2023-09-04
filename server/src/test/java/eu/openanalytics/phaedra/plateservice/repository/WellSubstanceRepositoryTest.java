@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.repository;
 
-import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
 import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import org.junit.jupiter.api.Test;

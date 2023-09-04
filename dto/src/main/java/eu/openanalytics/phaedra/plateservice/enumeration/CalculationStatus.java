@@ -18,18 +18,19 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.plateservice.enumartion;
+package eu.openanalytics.phaedra.plateservice.enumeration;
 
-public enum ApprovalStatus {
-    APPROVAL_NOT_SET(0),
-    APPROVAL_NOT_NEEDED(1),
-    APPROVED(2),
-    DISAPPROVED(-1),
+public enum CalculationStatus {
+    CALCULATION_NEEDED(0),
+    CALCULATION_OK(1),
+    CALCULATION_IN_PROGRESS(2),
+    CALCULATION_NOT_POSSIBLE(-1),
+    CALCULATION_ERROR(-2),
     ;
 
     private int code;
 
-    ApprovalStatus(int code) {
+    CalculationStatus(int code) {
         this.code = code;
     }
 
@@ -37,14 +38,11 @@ public enum ApprovalStatus {
         return code;
     }
 
-    public static ApprovalStatus getByCode(int code) {
-        for (ApprovalStatus s: ApprovalStatus.values()) {
+    public static CalculationStatus getByCode(int code) {
+        for (CalculationStatus s: CalculationStatus.values()) {
             if (s.getCode() == code) return s;
         }
         return null;
     }
 
-//    public boolean matches(Plate plate) {
-//        return getCode() == plate.getApprovalStatus();
-//    }
 }

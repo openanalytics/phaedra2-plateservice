@@ -58,6 +58,8 @@ public class PlateMeasurementServiceTest {
     private PlateService plateService;
     @Autowired
     private ProjectAccessService projectAccessService;
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
 
     private IAuthorizationService authService = AuthorizationServiceFactory.create();
 
@@ -80,7 +82,7 @@ public class PlateMeasurementServiceTest {
     @BeforeEach
     void before() {
         this.plateMeasurementService = new PlateMeasurementService(plateMeasurementRepository, measurementServiceClient,
-                modelMapper, plateService, projectAccessService, authService);
+                modelMapper, plateService, projectAccessService, authService, kafkaProducerService);
     }
 
     @Test

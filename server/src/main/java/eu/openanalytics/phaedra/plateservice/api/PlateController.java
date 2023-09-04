@@ -59,6 +59,7 @@ public class PlateController {
     @PostMapping
     public ResponseEntity<PlateDTO> createPlate(@RequestBody PlateDTO plateDTO) {
         PlateDTO result = plateService.createPlate(plateDTO);
+        if (result == null) return ResponseEntity.notFound().build();
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
@@ -66,6 +67,7 @@ public class PlateController {
     public ResponseEntity<PlateDTO> updatePlate(@PathVariable long plateId, @RequestBody PlateDTO plateDTO) {
     	plateDTO.setId(plateId);
         PlateDTO result = plateService.updatePlate(plateDTO);
+        if (result == null) return ResponseEntity.notFound().build();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -77,11 +79,9 @@ public class PlateController {
 
     @GetMapping(value = "/{plateId}")
     public ResponseEntity<PlateDTO> getPlate(@PathVariable long plateId) {
-        PlateDTO response = plateService.getPlateById(plateId);
-        if (response != null)
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        PlateDTO plate = plateService.getPlateById(plateId);
+        if (plate == null) return ResponseEntity.notFound().build();
+        return new ResponseEntity<>(plate, HttpStatus.OK);
     }
 
     @GetMapping(params = {"experimentId"})

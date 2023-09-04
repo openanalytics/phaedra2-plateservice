@@ -35,7 +35,7 @@ import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 
 @Service
 public class WellService {

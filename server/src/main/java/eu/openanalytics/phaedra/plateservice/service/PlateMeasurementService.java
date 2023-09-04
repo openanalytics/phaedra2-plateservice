@@ -34,7 +34,9 @@ import com.google.common.primitives.Longs;
 import eu.openanalytics.phaedra.measservice.dto.MeasurementDTO;
 import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateMeasurementLinkEvent;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
 import eu.openanalytics.phaedra.plateservice.repository.PlateMeasurementRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
@@ -48,11 +50,12 @@ public class PlateMeasurementService {
     private final PlateService plateService;
     private final ProjectAccessService projectAccessService;
     private final IAuthorizationService authService;
+    private final KafkaProducerService kafkaProducerService;
 
     public PlateMeasurementService(PlateMeasurementRepository plateMeasurementRepository,
     		MeasurementServiceClient measurementServiceClient, ModelMapper modelMapper,
     		PlateService plateService, ProjectAccessService projectAccessService,
-    		IAuthorizationService authService) {
+    		IAuthorizationService authService, KafkaProducerService kafkaProducerService) {
 
         this.plateMeasurementRepository = plateMeasurementRepository;
         this.measurementServiceClient = measurementServiceClient;
@@ -60,6 +63,7 @@ public class PlateMeasurementService {
         this.plateService = plateService;
         this.projectAccessService = projectAccessService;
         this.authService = authService;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     public PlateMeasurementDTO addPlateMeasurement(PlateMeasurementDTO plateMeasurementDTO) {
@@ -72,7 +76,9 @@ public class PlateMeasurementService {
     	PlateMeasurement plateMeasurement = modelMapper.map(plateMeasurementDTO);
         plateMeasurement = plateMeasurementRepository.save(plateMeasurement);
 
-        return modelMapper.map(plateMeasurement);
+        PlateMeasurementDTO newPlateMeas = modelMapper.map(plateMeasurement);
+        kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(newPlateMeas, LinkOutcome.OK));
+        return newPlateMeas;
     }
 
     public List<PlateMeasurementDTO> getPlateMeasurements(long plateId) {
@@ -112,6 +118,7 @@ public class PlateMeasurementService {
                     plateMeasurementRepository.save(pm);
                 }
             }
+            kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(plateMeasurementDTO, LinkOutcome.OK));
             return plateMeasurementDTO;
         } else {
     	    //TODO: Throw an exception because this state should not be possible

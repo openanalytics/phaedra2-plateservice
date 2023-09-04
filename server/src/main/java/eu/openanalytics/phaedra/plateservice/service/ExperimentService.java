@@ -35,10 +35,10 @@ import eu.openanalytics.phaedra.plateservice.repository.ExperimentRepository;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.ApprovalStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
-import eu.openanalytics.phaedra.plateservice.enumartion.ValidationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service

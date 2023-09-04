@@ -30,8 +30,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -44,18 +42,19 @@ import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
-import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateDefinitionLinkEvent;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEvent;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEventType;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class PlateService {
-	public static final String PLATE_TOPIC = "plate-topic";
-	public static final String PLATE_CALCULATION_EVENT = "plateCalculationEvent";
-	private final ModelMapper modelMapper = new ModelMapper();
 
 	private final PlateRepository plateRepository;
 	private final WellService wellService;
@@ -67,11 +66,14 @@ public class PlateService {
 	private final WellTemplateService wellTemplateService;
 	private final WellSubstanceService wellSubstanceService;
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final KafkaProducerService kafkaProducerService;
+	
+	private final ModelMapper modelMapper = new ModelMapper();
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
 						ProjectAccessService projectAccessService, IAuthorizationService authService,
-						PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService) {
+						PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService,
+						KafkaProducerService kafkaProducerService) {
 
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
@@ -81,6 +83,7 @@ public class PlateService {
 		this.plateTemplateService = plateTemplateService;
 		this.wellTemplateService = wellTemplateService;
 		this.wellSubstanceService = wellSubstanceService;
+		this.kafkaProducerService = kafkaProducerService;
 
 		// TODO move to dedicated ModelMapper service
 		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
@@ -107,27 +110,33 @@ public class PlateService {
 		// Automatically create the corresponding wells
 		wellService.createWells(plate);
 
-		return modelMapper.map(plate, PlateDTO.class);
+		PlateDTO newPlate = modelMapper.map(plate, PlateDTO.class);
+		kafkaProducerService.notifyPlateModified(new PlateModificationEvent(newPlate, PlateModificationEventType.Created));
+		return newPlate;
 	}
 
 	public PlateDTO updatePlate(PlateDTO plateDTO) {
-		Optional<Plate> plate = plateRepository.findById(plateDTO.getId());
-		plate.ifPresent(p -> {
-			projectAccessService.checkAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Write);
-			modelMapper.typeMap(PlateDTO.class, Plate.class)
-					.setPropertyCondition(Conditions.isNotNull())
-					.map(plateDTO, p);
-			p.setUpdatedBy(authService.getCurrentPrincipalName());
-			p.setUpdatedOn(new Date());
-			plateRepository.save(p);
-			logger.info("Plate with plateId " + p.getId() + " successfully updated!");
-		});
-		return plateDTO;
+		Plate plate = plateRepository.findById(plateDTO.getId()).orElse(null);
+		if (plate == null) return null;
+		
+		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plate.getId()), ProjectAccessLevel.Write);
+		
+		modelMapper.typeMap(PlateDTO.class, Plate.class)
+				.setPropertyCondition(Conditions.isNotNull())
+				.map(plateDTO, plate);
+		plate.setUpdatedBy(authService.getCurrentPrincipalName());
+		plate.setUpdatedOn(new Date());
+		plateRepository.save(plate);
+		
+		PlateDTO modifiedPlate = modelMapper.map(plate, PlateDTO.class);
+		kafkaProducerService.notifyPlateModified(new PlateModificationEvent(modifiedPlate, PlateModificationEventType.Updated));
+		return modifiedPlate;
 	}
 
 	public void deletePlate(long plateId) {
 		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateId), ProjectAccessLevel.Write);
 		plateRepository.deleteById(plateId);
+		kafkaProducerService.notifyPlateModified(new PlateModificationEvent(PlateDTO.builder().id(plateId).build(), PlateModificationEventType.Deleted));
 	}
 
 	public List<PlateDTO> getPlatesByExperimentId(long experimentId) {
@@ -180,7 +189,10 @@ public class PlateService {
 		plateDTO.setLinkSource("layout-template");
 		plateDTO.setLinkStatus(LinkStatus.LINKED);
 		plateDTO.setLinkedOn(new Date());
-		return updatePlate(plateDTO);
+		
+		PlateDTO updatedPlate = updatePlate(plateDTO);
+		kafkaProducerService.notifyPlateDefinitionLinked(new PlateDefinitionLinkEvent(plateId, plateTemplateId, LinkOutcome.OK));
+		return updatedPlate;
 	}
 
 	private void linkWithPlateTemplate(long plateId, long plateTemplateId) {

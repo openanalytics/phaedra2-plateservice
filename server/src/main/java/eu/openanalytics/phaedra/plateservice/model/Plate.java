@@ -20,16 +20,17 @@
  */
 package eu.openanalytics.phaedra.plateservice.model;
 
-import eu.openanalytics.phaedra.plateservice.enumartion.ApprovalStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.UploadStatus;
-import eu.openanalytics.phaedra.plateservice.enumartion.ValidationStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+
+import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;

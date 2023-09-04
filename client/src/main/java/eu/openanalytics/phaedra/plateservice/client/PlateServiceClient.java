@@ -29,7 +29,7 @@ import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 
 public interface PlateServiceClient {
 

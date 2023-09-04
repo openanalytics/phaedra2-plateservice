@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.dto;
 
-import eu.openanalytics.phaedra.plateservice.enumartion.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 import eu.openanalytics.phaedra.util.dto.validation.OnCreate;
 import eu.openanalytics.phaedra.util.dto.validation.OnUpdate;
 import lombok.*;

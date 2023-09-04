@@ -20,13 +20,17 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.plateservice.dto.*;
-import eu.openanalytics.phaedra.plateservice.enumartion.LinkStatus;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Test;
@@ -42,13 +46,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Date;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
 
 @Testcontainers
 @SpringBootTest

@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 import eu.openanalytics.phaedra.plateservice.model.ProjectAccess;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectAccessRepository;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectAccessDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service

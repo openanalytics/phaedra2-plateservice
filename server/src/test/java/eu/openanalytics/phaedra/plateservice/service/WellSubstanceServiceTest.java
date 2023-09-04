@@ -21,7 +21,7 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
 import eu.openanalytics.phaedra.plateservice.repository.WellSubstanceRepository;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;

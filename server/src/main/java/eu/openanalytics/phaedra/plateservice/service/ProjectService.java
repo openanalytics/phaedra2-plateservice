@@ -24,7 +24,7 @@ import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
-import eu.openanalytics.phaedra.plateservice.enumartion.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.model.Project;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
