@@ -64,7 +64,6 @@ import eu.openanalytics.phaedra.plateservice.support.Containers;
 @Sql({"/jdbc/test-data.sql"})
 @AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(locations = "classpath:application-test.properties")
-@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 public class PlateControllerTest {
 
     @Autowired
