@@ -28,6 +28,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -43,4 +45,6 @@ public class WellDTO {
 //	private Long compoundId; // TODO remove?
 	private String description;
 	private WellSubstanceDTO wellSubstance;
+
+	private List<String> tags;
 }

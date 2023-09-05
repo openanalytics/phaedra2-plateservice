@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.plateservice.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -78,4 +79,6 @@ public class PlateDTO {
 	private String createdBy;
 	private Date updatedOn;
 	private String updatedBy;
+
+	private List<String> tags;
 }

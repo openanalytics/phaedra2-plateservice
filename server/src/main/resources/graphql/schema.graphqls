@@ -136,6 +136,8 @@ type WellDTO {
     status: WellStatus
     description: String
     wellSubstance: WellSubstanceDTO
+
+    tags: [String]
 }
 
 type WellSubstanceDTO {
@@ -186,6 +188,7 @@ type PlateTemplateDTO {
     updatedOn: Date
     updatedBy: String
     wells: [WellTemplateDTO]
+
     tags: [String]
 }
 
