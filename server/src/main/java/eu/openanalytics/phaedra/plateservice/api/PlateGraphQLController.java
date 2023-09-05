@@ -91,13 +91,6 @@ public class PlateGraphQLController {
     @QueryMapping
     public List<WellDTO> getPlateWells(@Argument long plateId) {
         List<WellDTO> result = wellService.getWellsByPlateId(plateId);
-        if (CollectionUtils.isNotEmpty(result)) {
-            // Add tags
-            result.stream().forEach(wellDTO -> {
-                List<TagDTO> wellTags = metadataServiceClient.getTags(ObjectClass.WELL, wellDTO.getId());
-                wellDTO.setTags(wellTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
-            });
-        }
         return result;
     }
 
