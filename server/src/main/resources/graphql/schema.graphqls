@@ -84,7 +84,13 @@ type ExperimentDTO {
     tags: [String]
 }
 
-
+type ExperimentSummaryDTO {
+    experimentId: ID
+    nrPlates: Int
+    nrPlatesCalculated: Int
+    nrPlatesValidated: Int
+    nrPlatesApproved: Int
+}
 
 type PlateDTO {
     id: ID
@@ -127,6 +133,7 @@ type PlateDTO {
 
     tags: [String]
 }
+
 type WellDTO {
     id: ID
     plateId: ID
@@ -187,8 +194,8 @@ type PlateTemplateDTO {
     createdBy: String
     updatedOn: Date
     updatedBy: String
-    wells: [WellTemplateDTO]
 
+    wells: [WellTemplateDTO]
     tags: [String]
 }
 
@@ -199,6 +206,9 @@ type Query {
     getExperiments: [ExperimentDTO]
     getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
     getExperimentById(experimentId: ID): ExperimentDTO
+    getExperimentSummaries: [ExperimentSummaryDTO]
+    getExperimentSummariesByProjectId: [ExperimentSummaryDTO]
+    getExperimentSummaryByExperimentId: ExperimentSummaryDTO
     getPlatesByExperimentId(experimentId: ID): [PlateDTO]
     getPlatesByBarcode(barcode: String): [PlateDTO]
     getPlateById(plateId: ID): PlateDTO
@@ -206,4 +216,24 @@ type Query {
     getPlateMeasurements(plateId: ID, active: Boolean): [PlateMeasurementDTO]
     getPlateTemplates: [PlateTemplateDTO]
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
+    getWellTemplatesByPlateTemplateId(plateTemplateId: ID): [WellTemplateDTO]
+}
+
+input PlateTemplateInput {
+    name: String
+    description: String
+}
+
+input WellTemplateInput {
+    description: String
+    wellType: String
+    skipped: Boolean
+    substanceName: String
+    substanceType: String
+    concentration: Float
+}
+
+type Mutation {
+    updatePlateTemplate(plateTemplateId: ID!, plateTemplate: PlateTemplateInput): PlateTemplateDTO
+    updateWellTemplates(plateTemplateId: ID!, wellTemplates: [WellTemplateInput]): [WellTemplateDTO]
 }

@@ -20,26 +20,23 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.model.Experiment;
+import eu.openanalytics.phaedra.plateservice.repository.ExperimentRepository;
+import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import eu.openanalytics.phaedra.plateservice.model.Experiment;
-import eu.openanalytics.phaedra.plateservice.repository.ExperimentRepository;
-import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
-import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ExperimentService {
@@ -47,14 +44,16 @@ public class ExperimentService {
 
 	private final ExperimentRepository experimentRepository;
 	private final PlateService plateService;
+	private final PlateRepository plateRepository;
 	private final ProjectAccessService projectAccessService;
 	private final IAuthorizationService authService;
 
 	public ExperimentService(ExperimentRepository experimentRepository, @Lazy PlateService plateService,
-			ProjectAccessService projectAccessService, IAuthorizationService authService) {
+							 PlateRepository plateRepository, ProjectAccessService projectAccessService, IAuthorizationService authService) {
 
 		this.experimentRepository = experimentRepository;
 		this.plateService = plateService;
+		this.plateRepository = plateRepository;
 		this.projectAccessService = projectAccessService;
 		this.authService = authService;
 	}
@@ -112,18 +111,22 @@ public class ExperimentService {
 		return result.stream().map(this::mapToExperimentDTO).collect(Collectors.toList());
 	}
 
+	public List<ExperimentSummaryDTO> getExperimentSummaries() {
+		List<ExperimentSummaryDTO> result = plateRepository.findExperimentSummaries();
+		return result;
+	}
+
+	public List<ExperimentSummaryDTO> getExperimentSummaryInExperimentIds(Set<Long> experimentIds) {
+		List<ExperimentSummaryDTO> result = plateRepository.findExperimentSummariesInExperimentIds(experimentIds);
+		return result;
+	}
+
 	public List<ExperimentSummaryDTO> getExperimentSummariesByProjectId(long projectId) {
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
-		return getExperimentByProjectId(projectId).stream().map(exp -> {
-			List<PlateDTO> plates = plateService.getPlatesByExperimentId(exp.getId());
-			ExperimentSummaryDTO summary = new ExperimentSummaryDTO();
-			summary.experimentId = exp.getId();
-			summary.nrPlates = plates.size();
-			summary.nrPlatesCalculated = (int) plates.stream().filter(p -> p.getCalculationStatus() == CalculationStatus.CALCULATION_OK).count();
-			summary.nrPlatesValidated = (int) plates.stream().filter(p -> p.getValidationStatus() == ValidationStatus.VALIDATED).count();
-			summary.nrPlatesApproved = (int) plates.stream().filter(p -> p.getApprovalStatus() == ApprovalStatus.APPROVED).count();
-			return summary;
-		}).toList();
+		List<ExperimentDTO> experiments = getExperimentByProjectId(projectId);
+		Set<Long> experimentIds = experiments.stream().map(e -> e.getId()).collect(Collectors.toSet());
+		List<ExperimentSummaryDTO> result = plateRepository.findExperimentSummariesInExperimentIds(experimentIds);
+		return result;
 	}
 
 	private ExperimentDTO mapToExperimentDTO(Experiment experiment) {

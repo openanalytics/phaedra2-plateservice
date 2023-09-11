@@ -25,7 +25,6 @@ import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
-import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -34,6 +33,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -86,7 +86,17 @@ public class ExperimentGraphQLController {
 	}
 
 	@QueryMapping
-	public List<ExperimentSummaryDTO> getExperimentSummaries(@PathVariable long projectId) {
+	public List<ExperimentSummaryDTO> getExperimentSummaries() {
+		return experimentService.getExperimentSummaries();
+	}
+
+	@QueryMapping
+	public List<ExperimentSummaryDTO> getExperimentSummariesByProjectId(@PathVariable long projectId) {
 		return experimentService.getExperimentSummariesByProjectId(projectId);
+	}
+
+	@QueryMapping
+	public List<ExperimentSummaryDTO> getExperimentSummaryByExperimentId(@Argument long experimentId) {
+		return experimentService.getExperimentSummaryInExperimentIds(Set.of(experimentId));
 	}
 }
