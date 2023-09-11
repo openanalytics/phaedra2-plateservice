@@ -207,8 +207,8 @@ type Query {
     getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
     getExperimentById(experimentId: ID): ExperimentDTO
     getExperimentSummaries: [ExperimentSummaryDTO]
-    getExperimentSummariesByProjectId: [ExperimentSummaryDTO]
-    getExperimentSummaryByExperimentId: ExperimentSummaryDTO
+    getExperimentSummariesByProjectId(projectId: ID): [ExperimentSummaryDTO]
+    getExperimentSummaryByExperimentId(experimentId: ID): ExperimentSummaryDTO
     getPlatesByExperimentId(experimentId: ID): [PlateDTO]
     getPlatesByBarcode(barcode: String): [PlateDTO]
     getPlateById(plateId: ID): PlateDTO
