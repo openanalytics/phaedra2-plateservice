@@ -54,7 +54,7 @@ public class KafkaConsumerService {
         this.plateMeasurementService = plateMeasurementService;
     }
     
-    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID, filter = "reqPlateCalculationStatusUpdateFilter")
+    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateCalculationStatusUpdate", filter = "reqPlateCalculationStatusUpdateFilter")
     public void reqPlateCalculationStatusUpdate(PlateCalculationStatusDTO plateCalcStatusDTO) {
         Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
         if (result.isPresent()) {
@@ -73,7 +73,7 @@ public class KafkaConsumerService {
         }
     }
     
-    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID, filter = "reqPlateMeasLinkFilter")
+    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateMeasLink", filter = "reqPlateMeasLinkFilter")
     public void reqPlateMeasLink(String message) {
     	logger.debug("Received kafka event: " + EVENT_REQ_PLATE_MEAS_LINK);
     	Long plateId = JsonPath.read(message, "$.plateId");
@@ -89,7 +89,7 @@ public class KafkaConsumerService {
         plateMeasurementService.setActivePlateMeasurement(plateMeasLink);
     }
     
-    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID, filter = "reqPlateDefLinkFilter")
+    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateDefLink", filter = "reqPlateDefLinkFilter")
     public void reqPlateDefLink(String message) {
     	logger.debug("Received kafka event: " + EVENT_REQ_PLATE_DEF_LINK);
     	Long plateId = JsonPath.read(message, "$.plateId");
