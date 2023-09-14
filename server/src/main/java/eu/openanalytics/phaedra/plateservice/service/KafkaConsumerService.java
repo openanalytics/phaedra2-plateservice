@@ -20,8 +20,6 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.EVENT_REQ_PLATE_DEF_LINK;
-import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.EVENT_REQ_PLATE_MEAS_LINK;
 import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.GROUP_ID;
 import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.TOPIC_PLATES;
 
@@ -75,14 +73,13 @@ public class KafkaConsumerService {
     
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateMeasLink", filter = "reqPlateMeasLinkFilter")
     public void reqPlateMeasLink(String message) {
-    	logger.debug("Received kafka event: " + EVENT_REQ_PLATE_MEAS_LINK);
-    	Long plateId = JsonPath.read(message, "$.plateId");
-    	Long measId = JsonPath.read(message, "$.measurementId");
+    	Number plateId = JsonPath.read(message, "$.plateId");
+    	Number measId = JsonPath.read(message, "$.measurementId");
     	
     	PlateMeasurementDTO linkRequest = PlateMeasurementDTO.builder()
     			.active(true)
-    			.plateId(plateId)
-    			.measurementId(measId)
+    			.plateId(plateId.longValue())
+    			.measurementId(measId.longValue())
     			.build();
     	
     	PlateMeasurementDTO plateMeasLink = plateMeasurementService.addPlateMeasurement(linkRequest);
@@ -91,9 +88,8 @@ public class KafkaConsumerService {
     
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateDefLink", filter = "reqPlateDefLinkFilter")
     public void reqPlateDefLink(String message) {
-    	logger.debug("Received kafka event: " + EVENT_REQ_PLATE_DEF_LINK);
-    	Long plateId = JsonPath.read(message, "$.plateId");
-    	Long templateId = JsonPath.read(message, "$.templateId");
-    	plateService.linkPlate(plateId, templateId);
+    	Number plateId = JsonPath.read(message, "$.plateId");
+    	Number templateId = JsonPath.read(message, "$.templateId");
+    	plateService.linkPlate(plateId.longValue(), templateId.longValue());
     }
 }
