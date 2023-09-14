@@ -37,6 +37,7 @@ import eu.openanalytics.phaedra.plateservice.dto.PlateCalculationStatusDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class KafkaConsumerService {
@@ -44,12 +45,16 @@ public class KafkaConsumerService {
     private final PlateRepository plateRepository;
     private final PlateService plateService;
     private final PlateMeasurementService plateMeasurementService;
+    private final IAuthorizationService authService;
+    
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public KafkaConsumerService(PlateRepository plateRepository, PlateService plateService, PlateMeasurementService plateMeasurementService) {
+    public KafkaConsumerService(PlateRepository plateRepository, PlateService plateService,
+    		PlateMeasurementService plateMeasurementService, IAuthorizationService authService) {
         this.plateRepository = plateRepository;
         this.plateService = plateService;
         this.plateMeasurementService = plateMeasurementService;
+        this.authService = authService;
     }
     
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateCalculationStatusUpdate", filter = "reqPlateCalculationStatusUpdateFilter")
@@ -71,7 +76,7 @@ public class KafkaConsumerService {
         }
     }
     
-    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateMeasLink", filter = "reqPlateMeasLinkFilter")
+    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateMeasLink", filter = "reqPlateMeasLinkFilter", errorHandler = "kafkaErrorHandler")
     public void reqPlateMeasLink(String message) {
     	Number plateId = JsonPath.read(message, "$.plateId");
     	Number measId = JsonPath.read(message, "$.measurementId");
@@ -82,13 +87,14 @@ public class KafkaConsumerService {
     			.measurementId(measId.longValue())
     			.build();
     	
-    	plateMeasurementService.addPlateMeasurement(linkRequest, true);
+    	authService.runInKafkaContext(() -> plateMeasurementService.addPlateMeasurement(linkRequest, true));
     }
     
-    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateDefLink", filter = "reqPlateDefLinkFilter")
+    @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateDefLink", filter = "reqPlateDefLinkFilter", errorHandler = "kafkaErrorHandler")
     public void reqPlateDefLink(String message) {
     	Number plateId = JsonPath.read(message, "$.plateId");
     	Number templateId = JsonPath.read(message, "$.templateId");
-    	plateService.linkPlate(plateId.longValue(), templateId.longValue());
+    	
+    	authService.runInKafkaContext(() -> plateService.linkPlate(plateId.longValue(), templateId.longValue()));
     }
 }

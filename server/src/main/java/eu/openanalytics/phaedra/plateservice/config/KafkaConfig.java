@@ -20,9 +20,12 @@
  */
 package eu.openanalytics.phaedra.plateservice.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.listener.KafkaListenerErrorHandler;
 import org.springframework.kafka.listener.adapter.RecordFilterStrategy;
 
 @Configuration
@@ -41,6 +44,8 @@ public class KafkaConfig {
     public static final String EVENT_NOTIFY_PLATE_MEAS_LINKED = "notifyPlateMeasLinked";
     public static final String EVENT_NOTIFY_PLATE_DEFINITION_LINKED = "notifyPlateDefinitionLinked";
     
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    
     @Bean
     public RecordFilterStrategy<String, Object> reqPlateCalculationStatusUpdateFilter() {
         return rec -> !(rec.key().equalsIgnoreCase(EVENT_REQ_PLATE_STATUS_UPDATE));
@@ -56,4 +61,11 @@ public class KafkaConfig {
         return rec -> !(rec.key().equalsIgnoreCase(EVENT_REQ_PLATE_DEF_LINK));
     }
 
+    @Bean
+    public KafkaListenerErrorHandler kafkaErrorHandler() {
+    	return (msg, ex) -> {
+    		logger.error(String.format("Error occured while handling event"), ex);
+    		return null;
+    	};
+    }
 }
