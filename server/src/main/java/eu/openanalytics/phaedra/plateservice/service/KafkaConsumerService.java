@@ -82,8 +82,7 @@ public class KafkaConsumerService {
     			.measurementId(measId.longValue())
     			.build();
     	
-    	PlateMeasurementDTO plateMeasLink = plateMeasurementService.addPlateMeasurement(linkRequest);
-        plateMeasurementService.setActivePlateMeasurement(plateMeasLink);
+    	plateMeasurementService.addPlateMeasurement(linkRequest, true);
     }
     
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateDefLink", filter = "reqPlateDefLinkFilter")

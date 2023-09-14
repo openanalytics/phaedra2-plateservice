@@ -105,8 +105,7 @@ public class PlateController {
 
     @PostMapping(value = "/{plateId}/measurements")
     public ResponseEntity<PlateMeasurementDTO> addMeasurement(@PathVariable long plateId, @RequestBody PlateMeasurementDTO plateMeasurementDTO) {
-        PlateMeasurementDTO result = plateMeasurementService.addPlateMeasurement(plateMeasurementDTO);
-        plateMeasurementService.setActivePlateMeasurement(plateMeasurementDTO);
+        PlateMeasurementDTO result = plateMeasurementService.addPlateMeasurement(plateMeasurementDTO, true);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 

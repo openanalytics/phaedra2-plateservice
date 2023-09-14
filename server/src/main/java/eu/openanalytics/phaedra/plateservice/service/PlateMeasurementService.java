@@ -66,19 +66,27 @@ public class PlateMeasurementService {
         this.kafkaProducerService = kafkaProducerService;
     }
 
-    public PlateMeasurementDTO addPlateMeasurement(PlateMeasurementDTO plateMeasurementDTO) {
-    	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
-    	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
-
-    	plateMeasurementDTO.setLinkedBy(authService.getCurrentPrincipalName());
-    	plateMeasurementDTO.setLinkedOn(new Date());
-    	
-    	PlateMeasurement plateMeasurement = modelMapper.map(plateMeasurementDTO);
-        plateMeasurement = plateMeasurementRepository.save(plateMeasurement);
-
-        PlateMeasurementDTO newPlateMeas = modelMapper.map(plateMeasurement);
-        kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(newPlateMeas, LinkOutcome.OK));
-        return newPlateMeas;
+    public PlateMeasurementDTO addPlateMeasurement(PlateMeasurementDTO plateMeasurementDTO, boolean setActive) {
+    	try {
+	    	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
+	    	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
+	
+	    	plateMeasurementDTO.setLinkedBy(authService.getCurrentPrincipalName());
+	    	plateMeasurementDTO.setLinkedOn(new Date());
+	    	
+	    	PlateMeasurement plateMeasurement = modelMapper.map(plateMeasurementDTO);
+	        plateMeasurement = plateMeasurementRepository.save(plateMeasurement);
+	
+	        if (setActive) {
+	        	toggleActiveMeas(plateMeasurement);
+	        }
+	
+	        kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(plateMeasurementDTO, LinkOutcome.OK));
+	        return modelMapper.map(plateMeasurement);
+    	} catch (Exception e) {
+    		kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(plateMeasurementDTO, LinkOutcome.ERROR));
+    		throw e;
+    	}
     }
 
     public List<PlateMeasurementDTO> getPlateMeasurements(long plateId) {
@@ -103,27 +111,21 @@ public class PlateMeasurementService {
     }
 
     public PlateMeasurementDTO setActivePlateMeasurement(PlateMeasurementDTO plateMeasurementDTO) {
-    	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
-    	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
-
-    	PlateMeasurement plateMeasurement = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateMeasurementDTO.getPlateId(), plateMeasurementDTO.getMeasurementId());
-    	if (plateMeasurement != null) {
-            plateMeasurement.setActive(plateMeasurementDTO.getActive());
-            plateMeasurementRepository.save(plateMeasurement);
-
-            List<PlateMeasurement> plateMeasurements = plateMeasurementRepository.findByPlateId(plateMeasurementDTO.getPlateId());
-            for (PlateMeasurement pm : plateMeasurements) {
-                if (!pm.getMeasurementId().equals(plateMeasurementDTO.getMeasurementId())) {
-                    pm.setActive(false);
-                    plateMeasurementRepository.save(pm);
-                }
-            }
-            kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(plateMeasurementDTO, LinkOutcome.OK));
-            return plateMeasurementDTO;
-        } else {
-    	    //TODO: Throw an exception because this state should not be possible
-    	    return null;
-        }
+    	try {
+	    	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
+	    	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
+	
+	    	PlateMeasurement plateMeasurement = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateMeasurementDTO.getPlateId(), plateMeasurementDTO.getMeasurementId());
+	    	if (plateMeasurement == null) throw new IllegalStateException("PlateMeasurement is null");
+	    	
+	    	toggleActiveMeas(plateMeasurement);
+	        
+	        kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(plateMeasurementDTO, LinkOutcome.OK));
+	        return plateMeasurementDTO;
+    	} catch (Exception e) {
+    		kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(plateMeasurementDTO, LinkOutcome.ERROR));
+    		throw e;
+    	}
     }
 
     public PlateMeasurementDTO getActivePlateMeasurement(long plateId) {
@@ -141,5 +143,18 @@ public class PlateMeasurementService {
     private PlateMeasurementDTO mapToPlateMeasurementDTO(PlateMeasurement plateMeasurement) {
         List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurementsByMeasIds(plateMeasurement.getMeasurementId());
         return modelMapper.map(plateMeasurement, measurementDTOs.get(0));
+    }
+    
+    private void toggleActiveMeas(PlateMeasurement plateMeasurement) {
+    	plateMeasurement.setActive(true);
+        plateMeasurementRepository.save(plateMeasurement);
+
+        List<PlateMeasurement> plateMeasurements = plateMeasurementRepository.findByPlateId(plateMeasurement.getPlateId());
+        for (PlateMeasurement pm : plateMeasurements) {
+            if (!pm.getMeasurementId().equals(plateMeasurement.getMeasurementId())) {
+                pm.setActive(false);
+                plateMeasurementRepository.save(pm);
+            }
+        }
     }
 }
