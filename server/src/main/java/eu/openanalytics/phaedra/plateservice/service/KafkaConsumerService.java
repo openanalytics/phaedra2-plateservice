@@ -31,13 +31,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import com.jayway.jsonpath.JsonPath;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import eu.openanalytics.phaedra.plateservice.dto.PlateCalculationStatusDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Service
 public class KafkaConsumerService {
@@ -77,24 +79,33 @@ public class KafkaConsumerService {
     }
     
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateMeasLink", filter = "reqPlateMeasLinkFilter", errorHandler = "kafkaErrorHandler")
-    public void reqPlateMeasLink(String message) {
-    	Number plateId = JsonPath.read(message, "$.plateId");
-    	Number measId = JsonPath.read(message, "$.measurementId");
-    	
+    public void reqPlateMeasLink(ReqPlateMeasLinkDTO req) {
     	PlateMeasurementDTO linkRequest = PlateMeasurementDTO.builder()
     			.active(true)
-    			.plateId(plateId.longValue())
-    			.measurementId(measId.longValue())
+    			.plateId(req.getPlateId())
+    			.measurementId(req.getMeasurementId())
     			.build();
-    	
     	authService.runInKafkaContext(() -> plateMeasurementService.addPlateMeasurement(linkRequest, true));
     }
     
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateDefLink", filter = "reqPlateDefLinkFilter", errorHandler = "kafkaErrorHandler")
-    public void reqPlateDefLink(String message) {
-    	Number plateId = JsonPath.read(message, "$.plateId");
-    	Number templateId = JsonPath.read(message, "$.templateId");
-    	
-    	authService.runInKafkaContext(() -> plateService.linkPlate(plateId.longValue(), templateId.longValue()));
+    public void reqPlateDefLink(ReqPlateDefLinkDTO req) {
+    	authService.runInKafkaContext(() -> plateService.linkPlate(req.getPlateId(), req.getTemplateId()));
+    }
+    
+    @Data
+    @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ReqPlateMeasLinkDTO {
+    	private Long plateId;
+    	private Long measurementId;
+    }
+    
+    @Data
+    @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ReqPlateDefLinkDTO {
+    	private Long plateId;
+    	private Long templateId;
     }
 }
