@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.listener.KafkaListenerErrorHandler;
 import org.springframework.kafka.listener.adapter.RecordFilterStrategy;
+import org.springframework.kafka.support.converter.BytesJsonMessageConverter;
 
 @Configuration
 @EnableKafka
@@ -67,5 +68,10 @@ public class KafkaConfig {
     		logger.error(String.format("Error occured while handling event"), ex);
     		return null;
     	};
+    }
+    
+    @Bean
+    public BytesJsonMessageConverter messageConverter() {
+    	return new BytesJsonMessageConverter();
     }
 }
