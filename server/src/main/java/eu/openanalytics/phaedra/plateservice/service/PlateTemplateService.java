@@ -95,8 +95,6 @@ public class PlateTemplateService {
 
             wellTemplateService.updateWellTemplates(plateTemplateDTO.getWells());
         });
-
-
     }
 
     public void deletePlateTemplate(long plateTemplateId) {
@@ -115,7 +113,7 @@ public class PlateTemplateService {
                 .map(this::mapToPlateTemplateDTO)
                 .collect(Collectors.toList());
     }
-    
+
     public List<PlateTemplateDTO> getPlateTemplatesByName(String name) {
     	authService.performAccessCheck(p -> authService.hasUserAccess());
 
@@ -134,7 +132,6 @@ public class PlateTemplateService {
 
     private PlateTemplateDTO mapToPlateTemplateDTO(PlateTemplate plateTemplate) {
         var builder = modelMapper.map(plateTemplate, PlateTemplateDTO.PlateTemplateDTOBuilder.class);
-        builder.wells(wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplate.getId()));
         return builder.build();
     }
 }

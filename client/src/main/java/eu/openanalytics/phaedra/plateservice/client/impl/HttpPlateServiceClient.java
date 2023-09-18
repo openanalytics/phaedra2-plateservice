@@ -142,19 +142,25 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     	var response = restTemplate.exchange(UrlFactory.experiments(projectId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), ExperimentDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
     }
-    
+
     @Override
     public List<PlateDTO> getPlatesByBarcode(String barcode) {
     	var response = restTemplate.exchange(UrlFactory.platesByBarcode(barcode), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
     }
-    
+
+    @Override
+    public List<PlateDTO> getPlatesByExperiment(long experimentId) {
+        var response = restTemplate.exchange(UrlFactory.experimentPlates(experimentId), HttpMethod.GET, new HttpEntity<>(makeHttpHeaders()), PlateDTO[].class);
+        return Arrays.stream(response.getBody()).toList();
+    }
+
     @Override
     public List<PlateTemplateDTO> getPlateTemplatesByName(String name) {
     	var response = restTemplate.exchange(UrlFactory.plateTemplatesByName(name), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateTemplateDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
     }
-    
+
     private HttpHeaders makeHttpHeaders() {
     	HttpHeaders httpHeaders = new HttpHeaders();
         String bearerToken = authService.getCurrentBearerToken();

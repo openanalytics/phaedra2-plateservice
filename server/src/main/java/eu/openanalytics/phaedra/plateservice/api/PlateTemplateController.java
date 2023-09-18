@@ -22,6 +22,8 @@ package eu.openanalytics.phaedra.plateservice.api;
 
 import java.util.List;
 
+import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.service.WellTemplateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +45,11 @@ import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
 public class PlateTemplateController {
 
     private final PlateTemplateService plateTemplateService;
+    private final WellTemplateService wellTemplateService;
 
-    public PlateTemplateController(PlateTemplateService plateTemplateService) {
+    public PlateTemplateController(PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService) {
         this.plateTemplateService = plateTemplateService;
+        this.wellTemplateService = wellTemplateService;
     }
 
     @PostMapping
@@ -74,6 +78,16 @@ public class PlateTemplateController {
         	return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         } else {
         	return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping(value = "/{plateTemplateId}/wells", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<WellTemplateDTO>> getWellTemplatesByPlateTemplateId(@PathVariable long plateTemplateId) {
+        List<WellTemplateDTO> response = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
+        if (response == null) {
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
 

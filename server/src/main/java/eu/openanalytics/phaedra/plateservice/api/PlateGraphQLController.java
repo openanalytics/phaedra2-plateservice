@@ -97,9 +97,9 @@ public class PlateGraphQLController {
     @QueryMapping
     public List<PlateMeasurementDTO> getPlateMeasurements(@Argument long plateId, @Argument boolean active) {
         if (active) {
-            return plateMeasurementService.getPlateMeasurements(plateId);
-        } else {
             return List.of(plateMeasurementService.getActivePlateMeasurement(plateId));
+        } else {
+            return plateMeasurementService.getPlateMeasurements(plateId);
         }
     }
 }

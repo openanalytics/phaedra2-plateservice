@@ -44,8 +44,10 @@ public interface PlateServiceClient {
     List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws PlateUnresolvableException;
 
     List<ExperimentDTO> getExperiments(long projectId);
-    
+
     List<PlateDTO> getPlatesByBarcode(String barcode);
-    
+
+    List<PlateDTO> getPlatesByExperiment(long experimentId);
+
     List<PlateTemplateDTO> getPlateTemplatesByName(String name);
 }
