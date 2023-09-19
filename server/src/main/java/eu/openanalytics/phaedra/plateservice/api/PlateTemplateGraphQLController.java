@@ -67,9 +67,13 @@ public class PlateTemplateGraphQLController {
     }
 
     @QueryMapping
-    PlateTemplateDTO getPlateTemplateById(@Argument long plateTemplateId) {
+    PlateTemplateDTO getPlateTemplateById(@Argument Long plateTemplateId) {
         PlateTemplateDTO result = plateTemplateService.getPlateTemplateById(plateTemplateId);
         if (Objects.nonNull(result)) {
+            // Add wells
+            List<WellTemplateDTO> wells = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
+            result.setWells(wells);
+
             // Add tags
             List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PLATE_TEMPLATE, result.getId());
             result.setTags(projectTags.stream().map(TagDTO::getTag).collect(toList()));
@@ -78,13 +82,13 @@ public class PlateTemplateGraphQLController {
     }
 
     @QueryMapping
-    List<WellTemplateDTO> getWellTemplatesByPlateTemplateId(@Argument long plateTemplateId) {
+    List<WellTemplateDTO> getWellTemplatesByPlateTemplateId(@Argument Long plateTemplateId) {
         List<WellTemplateDTO> result = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
         return result;
     }
 
     @MutationMapping
-    PlateTemplateDTO updatePlateTemplate(@Argument long plateTemplateId, PlateTemplateDTO plateTemplate) {
+    PlateTemplateDTO updatePlateTemplate(@Argument Long plateTemplateId, PlateTemplateDTO plateTemplate) {
         plateTemplateService.updatePlateTemplate(plateTemplate);
         return plateTemplate;
     }
