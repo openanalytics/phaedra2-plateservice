@@ -82,7 +82,7 @@ type ExperimentDTO {
     updatedBy: String
 
     tags: [String]
-    summery: ExperimentSummaryDTO
+    summary: ExperimentSummaryDTO
 }
 
 type ExperimentSummaryDTO {
