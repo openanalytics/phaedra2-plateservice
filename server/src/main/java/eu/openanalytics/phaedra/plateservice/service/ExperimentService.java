@@ -105,6 +105,19 @@ public class ExperimentService {
 				.toList();
 	}
 
+	/**
+	 * Get n most recently created experiments
+	 * @param n number of experiments
+	 * @return n most recently created experiments
+	 */
+	public List<ExperimentDTO> getLatestNExperiments(int n) {
+		List<Experiment> result = experimentRepository.findLatestNExperiments(n);
+		return result.stream()
+				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
+				.map(this::mapToExperimentDTO)
+				.toList();
+	}
+
 	public List<ExperimentDTO> getExperimentByProjectId(long projectId) {
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 		List<Experiment> result = experimentRepository.findByProjectId(projectId);

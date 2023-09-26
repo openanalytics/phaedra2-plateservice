@@ -32,6 +32,12 @@ import eu.openanalytics.phaedra.plateservice.model.Experiment;
 @Repository
 public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
 
+	@Query("select * from hca_experiment order by id desc")
+	List<Experiment> findAll();
+
+	@Query("select * from hca_experiment order by id desc limit :n")
+	List<Experiment> findLatestNExperiments(int n);
+
 	List<Experiment> findByProjectId(long projectId);
 
 	@Query("delete from hca_experiment e where e.project_id = :projectId")
