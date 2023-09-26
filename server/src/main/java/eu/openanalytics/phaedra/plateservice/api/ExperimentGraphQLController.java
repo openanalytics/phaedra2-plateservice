@@ -101,17 +101,8 @@ public class ExperimentGraphQLController {
 	}
 
 	@QueryMapping
-	public List<ExperimentSummaryDTO> getExperimentSummaryByExperimentId(@Argument Long experimentId) {
-		logger.info("getExperimentSummaryByExperimentId: " + experimentId);
-		Set<Long> experimentIds = new HashSet<>();
-		experimentIds.add(experimentId);
-		List<ExperimentSummaryDTO> result = experimentService.getExperimentSummaryInExperimentIds(experimentIds);
-		logger.info("getExperimentSummaryByExperimentId result.size(): " + result.size());
-        logger.info("getExperimentSummaryByExperimentId result.get(0).experimentId: " + result.get(0).experimentId);
-        logger.info("getExperimentSummaryByExperimentId result.get(0).nrPlates: " + result.get(0).nrPlates);
-        logger.info("getExperimentSummaryByExperimentId result.get(0).nrPlatesCalculated: " + result.get(0).nrPlatesCalculated);
-        logger.info("getExperimentSummaryByExperimentId result.get(0).nrPlatesValidated: " + result.get(0).nrPlatesValidated);
-        logger.info("getExperimentSummaryByExperimentId result.get(0).nrPlatesApproved: " + result.get(0).nrPlatesApproved);
-		return result;
+	public ExperimentSummaryDTO getExperimentSummaryByExperimentId(@Argument Long experimentId) {
+		List<ExperimentSummaryDTO> result = experimentService.getExperimentSummaryInExperimentIds(Set.of(experimentId));
+		return result.get(0);
 	}
 }
