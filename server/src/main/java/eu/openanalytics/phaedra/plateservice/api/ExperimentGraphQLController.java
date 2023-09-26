@@ -111,6 +111,6 @@ public class ExperimentGraphQLController {
 	@QueryMapping
 	public ExperimentSummaryDTO getExperimentSummaryByExperimentId(@Argument Long experimentId) {
 		List<ExperimentSummaryDTO> result = experimentService.getExperimentSummaryInExperimentIds(Set.of(experimentId));
-		return result.get(0);
+		return CollectionUtils.isNotEmpty(result) ? result.get(0) : null;
 	}
 }
