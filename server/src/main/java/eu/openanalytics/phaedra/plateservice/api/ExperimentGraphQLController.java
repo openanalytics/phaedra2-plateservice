@@ -27,6 +27,8 @@ import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,8 @@ import java.util.stream.Collectors;
 
 @Controller
 public class ExperimentGraphQLController {
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final ExperimentService experimentService;
 	private final MetadataServiceClient metadataServiceClient;
@@ -61,7 +65,7 @@ public class ExperimentGraphQLController {
 	}
 
 	@QueryMapping
-	public ExperimentDTO getExperimentById(@Argument long experimentId) {
+	public ExperimentDTO getExperimentById(@Argument Long experimentId) {
 		ExperimentDTO result = experimentService.getExperimentById(experimentId);
 		if (result != null) {
 			// Add tags
@@ -73,7 +77,7 @@ public class ExperimentGraphQLController {
 	}
 
 	@QueryMapping
-	public List<ExperimentDTO> getExperimentsByProjectId(@Argument long projectId) {
+	public List<ExperimentDTO> getExperimentsByProjectId(@Argument Long projectId) {
 		List<ExperimentDTO> result = experimentService.getExperimentByProjectId(projectId);
 		if (CollectionUtils.isNotEmpty(result)) {
 			// Add tags
@@ -91,12 +95,16 @@ public class ExperimentGraphQLController {
 	}
 
 	@QueryMapping
-	public List<ExperimentSummaryDTO> getExperimentSummariesByProjectId(@PathVariable long projectId) {
-		return experimentService.getExperimentSummariesByProjectId(projectId);
+	public List<ExperimentSummaryDTO> getExperimentSummariesByProjectId(@Argument Long projectId) {
+		List<ExperimentSummaryDTO> result = experimentService.getExperimentSummariesByProjectId(projectId);
+		return result;
 	}
 
 	@QueryMapping
-	public List<ExperimentSummaryDTO> getExperimentSummaryByExperimentId(@Argument long experimentId) {
-		return experimentService.getExperimentSummaryInExperimentIds(Set.of(experimentId));
+	public List<ExperimentSummaryDTO> getExperimentSummaryByExperimentId(@Argument Long experimentId) {
+		logger.debug("getExperimentSummaryByExperimentId: " + experimentId);
+		List<ExperimentSummaryDTO> result = experimentService.getExperimentSummaryInExperimentIds(Set.of(experimentId));
+		logger.debug("getExperimentSummaryByExperimentId result: " + result.size());
+		return result;
 	}
 }
