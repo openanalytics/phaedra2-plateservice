@@ -27,15 +27,14 @@ import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import org.apache.commons.collections4.CollectionUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -59,6 +58,9 @@ public class ExperimentGraphQLController {
 			result.stream().forEach(experimentDTO -> {
 				List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, experimentDTO.getId());
 				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+
+				ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentDTO.getId());
+				experimentDTO.setSummery(experimentSummaryDTO);
 			});
 		}
 		return result;
@@ -71,6 +73,9 @@ public class ExperimentGraphQLController {
 			// Add tags
 			List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, result.getId());
 			result.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+
+			ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentId);
+			result.setSummery(experimentSummaryDTO);
 		}
 
 		return result;
@@ -84,6 +89,9 @@ public class ExperimentGraphQLController {
 			result.stream().forEach(experimentDTO -> {
 				List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, experimentDTO.getId());
 				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+
+				ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentDTO.getId());
+				experimentDTO.setSummery(experimentSummaryDTO);
 			});
 		}
 		return result;
