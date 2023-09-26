@@ -205,6 +205,7 @@ type Query {
     getProjectById(projectId: ID): ProjectDTO
     getProjectAccess(projectId: ID): [ProjectAccessDTO]
     getExperiments: [ExperimentDTO]
+    getNMostRecentExperiments(n: Int): [ExperimentDTO]
     getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
     getExperimentById(experimentId: ID): ExperimentDTO
     getExperimentSummaries: [ExperimentSummaryDTO]

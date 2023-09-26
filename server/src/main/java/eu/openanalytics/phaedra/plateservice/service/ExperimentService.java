@@ -110,8 +110,8 @@ public class ExperimentService {
 	 * @param n number of experiments
 	 * @return n most recently created experiments
 	 */
-	public List<ExperimentDTO> getLatestNExperiments(int n) {
-		List<Experiment> result = experimentRepository.findLatestNExperiments(n);
+	public List<ExperimentDTO> getNMostRecentExperiments(int n) {
+		List<Experiment> result = experimentRepository.findNMostRecentExperiments(n);
 		return result.stream()
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
 				.map(this::mapToExperimentDTO)

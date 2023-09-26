@@ -67,6 +67,22 @@ public class ExperimentGraphQLController {
 	}
 
 	@QueryMapping
+	public List<ExperimentDTO> getNMostRecentExperiments(int n) {
+		List<ExperimentDTO> result = experimentService.getNMostRecentExperiments(n);
+		if (CollectionUtils.isNotEmpty(result)) {
+			// Add tags
+			result.stream().forEach(experimentDTO -> {
+				List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, experimentDTO.getId());
+				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+
+				ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentDTO.getId());
+				experimentDTO.setSummary(experimentSummaryDTO);
+			});
+		}
+		return result;
+	}
+
+	@QueryMapping
 	public ExperimentDTO getExperimentById(@Argument Long experimentId) {
 		ExperimentDTO result = experimentService.getExperimentById(experimentId);
 		if (result != null) {

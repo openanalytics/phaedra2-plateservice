@@ -36,7 +36,7 @@ public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
 	List<Experiment> findAll();
 
 	@Query("select * from hca_experiment order by id desc limit :n")
-	List<Experiment> findLatestNExperiments(int n);
+	List<Experiment> findNMostRecentExperiments(int n);
 
 	List<Experiment> findByProjectId(long projectId);
 
