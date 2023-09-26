@@ -60,7 +60,7 @@ public class ExperimentGraphQLController {
 				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
 
 				ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentDTO.getId());
-				experimentDTO.setSummery(experimentSummaryDTO);
+				experimentDTO.setSummary(experimentSummaryDTO);
 			});
 		}
 		return result;
@@ -75,7 +75,7 @@ public class ExperimentGraphQLController {
 			result.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
 
 			ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentId);
-			result.setSummery(experimentSummaryDTO);
+			result.setSummary(experimentSummaryDTO);
 		}
 
 		return result;
@@ -91,7 +91,7 @@ public class ExperimentGraphQLController {
 				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
 
 				ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentDTO.getId());
-				experimentDTO.setSummery(experimentSummaryDTO);
+				experimentDTO.setSummary(experimentSummaryDTO);
 			});
 		}
 		return result;
