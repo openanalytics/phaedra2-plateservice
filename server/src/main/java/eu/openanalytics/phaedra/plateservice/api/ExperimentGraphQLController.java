@@ -67,7 +67,7 @@ public class ExperimentGraphQLController {
 	}
 
 	@QueryMapping
-	public List<ExperimentDTO> getNMostRecentExperiments(int n) {
+	public List<ExperimentDTO> getNMostRecentExperiments(@Argument int n) {
 		List<ExperimentDTO> result = experimentService.getNMostRecentExperiments(n);
 		if (CollectionUtils.isNotEmpty(result)) {
 			// Add tags
