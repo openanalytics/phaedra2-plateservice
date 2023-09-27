@@ -38,4 +38,5 @@ public class ProjectDTO {
     private String updatedBy;
 
     private List<String> tags;
+    private List<ProjectAccessDTO> access;
 }

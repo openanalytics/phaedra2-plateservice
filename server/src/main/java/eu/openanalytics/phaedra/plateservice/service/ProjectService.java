@@ -99,6 +99,14 @@ public class ProjectService {
 				.collect(Collectors.toList());
 	}
 
+	public List<ProjectDTO> getNMostRecentlyUpdatedProjects(int n) {
+		List<Project> projects = projectRepository.findNMostRecentlyUpdatedProjects(n);
+		return projects.stream()
+				.filter(p -> projectAccessService.hasAccessLevel(p.getId(), ProjectAccessLevel.Read))
+				.map(this::mapToProjectDTO)
+				.collect(Collectors.toList());
+	}
+
 	public ProjectDTO getProjectById(long projectId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		return result

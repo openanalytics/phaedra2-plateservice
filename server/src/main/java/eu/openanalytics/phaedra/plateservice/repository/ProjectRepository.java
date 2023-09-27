@@ -20,12 +20,16 @@
  */
 package eu.openanalytics.phaedra.plateservice.repository;
 
+import eu.openanalytics.phaedra.plateservice.model.Project;
+import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import eu.openanalytics.phaedra.plateservice.model.Project;
+import java.util.List;
 
 @Repository
 public interface ProjectRepository extends CrudRepository<Project, Long> {
 
+    @Query("select * from hca_project order by updated_on desc limit :n")
+    List<Project> findNMostRecentlyUpdatedProjects(int n);
 }

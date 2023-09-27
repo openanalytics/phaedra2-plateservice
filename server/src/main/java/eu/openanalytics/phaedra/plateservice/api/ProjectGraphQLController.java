@@ -53,30 +53,43 @@ public class ProjectGraphQLController {
     public List<ProjectDTO> getProjects() {
         List<ProjectDTO> result = projectService.getAllProjects();
         if (CollectionUtils.isNotEmpty(result)) {
-            // Add tags
 			result.stream().forEach(projectDTO -> {
-				List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PROJECT, projectDTO.getId());
-				projectDTO.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
-			});
+                addProjectMetadata(projectDTO);
+            });
         }
         return result;
     }
 
+    @QueryMapping
+    public List<ProjectDTO> getNMostRecentlyUpdatedProjects(@Argument int n) {
+        List<ProjectDTO> result = projectService.getNMostRecentlyUpdatedProjects(n);
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.stream().forEach(projectDTO -> {
+                addProjectMetadata(projectDTO);
+            });
+        }
+        return result;
+    }
 
     @QueryMapping
     public ProjectDTO getProjectById(@Argument long projectId) {
         ProjectDTO result = projectService.getProjectById(projectId);
         if (result != null) {
-            // Add tags
-            List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PROJECT, result.getId());
-            result.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+            addProjectMetadata(result);
         }
-
         return result;
     }
 
     @QueryMapping
     public List<ProjectAccessDTO> getProjectAccess(@Argument long projectId) {
         return projectAccessService.getProjectAccessForProject(projectId);
+    }
+
+    private void addProjectMetadata(ProjectDTO projectDTO) {
+        List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PROJECT, projectDTO.getId());
+        projectDTO.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+
+        List<ProjectAccessDTO> projectAccess = projectAccessService.getProjectAccessForProject(projectDTO.getId());
+        projectDTO.setAccess(projectAccess);
     }
 }

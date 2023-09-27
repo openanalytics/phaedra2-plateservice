@@ -59,6 +59,7 @@ type ProjectDTO {
     updatedBy: String
 
     tags: [String]
+    access: [ProjectAccessDTO]
 }
 
 type ProjectAccessDTO {
@@ -202,6 +203,7 @@ type PlateTemplateDTO {
 
 type Query {
     getProjects: [ProjectDTO]
+    getNMostRecentlyUpdatedProjects(n: Int): [ProjectDTO]
     getProjectById(projectId: ID): ProjectDTO
     getProjectAccess(projectId: ID): [ProjectAccessDTO]
     getExperiments: [ExperimentDTO]
