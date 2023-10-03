@@ -158,14 +158,21 @@ type WellSubstanceDTO {
 }
 
 type PlateMeasurementDTO {
-    plateId: Int
+    id: ID
+    measurementId: ID
+
+    plateId: ID
+    active: Boolean
+    linkedBy: String
+    linkedOn: Date
+
+    name: String
     barcode: String
+    description: String
     rows: Int
     columns: Int
-
-    measurementId: Int
-    source: String
-    active: Boolean
+    createdOn: Date
+    createdBy: String
     wellColumns: [String]
     subWellColumns: [String]
     imageChannels: [String]
