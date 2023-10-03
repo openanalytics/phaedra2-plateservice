@@ -98,15 +98,14 @@ public class PlateGraphQLController {
     }
 
     @QueryMapping
-    public List<PlateMeasurementDTO> getPlateMeasurements(@Argument Long plateId, @Argument boolean active) {
-        List<PlateMeasurementDTO> result = new ArrayList<>();
-        if (ObjectUtils.isNotEmpty(plateId)) {
-            if (active) {
-                result.add(plateMeasurementService.getActivePlateMeasurement(plateId));
-            } else {
-                result.addAll(plateMeasurementService.getPlateMeasurements(plateId));
-            }
-        }
+    public List<PlateMeasurementDTO> getMeasurementsByPlateId(@Argument Long plateId) {
+        List<PlateMeasurementDTO> result = plateMeasurementService.getPlateMeasurements(plateId);
+        return result;
+    }
+
+    @QueryMapping
+    public PlateMeasurementDTO getActiveMeasurementByPlateId(@Argument Long plateId) {
+        PlateMeasurementDTO result = plateMeasurementService.getActivePlateMeasurement(plateId);
         return result;
     }
 }

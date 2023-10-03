@@ -158,13 +158,11 @@ type WellSubstanceDTO {
 }
 
 type PlateMeasurementDTO {
-    """Plate information"""
     plateId: Int
     barcode: String
     rows: Int
     columns: Int
 
-    """Linked Measurement information"""
     measurementId: Int
     source: String
     active: Boolean
@@ -217,7 +215,8 @@ type Query {
     getPlatesByBarcode(barcode: String): [PlateDTO]
     getPlateById(plateId: ID): PlateDTO
     getPlateWells(plateId: ID): [WellDTO]
-    getPlateMeasurements(plateId: ID, active: Boolean): [PlateMeasurementDTO]
+    getMeasurementsByPlateId(plateId: ID): [PlateMeasurementDTO]
+    getActiveMeasurementByPlateId(plateId: ID): PlateMeasurementDTO
     getPlateTemplates: [PlateTemplateDTO]
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
     getWellTemplatesByPlateTemplateId(plateTemplateId: ID): [WellTemplateDTO]

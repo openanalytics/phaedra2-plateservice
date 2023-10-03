@@ -40,6 +40,7 @@ public class WellDTO {
 	private Long plateId;
 	private Integer row;
 	private Integer column;
+	private Integer wellNr;
 	private String wellType;
 	private WellStatus status;
 //	private Long compoundId; // TODO remove?
