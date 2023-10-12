@@ -246,4 +246,5 @@ input WellTemplateInput {
 type Mutation {
     updatePlateTemplate(plateTemplateId: ID!, plateTemplate: PlateTemplateInput): PlateTemplateDTO
     updateWellTemplates(plateTemplateId: ID!, wellTemplates: [WellTemplateInput]): [WellTemplateDTO]
+    linkMeasurement(plateId: ID, measurementId: ID): PlateMeasurementDTO
 }

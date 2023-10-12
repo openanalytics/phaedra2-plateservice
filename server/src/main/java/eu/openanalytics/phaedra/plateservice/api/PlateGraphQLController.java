@@ -29,14 +29,17 @@ import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,12 +50,16 @@ public class PlateGraphQLController {
     private final WellService wellService;
     private final PlateMeasurementService plateMeasurementService;
     private final MetadataServiceClient metadataServiceClient;
+    private final IAuthorizationService authService;
 
-    public PlateGraphQLController(PlateService plateService, WellService wellService, PlateMeasurementService plateMeasurementService, MetadataServiceClient metadataServiceClient) {
+    public PlateGraphQLController(PlateService plateService, WellService wellService,
+                                  PlateMeasurementService plateMeasurementService,
+                                  MetadataServiceClient metadataServiceClient, IAuthorizationService authService) {
         this.plateService = plateService;
         this.wellService = wellService;
         this.plateMeasurementService = plateMeasurementService;
         this.metadataServiceClient = metadataServiceClient;
+        this.authService = authService;
     }
 
     @QueryMapping
@@ -107,5 +114,10 @@ public class PlateGraphQLController {
     public PlateMeasurementDTO getActiveMeasurementByPlateId(@Argument Long plateId) {
         PlateMeasurementDTO result = plateMeasurementService.getActivePlateMeasurement(plateId);
         return result;
+    }
+
+    @MutationMapping
+    public PlateMeasurementDTO linkMeasurement(@Argument Long plateId, @Argument Long measurementId) {
+        return plateMeasurementService.linkMeasurement(plateId, measurementId);
     }
 }

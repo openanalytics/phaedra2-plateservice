@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import eu.openanalytics.phaedra.plateservice.model.Plate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -70,17 +71,17 @@ public class PlateMeasurementService {
     	try {
 	    	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
 	    	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
-	
+
 	    	plateMeasurementDTO.setLinkedBy(authService.getCurrentPrincipalName());
 	    	plateMeasurementDTO.setLinkedOn(new Date());
-	    	
+
 	    	PlateMeasurement plateMeasurement = modelMapper.map(plateMeasurementDTO);
 	        plateMeasurement = plateMeasurementRepository.save(plateMeasurement);
-	
+
 	        if (setActive) {
 	        	toggleActiveMeas(plateMeasurement);
 	        }
-	
+
 	        kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(plateMeasurementDTO, LinkOutcome.OK));
 	        return modelMapper.map(plateMeasurement);
     	} catch (Exception e) {
@@ -114,12 +115,12 @@ public class PlateMeasurementService {
     	try {
 	    	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
 	    	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
-	
+
 	    	PlateMeasurement plateMeasurement = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateMeasurementDTO.getPlateId(), plateMeasurementDTO.getMeasurementId());
 	    	if (plateMeasurement == null) throw new IllegalStateException("PlateMeasurement is null");
-	    	
+
 	    	toggleActiveMeas(plateMeasurement);
-	        
+
 	        kafkaProducerService.notifyPlateMeasLinked(new PlateMeasurementLinkEvent(plateMeasurementDTO, LinkOutcome.OK));
 	        return plateMeasurementDTO;
     	} catch (Exception e) {
@@ -144,7 +145,7 @@ public class PlateMeasurementService {
         List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurementsByMeasIds(plateMeasurement.getMeasurementId());
         return modelMapper.map(plateMeasurement, measurementDTOs.get(0));
     }
-    
+
     private void toggleActiveMeas(PlateMeasurement plateMeasurement) {
     	plateMeasurement.setActive(true);
         plateMeasurementRepository.save(plateMeasurement);
@@ -155,6 +156,27 @@ public class PlateMeasurementService {
                 pm.setActive(false);
                 plateMeasurementRepository.save(pm);
             }
+        }
+    }
+
+    public PlateMeasurementDTO linkMeasurement(Long plateId, Long measurementId) {
+        long projectId = plateService.getProjectIdByPlateId(plateId);
+        projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
+
+        PlateMeasurement result = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateId, measurementId);
+        if (result != null && !result.getActive()) {
+            result.setActive(true);
+            PlateMeasurement updated = plateMeasurementRepository.save(result);
+            return mapToPlateMeasurementDTO(updated);
+        } else {
+            PlateMeasurement newPlateMeasurement = new PlateMeasurement();
+            newPlateMeasurement.setPlateId(plateId);
+            newPlateMeasurement.setMeasurementId(measurementId);
+            newPlateMeasurement.setLinkedOn(new Date());
+            newPlateMeasurement.setLinkedBy(authService.getCurrentPrincipalName());
+            newPlateMeasurement.setActive(true);
+            PlateMeasurement created = plateMeasurementRepository.save(newPlateMeasurement);
+            return mapToPlateMeasurementDTO(created);
         }
     }
 }
