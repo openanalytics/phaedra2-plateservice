@@ -39,7 +39,6 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,16 +49,14 @@ public class PlateGraphQLController {
     private final WellService wellService;
     private final PlateMeasurementService plateMeasurementService;
     private final MetadataServiceClient metadataServiceClient;
-    private final IAuthorizationService authService;
 
     public PlateGraphQLController(PlateService plateService, WellService wellService,
                                   PlateMeasurementService plateMeasurementService,
-                                  MetadataServiceClient metadataServiceClient, IAuthorizationService authService) {
+                                  MetadataServiceClient metadataServiceClient) {
         this.plateService = plateService;
         this.wellService = wellService;
         this.plateMeasurementService = plateMeasurementService;
         this.metadataServiceClient = metadataServiceClient;
-        this.authService = authService;
     }
 
     @QueryMapping
@@ -67,9 +64,9 @@ public class PlateGraphQLController {
         List<PlateDTO> result = ObjectUtils.isNotEmpty(experimentId) ? plateService.getPlatesByExperimentId(experimentId) : new ArrayList<>();
         if (CollectionUtils.isNotEmpty(result)) {
             // Add tags
-            result.stream().forEach(plateDTO -> {
+            result.forEach(plateDTO -> {
                 List<TagDTO> plateTags = metadataServiceClient.getTags(ObjectClass.PLATE, plateDTO.getId());
-                plateDTO.setTags(plateTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+                plateDTO.setTags(plateTags.stream().map(TagDTO::getTag).toList());
             });
         }
         return result;
@@ -80,9 +77,9 @@ public class PlateGraphQLController {
         List<PlateDTO> result = StringUtils.isNotEmpty(barcode) ? plateService.getPlatesByBarcode(barcode) : new ArrayList<>();
         if (CollectionUtils.isNotEmpty(result)) {
             // Add tags
-            result.stream().forEach(plateDTO -> {
+            result.forEach(plateDTO -> {
                 List<TagDTO> plateTags = metadataServiceClient.getTags(ObjectClass.PLATE, plateDTO.getId());
-                plateDTO.setTags(plateTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+                plateDTO.setTags(plateTags.stream().map(TagDTO::getTag).toList());
             });
         }
         return result;
@@ -93,27 +90,24 @@ public class PlateGraphQLController {
         PlateDTO result = ObjectUtils.isNotEmpty(plateId) ? plateService.getPlateById(plateId) : null;
         if (result != null) {
             List<TagDTO> plateTags = metadataServiceClient.getTags(ObjectClass.PLATE, result.getId());
-            result.setTags(plateTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+            result.setTags(plateTags.stream().map(TagDTO::getTag).toList());
         }
         return result;
     }
 
     @QueryMapping
     public List<WellDTO> getPlateWells(@Argument Long plateId) {
-        List<WellDTO> result = ObjectUtils.isNotEmpty(plateId) ? wellService.getWellsByPlateId(plateId) : new ArrayList<>();
-        return result;
+        return ObjectUtils.isNotEmpty(plateId) ? wellService.getWellsByPlateId(plateId) : new ArrayList<>();
     }
 
     @QueryMapping
     public List<PlateMeasurementDTO> getMeasurementsByPlateId(@Argument Long plateId) {
-        List<PlateMeasurementDTO> result = plateMeasurementService.getPlateMeasurements(plateId);
-        return result;
+        return plateMeasurementService.getPlateMeasurements(plateId);
     }
 
     @QueryMapping
     public PlateMeasurementDTO getActiveMeasurementByPlateId(@Argument Long plateId) {
-        PlateMeasurementDTO result = plateMeasurementService.getActivePlateMeasurement(plateId);
-        return result;
+        return plateMeasurementService.getActivePlateMeasurement(plateId);
     }
 
     @MutationMapping

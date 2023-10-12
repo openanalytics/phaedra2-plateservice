@@ -20,18 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
-
 import com.google.common.primitives.Longs;
-
 import eu.openanalytics.phaedra.measservice.dto.MeasurementDTO;
 import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
@@ -41,6 +30,14 @@ import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
 import eu.openanalytics.phaedra.plateservice.repository.PlateMeasurementRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PlateMeasurementService {
