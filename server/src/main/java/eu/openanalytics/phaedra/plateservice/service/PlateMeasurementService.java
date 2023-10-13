@@ -171,8 +171,8 @@ public class PlateMeasurementService {
             newPlateMeasurement.setMeasurementId(measurementId);
             newPlateMeasurement.setLinkedOn(new Date());
             newPlateMeasurement.setLinkedBy(authService.getCurrentPrincipalName());
-            newPlateMeasurement.setActive(true);
             PlateMeasurement created = plateMeasurementRepository.save(newPlateMeasurement);
+            toggleActiveMeas(created);
             return mapToPlateMeasurementDTO(created);
         }
     }

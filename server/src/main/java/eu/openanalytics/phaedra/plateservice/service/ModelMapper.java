@@ -63,7 +63,9 @@ public class ModelMapper {
         PlateMeasurementDTO plateMeasurementDTO = new PlateMeasurementDTO();
 
         if (plateMeasurement != null) {
+            plateMeasurementDTO.setId(plateMeasurement.getId());
             plateMeasurementDTO.setPlateId(plateMeasurement.getPlateId());
+            plateMeasurementDTO.setMeasurementId(plateMeasurement.getMeasurementId());
             plateMeasurementDTO.setActive(plateMeasurement.getActive());
             plateMeasurementDTO.setLinkedBy(plateMeasurement.getLinkedBy());
             plateMeasurementDTO.setLinkedOn(plateMeasurement.getLinkedOn());
