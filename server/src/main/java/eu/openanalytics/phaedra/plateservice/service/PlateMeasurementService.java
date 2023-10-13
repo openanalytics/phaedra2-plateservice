@@ -162,9 +162,8 @@ public class PlateMeasurementService {
 
         PlateMeasurement result = plateMeasurementRepository.findByPlateIdAndMeasurementId(plateId, measurementId);
         if (result != null && !result.getActive()) {
-            result.setActive(true);
-            PlateMeasurement updated = plateMeasurementRepository.save(result);
-            return mapToPlateMeasurementDTO(updated);
+            PlateMeasurementDTO plateMeasurementDTO = mapToPlateMeasurementDTO(result);
+            return setActivePlateMeasurement(plateMeasurementDTO);
         } else {
             PlateMeasurement newPlateMeasurement = new PlateMeasurement();
             newPlateMeasurement.setPlateId(plateId);
