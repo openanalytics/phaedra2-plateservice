@@ -165,14 +165,12 @@ public class PlateMeasurementService {
             PlateMeasurementDTO plateMeasurementDTO = mapToPlateMeasurementDTO(result);
             return setActivePlateMeasurement(plateMeasurementDTO);
         } else {
-            PlateMeasurement newPlateMeasurement = new PlateMeasurement();
+            PlateMeasurementDTO newPlateMeasurement = new PlateMeasurementDTO();
             newPlateMeasurement.setPlateId(plateId);
             newPlateMeasurement.setMeasurementId(measurementId);
             newPlateMeasurement.setLinkedOn(new Date());
             newPlateMeasurement.setLinkedBy(authService.getCurrentPrincipalName());
-            PlateMeasurement created = plateMeasurementRepository.save(newPlateMeasurement);
-            toggleActiveMeas(created);
-            return mapToPlateMeasurementDTO(created);
+            return addPlateMeasurement(newPlateMeasurement, true);
         }
     }
 }
