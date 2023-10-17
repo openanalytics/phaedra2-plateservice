@@ -23,6 +23,7 @@ package eu.openanalytics.phaedra.plateservice.service;
 import com.google.common.primitives.Longs;
 import eu.openanalytics.phaedra.measservice.dto.MeasurementDTO;
 import eu.openanalytics.phaedra.measurementservice.client.MeasurementServiceClient;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateMeasurementLinkEvent;
@@ -172,5 +173,10 @@ public class PlateMeasurementService {
             newPlateMeasurement.setLinkedBy(authService.getCurrentPrincipalName());
             return addPlateMeasurement(newPlateMeasurement, true);
         }
+    }
+
+    public List<PlateMeasurementDTO> getActivePlateMeasurementsByExperimentId(Long experimentId) {
+        List<PlateDTO> plates = plateService.getPlatesByExperimentId(experimentId);
+        return plates.stream().map(plate -> getActivePlateMeasurement(plate.getId())).collect(Collectors.toList());
     }
 }

@@ -112,4 +112,9 @@ public class PlateGraphQLController {
     public PlateMeasurementDTO linkMeasurement(@Argument Long plateId, @Argument Long measurementId) {
         return plateMeasurementService.linkMeasurement(plateId, measurementId);
     }
+
+    @QueryMapping
+    public List<PlateMeasurementDTO> getActiveMeasurementsByExperimentId(@Argument Long experimentId) {
+        return plateMeasurementService.getActivePlateMeasurementsByExperimentId(experimentId);
+    }
 }
