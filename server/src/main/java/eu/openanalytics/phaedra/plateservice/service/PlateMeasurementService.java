@@ -177,6 +177,6 @@ public class PlateMeasurementService {
 
     public List<PlateMeasurementDTO> getActivePlateMeasurementsByExperimentId(Long experimentId) {
         List<PlateDTO> plates = plateService.getPlatesByExperimentId(experimentId);
-        return plates.stream().map(plate -> getActivePlateMeasurement(plate.getId())).collect(Collectors.toList());
+        return plates.stream().map(plate -> getActivePlateMeasurement(plate.getId())).toList();
     }
 }
