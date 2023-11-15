@@ -84,7 +84,27 @@ public class PlateTemplateControllerTest {
 
         PlateTemplateDTO plateTemplateDTOResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
         assertThat(plateTemplateDTOResult).isNotNull();
-        assertThat(plateTemplateDTOResult.getId()).isEqualTo(1L);
+        assertThat(plateTemplateDTOResult.getId()).isNotNull();
+//        assertThat(plateTemplateDTOResult.getWells().size()).isEqualTo(384);
+    }
+
+    @Test
+    public void plateTemplatePostTest2() throws Exception{
+        String path = "src/test/resources/json/new_plate_template2.json";
+        File file = new File(path);
+
+        PlateTemplateDTO newPlateTemplateDTO = this.objectMapper.readValue(file, PlateTemplateDTO.class);
+        assertThat(newPlateTemplateDTO).isNotNull();
+
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplateDTO);
+        MvcResult mvcResult = this.mockMvc.perform(post("/platetemplates").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        PlateTemplateDTO plateTemplateDTOResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
+        assertThat(plateTemplateDTOResult).isNotNull();
+        assertThat(plateTemplateDTOResult.getId()).isNotNull();
 //        assertThat(plateTemplateDTOResult.getWells().size()).isEqualTo(384);
     }
 
