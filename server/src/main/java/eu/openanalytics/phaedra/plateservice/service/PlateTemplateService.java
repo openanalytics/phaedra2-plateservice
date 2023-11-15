@@ -76,6 +76,8 @@ public class PlateTemplateService {
         //Add wellTemplates
         if (CollectionUtils.isNotEmpty(plateTemplateDTO.getWells()))
             wellTemplateService.createWellTemplates(plateTemplate, plateTemplateDTO.getWells());
+        else
+            wellTemplateService.createEmptyWellTemplates(plateTemplate);
 
 
         return mapToPlateTemplateDTO(plateTemplate);
