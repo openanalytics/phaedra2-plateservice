@@ -73,10 +73,9 @@ public class PlateTemplateService {
         plateTemplate = plateTemplateRepository.save(plateTemplate);
         wellTemplateService.createEmptyWellTemplates(plateTemplate);
 
-//        //Add wellTemplates
-//        if (CollectionUtils.isNotEmpty(plateTemplateDTO.getWells()))
-//            wellTemplateService.updateWellTemplates(plateTemplate, plateTemplateDTO.getWells());
-
+        //Add wellTemplates
+        if (CollectionUtils.isNotEmpty(plateTemplateDTO.getWells()))
+            wellTemplateService.updateWellTemplates(plateTemplate, plateTemplateDTO.getWells());
 
         return mapToPlateTemplateDTO(plateTemplate);
     }

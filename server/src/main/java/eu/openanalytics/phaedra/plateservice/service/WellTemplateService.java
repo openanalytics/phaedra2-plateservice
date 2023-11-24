@@ -70,14 +70,6 @@ public class WellTemplateService {
     public List<WellTemplateDTO> createWellTemplates(PlateTemplate plateTemplate, List<WellTemplateDTO> wellTemplateDTOs) {
         authService.performOwnershipCheck(plateTemplate.getCreatedBy());
 
-//        .map(well -> modelMapper.map(well, WellDTO.class))
-//                .map(dto -> {
-//                    dto.setWellSubstance(substances.stream().filter(s -> s.getWellId().longValue() == dto.getId().longValue()).findAny().orElse(null));
-//                    return dto;
-//                })
-//                .sorted(WELL_COMPARATOR)
-//                .toList();
-
         List<WellTemplate> wellTemplates = wellTemplateDTOs.stream().map(wellDTO -> modelMapper.map(wellDTO, WellTemplate.class))
                 .map(well -> {
                     well.setPlateTemplateId(plateTemplate.getId());
