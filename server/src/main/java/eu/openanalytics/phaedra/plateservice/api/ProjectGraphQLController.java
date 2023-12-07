@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectAccessDTO;
@@ -88,6 +89,9 @@ public class ProjectGraphQLController {
     private void addProjectMetadata(ProjectDTO projectDTO) {
         List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PROJECT, projectDTO.getId());
         projectDTO.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+
+        List<PropertyDTO> projectProperties = metadataServiceClient.getPorperties(ObjectClass.PROJECT, projectDTO.getId());
+        projectDTO.setProperties(projectProperties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
 
         List<ProjectAccessDTO> projectAccess = projectAccessService.getProjectAccessForProject(projectDTO.getId());
         projectDTO.setAccess(projectAccess);
