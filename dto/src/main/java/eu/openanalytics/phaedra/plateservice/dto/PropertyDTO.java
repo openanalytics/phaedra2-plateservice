@@ -20,24 +20,5 @@
  */
 package eu.openanalytics.phaedra.plateservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Data;
-
-import java.util.Date;
-import java.util.List;
-
-@Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProjectDTO {
-    private Long id;
-    private String name;
-    private String description;
-    private Date createdOn = new Date();
-    private String createdBy;
-    private Date updatedOn = new Date();
-    private String updatedBy;
-
-    private List<String> tags;
-    private List<PropertyDTO> properties;
-    private List<ProjectAccessDTO> access;
+public record PropertyDTO(String propertyName, String propertyValue) {
 }
