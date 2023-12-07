@@ -20,10 +20,11 @@
  */
 package eu.openanalytics.phaedra.plateservice.client.impl;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
+import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
+import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.dto.*;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,16 +32,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
-import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class HttpPlateServiceClient implements PlateServiceClient {

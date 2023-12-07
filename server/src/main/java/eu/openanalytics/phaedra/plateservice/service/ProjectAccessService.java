@@ -20,20 +20,19 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import java.util.List;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
-
+import eu.openanalytics.phaedra.plateservice.dto.ProjectAccessDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.model.ProjectAccess;
+import eu.openanalytics.phaedra.plateservice.repository.ProjectAccessRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import eu.openanalytics.phaedra.plateservice.model.ProjectAccess;
-import eu.openanalytics.phaedra.plateservice.repository.ProjectAccessRepository;
-import eu.openanalytics.phaedra.plateservice.dto.ProjectAccessDTO;
-import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectAccessService {

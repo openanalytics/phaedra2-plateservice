@@ -20,24 +20,21 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
+import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
-import org.modelmapper.Conditions;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
-
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
-import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
-import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Service
 public class WellTemplateService {

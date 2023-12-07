@@ -20,13 +20,13 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
+import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
+import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +40,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import eu.openanalytics.phaedra.plateservice.model.WellTemplate;
-import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
-import eu.openanalytics.phaedra.plateservice.repository.WellTemplateRepository;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.Date;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest

@@ -20,19 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.GROUP_ID;
-import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.TOPIC_PLATES;
-
-import java.util.Date;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import eu.openanalytics.phaedra.plateservice.dto.PlateCalculationStatusDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
@@ -40,15 +28,25 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Optional;
+
+import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.GROUP_ID;
+import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.TOPIC_PLATES;
 
 @Service
 public class KafkaConsumerService {
-	
+
     private final PlateRepository plateRepository;
     private final PlateService plateService;
     private final PlateMeasurementService plateMeasurementService;
     private final IAuthorizationService authService;
-    
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public KafkaConsumerService(PlateRepository plateRepository, PlateService plateService,
@@ -58,14 +56,14 @@ public class KafkaConsumerService {
         this.plateMeasurementService = plateMeasurementService;
         this.authService = authService;
     }
-    
+
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateCalculationStatusUpdate", filter = "reqPlateCalculationStatusUpdateFilter")
     public void reqPlateCalculationStatusUpdate(PlateCalculationStatusDTO plateCalcStatusDTO) {
         Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
         if (result.isPresent()) {
-        	logger.debug(String.format("Setting plate calculation status to %s for plateId %d", 
+        	logger.debug(String.format("Setting plate calculation status to %s for plateId %d",
         			plateCalcStatusDTO.getCalculationStatus().name(), plateCalcStatusDTO.getPlateId()));
-        	
+
             Plate plate = result.get();
             plate.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
             if (plateCalcStatusDTO.getDetails() != null) {
@@ -77,7 +75,7 @@ public class KafkaConsumerService {
             logger.error("No plate found with plateId  " + plateCalcStatusDTO.getPlateId());
         }
     }
-    
+
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateMeasLink", filter = "reqPlateMeasLinkFilter", errorHandler = "kafkaErrorHandler")
     public void reqPlateMeasLink(ReqPlateMeasLinkDTO req) {
     	PlateMeasurementDTO linkRequest = PlateMeasurementDTO.builder()
@@ -87,12 +85,12 @@ public class KafkaConsumerService {
     			.build();
     	authService.runInKafkaContext(() -> plateMeasurementService.addPlateMeasurement(linkRequest, true));
     }
-    
+
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateDefLink", filter = "reqPlateDefLinkFilter", errorHandler = "kafkaErrorHandler")
     public void reqPlateDefLink(ReqPlateDefLinkDTO req) {
     	authService.runInKafkaContext(() -> plateService.linkPlate(req.getPlateId(), req.getTemplateId()));
     }
-    
+
     @Data
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -100,7 +98,7 @@ public class KafkaConsumerService {
     	private Long plateId;
     	private Long measurementId;
     }
-    
+
     @Data
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)

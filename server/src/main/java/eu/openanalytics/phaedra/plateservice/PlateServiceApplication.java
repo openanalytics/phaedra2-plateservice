@@ -20,9 +20,15 @@
  */
 package eu.openanalytics.phaedra.plateservice;
 
-import javax.sql.DataSource;
-
+import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.metadataservice.client.config.MetadataServiceClientAutoConfiguration;
+import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
+import eu.openanalytics.phaedra.util.auth.AuthenticationConfigHelper;
+import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,14 +45,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
-import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
-import eu.openanalytics.phaedra.util.auth.AuthenticationConfigHelper;
-import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
-import eu.openanalytics.phaedra.util.jdbc.JDBCUtils;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.servers.Server;
+import javax.sql.DataSource;
 
 @EnableDiscoveryClient
 @EnableScheduling

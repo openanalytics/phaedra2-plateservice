@@ -20,20 +20,15 @@
  */
 package eu.openanalytics.phaedra.plateservice.dto;
 
-import java.util.Date;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor

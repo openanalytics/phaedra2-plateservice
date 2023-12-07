@@ -20,15 +20,14 @@
  */
 package eu.openanalytics.phaedra.plateservice.repository;
 
-import java.util.Collection;
-import java.util.List;
-
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
-import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
+import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface WellSubstanceRepository extends CrudRepository<WellSubstance, Long> {

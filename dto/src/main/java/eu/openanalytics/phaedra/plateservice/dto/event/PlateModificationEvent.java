@@ -21,7 +21,6 @@
 package eu.openanalytics.phaedra.plateservice.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,5 +36,5 @@ public class PlateModificationEvent {
 
 	private PlateDTO plate;
 	private PlateModificationEventType type;
-	
+
 }

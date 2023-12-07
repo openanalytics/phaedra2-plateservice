@@ -21,10 +21,10 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.plateservice.model.Project;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
+import eu.openanalytics.phaedra.plateservice.model.Project;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
