@@ -141,6 +141,7 @@ type PlateDTO {
     updatedBy: String
 
     tags: [String]
+    properties: [PropertyDTO]
 }
 
 type WellDTO {

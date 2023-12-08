@@ -76,4 +76,5 @@ public class PlateDTO {
 	private String updatedBy;
 
 	private List<String> tags;
+	private List<PropertyDTO> properties;
 }
