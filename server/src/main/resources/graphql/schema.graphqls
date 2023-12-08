@@ -59,6 +59,7 @@ type ProjectDTO {
     updatedBy: String
 
     tags: [String]
+    properties: [PropertyDTO]
     access: [ProjectAccessDTO]
 }
 
