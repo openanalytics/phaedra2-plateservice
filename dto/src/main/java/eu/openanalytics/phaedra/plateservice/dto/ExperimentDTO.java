@@ -44,5 +44,6 @@ public class ExperimentDTO {
 	private Date updatedOn;
 	private String updatedBy;
 	private List<String> tags;
+	private List<PropertyDTO> properties;
 	private ExperimentSummaryDTO summary;
 }

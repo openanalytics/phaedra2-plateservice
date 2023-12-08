@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
@@ -35,7 +36,6 @@ import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 public class ExperimentGraphQLController {
@@ -54,13 +54,8 @@ public class ExperimentGraphQLController {
 	public List<ExperimentDTO> getExperiments() {
 		List<ExperimentDTO> result = experimentService.getAllExperiments();
 		if (CollectionUtils.isNotEmpty(result)) {
-			// Add tags
 			result.stream().forEach(experimentDTO -> {
-				List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, experimentDTO.getId());
-				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
-
-				ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentDTO.getId());
-				experimentDTO.setSummary(experimentSummaryDTO);
+				addExperimentMetadata(experimentDTO);
 			});
 		}
 		return result;
@@ -70,13 +65,8 @@ public class ExperimentGraphQLController {
 	public List<ExperimentDTO> getNMostRecentExperiments(@Argument int n) {
 		List<ExperimentDTO> result = experimentService.getNMostRecentExperiments(n);
 		if (CollectionUtils.isNotEmpty(result)) {
-			// Add tags
 			result.stream().forEach(experimentDTO -> {
-				List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, experimentDTO.getId());
-				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
-
-				ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentDTO.getId());
-				experimentDTO.setSummary(experimentSummaryDTO);
+				addExperimentMetadata(experimentDTO);
 			});
 		}
 		return result;
@@ -86,12 +76,7 @@ public class ExperimentGraphQLController {
 	public ExperimentDTO getExperimentById(@Argument Long experimentId) {
 		ExperimentDTO result = experimentService.getExperimentById(experimentId);
 		if (result != null) {
-			// Add tags
-			List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, result.getId());
-			result.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
-
-			ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentId);
-			result.setSummary(experimentSummaryDTO);
+			addExperimentMetadata(result);
 		}
 
 		return result;
@@ -101,13 +86,8 @@ public class ExperimentGraphQLController {
 	public List<ExperimentDTO> getExperimentsByProjectId(@Argument Long projectId) {
 		List<ExperimentDTO> result = experimentService.getExperimentByProjectId(projectId);
 		if (CollectionUtils.isNotEmpty(result)) {
-			// Add tags
 			result.stream().forEach(experimentDTO -> {
-				List<TagDTO> experimentTags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, experimentDTO.getId());
-				experimentDTO.setTags(experimentTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
-
-				ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentDTO.getId());
-				experimentDTO.setSummary(experimentSummaryDTO);
+				addExperimentMetadata(experimentDTO);
 			});
 		}
 		return result;
@@ -128,5 +108,16 @@ public class ExperimentGraphQLController {
 	public ExperimentSummaryDTO getExperimentSummaryByExperimentId(@Argument Long experimentId) {
 		List<ExperimentSummaryDTO> result = experimentService.getExperimentSummaryInExperimentIds(Set.of(experimentId));
 		return CollectionUtils.isNotEmpty(result) ? result.get(0) : null;
+	}
+
+	private void addExperimentMetadata(ExperimentDTO experimentDTO) {
+		List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT, experimentDTO.getId());
+		experimentDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+		List<PropertyDTO> porperties = metadataServiceClient.getPorperties(ObjectClass.EXPERIMENT, experimentDTO.getId());
+		experimentDTO.setProperties(porperties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
+
+		ExperimentSummaryDTO experimentSummaryDTO = getExperimentSummaryByExperimentId(experimentDTO.getId());
+		experimentDTO.setSummary(experimentSummaryDTO);
 	}
 }
