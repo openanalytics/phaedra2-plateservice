@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
@@ -36,8 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Objects;
-
-import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/platetemplates")
@@ -57,10 +56,8 @@ public class PlateTemplateGraphQLController {
     List<PlateTemplateDTO> getPlateTemplates() {
         List<PlateTemplateDTO> result = plateTemplateService.getAllPlateTemplates();
         if (CollectionUtils.isNotEmpty(result)) {
-            // Add tags
             result.stream().forEach(plateTemplateDTO -> {
-                List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PLATE_TEMPLATE, plateTemplateDTO.getId());
-                plateTemplateDTO.setTags(projectTags.stream().map(TagDTO::getTag).collect(toList()));
+                addPlateTemplateMetadata(plateTemplateDTO);
             });
         }
         return result;
@@ -74,9 +71,7 @@ public class PlateTemplateGraphQLController {
             List<WellTemplateDTO> wells = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
             result.setWells(wells);
 
-            // Add tags
-            List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PLATE_TEMPLATE, result.getId());
-            result.setTags(projectTags.stream().map(TagDTO::getTag).collect(toList()));
+            addPlateTemplateMetadata(result);
         }
         return result;
     }
@@ -91,5 +86,13 @@ public class PlateTemplateGraphQLController {
     PlateTemplateDTO updatePlateTemplate(@Argument Long plateTemplateId, PlateTemplateDTO plateTemplate) {
         plateTemplateService.updatePlateTemplate(plateTemplate);
         return plateTemplate;
+    }
+
+    private void addPlateTemplateMetadata(PlateTemplateDTO plateTemplateDTO) {
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PLATE, plateTemplateDTO.getId());
+        plateTemplateDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+        List<PropertyDTO> properties = metadataServiceClient.getPorperties(ObjectClass.PLATE, plateTemplateDTO.getId());
+        plateTemplateDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
     }
 }

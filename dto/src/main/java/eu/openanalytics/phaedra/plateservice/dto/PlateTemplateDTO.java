@@ -52,4 +52,5 @@ public class PlateTemplateDTO {
     private String updatedBy;
     private List<WellTemplateDTO> wells;
     private List<String> tags;
+    private List<PropertyDTO> properties;
 }
