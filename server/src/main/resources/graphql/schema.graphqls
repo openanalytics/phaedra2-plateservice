@@ -49,6 +49,11 @@ enum ProjectAccessLevel {
     Admin
 }
 
+type PropertyDTO {
+    propertyName: String
+    propertyValue: String
+}
+
 type ProjectDTO {
     id: ID
     name: String
@@ -61,11 +66,6 @@ type ProjectDTO {
     tags: [String]
     properties: [PropertyDTO]
     access: [ProjectAccessDTO]
-}
-
-type PropertyDTO {
-    propertyName: String
-    propertyValue: String
 }
 
 type ProjectAccessDTO {
