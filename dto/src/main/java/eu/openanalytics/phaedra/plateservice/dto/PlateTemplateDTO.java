@@ -20,16 +20,15 @@
  */
 package eu.openanalytics.phaedra.plateservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -42,12 +41,8 @@ public class PlateTemplateDTO {
     private String description;
     private Integer rows;
     private Integer columns;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SS")
     private Date createdOn;
     private String createdBy;
-    @DateTimeFormat (pattern = "yyyy-MM-dd HH:mm:ss.SS")
-    @JsonFormat (pattern = "yyyy-MM-dd HH:mm:ss.SS")
     private Date updatedOn;
     private String updatedBy;
     private List<WellTemplateDTO> wells;
