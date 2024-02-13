@@ -20,11 +20,13 @@
  */
 package eu.openanalytics.phaedra.plateservice.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ExperimentSummaryDTO {
 	public long experimentId;
 	public int nrPlates;
