@@ -46,6 +46,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PlateService {
@@ -187,6 +188,11 @@ public class PlateService {
 		PlateDTO updatedPlate = updatePlate(plateDTO);
 		kafkaProducerService.notifyPlateDefinitionLinked(new PlateDefinitionLinkEvent(plateId, plateTemplateId, LinkOutcome.OK));
 		return updatedPlate;
+	}
+
+	public List<PlateDTO> linkPlates(long experimentId, long plateTemplateId) {
+		List<PlateDTO> plates = getPlatesByExperimentId(experimentId);
+		return plates.stream().map(plate -> linkPlate(plate.getId(), plateTemplateId)).collect(Collectors.toList());
 	}
 
 	private void linkWithPlateTemplate(long plateId, long plateTemplateId) {

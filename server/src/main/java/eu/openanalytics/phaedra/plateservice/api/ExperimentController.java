@@ -86,4 +86,14 @@ public class ExperimentController {
 		List<PlateDTO> plates = plateService.getPlatesByExperimentId(experimentId);
 		return ResponseEntity.ok(plates);
 	}
+
+	@PutMapping(value="/{experimentId}/plates/link/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PlateDTO>> setPlateTemplate(@PathVariable long experimentId, @PathVariable long plateTemplateId) {
+		// Return 404 if the experiment was not found or not accessible.
+		ExperimentDTO experiment = experimentService.getExperimentById(experimentId);
+		if (experiment == null) return ResponseEntity.notFound().build();
+
+		List<PlateDTO> plates = plateService.linkPlates(experimentId, plateTemplateId);
+		return ResponseEntity.ok(plates);
+	}
 }

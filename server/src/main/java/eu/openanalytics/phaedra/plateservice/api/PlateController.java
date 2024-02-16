@@ -124,8 +124,8 @@ public class PlateController {
     }
 
     @PutMapping(value = "/{plateId}/link/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PlateDTO> linkPlate(@PathVariable long plateId, @PathVariable long plateTemplateId) {
-        PlateDTO plateDTO = plateService.linkPlate(plateId,plateTemplateId);
+    public ResponseEntity<PlateDTO> setPlateTemplate(@PathVariable long plateId, @PathVariable long plateTemplateId) {
+        PlateDTO plateDTO = plateService.linkPlate(plateId, plateTemplateId);
         return new ResponseEntity<>(plateDTO, HttpStatus.OK);
     }
 }
