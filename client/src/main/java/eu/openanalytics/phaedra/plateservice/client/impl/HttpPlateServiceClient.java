@@ -20,11 +20,10 @@
  */
 package eu.openanalytics.phaedra.plateservice.client.impl;
 
-import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
-import eu.openanalytics.phaedra.plateservice.dto.*;
-import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,9 +31,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
+import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Component
 public class HttpPlateServiceClient implements PlateServiceClient {
@@ -154,7 +160,37 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     	var response = restTemplate.exchange(UrlFactory.plateTemplatesByName(name), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateTemplateDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
     }
+    
+    @Override
+    public ExperimentDTO createExperiment(String name, long projectId) {
+    	try {
+    		ExperimentDTO experiment = new ExperimentDTO();
+    		experiment.setName(name);
+    		experiment.setProjectId(projectId);
 
+            var response = restTemplate.exchange(UrlFactory.experiment(null), HttpMethod.POST, new HttpEntity<>(experiment, makeHttpHeaders()), ExperimentDTO.class);
+            return response.getBody();
+        } catch (HttpClientErrorException ex) {
+            throw new RuntimeException("Error while creating experiment");
+        }
+    }
+
+    @Override
+    public PlateDTO createPlate(String barcode, long experimentId, int rows, int columns) {
+    	try {
+    		PlateDTO plate = new PlateDTO();
+    		plate.setBarcode(barcode);
+    		plate.setRows(rows);
+    		plate.setColumns(columns);
+    		plate.setExperimentId(experimentId);
+
+            var response = restTemplate.exchange(UrlFactory.plate(null), HttpMethod.POST, new HttpEntity<>(plate, makeHttpHeaders()), PlateDTO.class);
+            return response.getBody();
+        } catch (HttpClientErrorException ex) {
+            throw new RuntimeException("Error while creating plate");
+        }
+    }
+    
     private HttpHeaders makeHttpHeaders() {
     	HttpHeaders httpHeaders = new HttpHeaders();
         String bearerToken = authService.getCurrentBearerToken();

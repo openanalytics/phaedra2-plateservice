@@ -45,4 +45,9 @@ public interface PlateServiceClient {
     List<PlateDTO> getPlatesByExperiment(long experimentId);
 
     List<PlateTemplateDTO> getPlateTemplatesByName(String name);
+    
+    ExperimentDTO createExperiment(String name, long projectId);
+    
+    PlateDTO createPlate(String barcode, long experimentId, int rows, int columns);
+
 }
