@@ -115,10 +115,10 @@ public class PlateGraphQLController {
     }
 
     private void addPlateMetadata(PlateDTO plateDTO) {
-        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PLATE, plateDTO.getId());
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PLATE.name(), plateDTO.getId());
         plateDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
 
-        List<PropertyDTO> properties = metadataServiceClient.getPorperties(ObjectClass.PLATE, plateDTO.getId());
+        List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.PLATE.name(), plateDTO.getId());
         plateDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
     }
 }
