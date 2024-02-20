@@ -100,6 +100,7 @@ public class PlateService {
 		modelMapper.typeMap(PlateDTO.class, Plate.class).map(plateDTO, plate);
 		plate.setCreatedBy(authService.getCurrentPrincipalName());
 		plate.setCreatedOn(new Date());
+		if (plate.getSequence() == null) plate.setSequence(1);
 		plate = plateRepository.save(plate);
 
 		// Automatically create the corresponding wells

@@ -22,6 +22,7 @@ package eu.openanalytics.phaedra.plateservice.service;
 
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.ExperimentStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.model.Experiment;
 import eu.openanalytics.phaedra.plateservice.repository.ExperimentRepository;
@@ -64,6 +65,7 @@ public class ExperimentService {
 				.map(experimentDTO, experiment);
 		experiment.setCreatedBy(authService.getCurrentPrincipalName());
 		experiment.setCreatedOn(new Date());
+		experiment.setStatus(ExperimentStatus.OPEN);
 
 		projectAccessService.checkAccessLevel(experiment.getProjectId(), ProjectAccessLevel.Write);
 		experiment = experimentRepository.save(experiment);
