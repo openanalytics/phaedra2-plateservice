@@ -25,9 +25,13 @@ import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateDefinitionLinkEvent;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEvent;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEventType;
+import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
@@ -98,9 +102,17 @@ public class PlateService {
 
 		Plate plate = new Plate();
 		modelMapper.typeMap(PlateDTO.class, Plate.class).map(plateDTO, plate);
+		
 		plate.setCreatedBy(authService.getCurrentPrincipalName());
 		plate.setCreatedOn(new Date());
+		
 		if (plate.getSequence() == null) plate.setSequence(1);
+		if (plate.getLinkStatus() == null) plate.setLinkStatus(LinkStatus.NOT_LINKED);
+		if (plate.getCalculationStatus() == null) plate.setCalculationStatus(CalculationStatus.CALCULATION_NEEDED);
+		if (plate.getValidationStatus() == null) plate.setValidationStatus(ValidationStatus.VALIDATION_NOT_SET);
+		if (plate.getApprovalStatus() == null) plate.setApprovalStatus(ApprovalStatus.APPROVAL_NOT_SET);
+		if (plate.getUploadStatus() == null) plate.setUploadStatus(UploadStatus.UPLOAD_NOT_SET);
+		
 		plate = plateRepository.save(plate);
 
 		// Automatically create the corresponding wells
