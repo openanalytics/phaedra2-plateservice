@@ -14,6 +14,8 @@
 
 	<properties>
         <docker.imageName>openanalytics/${project.parent.artifactId}</docker.imageName>
+        <phaedra2-measurementservice-client.version>2.0.3</phaedra2-measurementservice-client.version>
+        <phaedra2-metadataservice-client.version>2.0.3</phaedra2-metadataservice-client.version>
 	</properties>
 
 	<dependencies>
@@ -32,12 +34,12 @@
 		<dependency>
 			<groupId>eu.openanalytics.phaedra</groupId>
 			<artifactId>phaedra2-measurementservice-client</artifactId>
-			<version>2.0.3-SNAPSHOT</version>
+			<version>${phaedra2-measurementservice-client.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.openanalytics.phaedra</groupId>
 			<artifactId>phaedra2-metadataservice-client</artifactId>
-			<version>2.0.3-SNAPSHOT</version>
+			<version>${phaedra2-metadataservice-client.version}</version>
 		</dependency>
 
 		<!-- Spring Cloud dependencies -->
