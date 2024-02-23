@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,11 +20,11 @@
  */
 package eu.openanalytics.phaedra.plateservice.util;
 
+import eu.openanalytics.phaedra.plateservice.model.Well;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
-
-import eu.openanalytics.phaedra.plateservice.model.Well;
 
 public class WellUtils {
 

@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -21,11 +21,13 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.plateservice.dto.*;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
-import eu.openanalytics.phaedra.plateservice.service.KafkaProducerService;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;

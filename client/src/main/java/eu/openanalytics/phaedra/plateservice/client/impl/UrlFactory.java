@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -43,6 +43,14 @@ public class UrlFactory {
         return String.format("%s/plates/%s/measurements", PLATE_SERVICE, plateId);
     }
 
+    public static String experiment(Long experimentId) {
+    	if (experimentId == null) {
+    		return String.format("%s/experiments", PLATE_SERVICE);
+    	} else {
+    		return String.format("%s/experiments/%s", PLATE_SERVICE, experimentId);
+    	}
+    }
+    
     public static String experiments(Long projectId) {
     	return String.format("%s/projects/%s/experiments", PLATE_SERVICE, projectId);
     }

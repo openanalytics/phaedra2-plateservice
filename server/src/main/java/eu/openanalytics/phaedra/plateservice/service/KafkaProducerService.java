@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,17 +20,16 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
-
 import eu.openanalytics.phaedra.plateservice.config.KafkaConfig;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateDefinitionLinkEvent;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateMeasurementLinkEvent;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEvent;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaProducerService {
-	
+
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public KafkaProducerService(KafkaTemplate<String, Object> kafkaTemplate) {
@@ -44,7 +43,7 @@ public class KafkaProducerService {
     public void notifyPlateMeasLinked(PlateMeasurementLinkEvent plateMeasLink) {
         kafkaTemplate.send(KafkaConfig.TOPIC_PLATES, KafkaConfig.EVENT_NOTIFY_PLATE_MEAS_LINKED, plateMeasLink);
     }
-    
+
     public void notifyPlateDefinitionLinked(PlateDefinitionLinkEvent plateDefinitionLink) {
         kafkaTemplate.send(KafkaConfig.TOPIC_PLATES, KafkaConfig.EVENT_NOTIFY_PLATE_DEFINITION_LINKED, plateDefinitionLink);
     }

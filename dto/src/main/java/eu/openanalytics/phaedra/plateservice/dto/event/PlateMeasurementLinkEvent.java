@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -21,7 +21,6 @@
 package eu.openanalytics.phaedra.plateservice.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,5 +36,5 @@ public class PlateMeasurementLinkEvent {
 
 	private PlateMeasurementDTO measurement;
 	private LinkOutcome outcome;
-	
+
 }

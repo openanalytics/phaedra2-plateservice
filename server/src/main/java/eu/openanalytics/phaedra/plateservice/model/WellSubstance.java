@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,12 +20,11 @@
  */
 package eu.openanalytics.phaedra.plateservice.model;
 
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
-
-import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
 
 import javax.validation.constraints.NotNull;
 

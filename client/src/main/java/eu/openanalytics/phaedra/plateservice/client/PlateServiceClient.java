@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,16 +20,11 @@
  */
 package eu.openanalytics.phaedra.plateservice.client;
 
-import java.util.List;
-
 import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
-import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.dto.*;
 import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+
+import java.util.List;
 
 public interface PlateServiceClient {
 
@@ -50,4 +45,9 @@ public interface PlateServiceClient {
     List<PlateDTO> getPlatesByExperiment(long experimentId);
 
     List<PlateTemplateDTO> getPlateTemplatesByName(String name);
+    
+    ExperimentDTO createExperiment(String name, long projectId);
+    
+    PlateDTO createPlate(String barcode, long experimentId, int rows, int columns);
+
 }

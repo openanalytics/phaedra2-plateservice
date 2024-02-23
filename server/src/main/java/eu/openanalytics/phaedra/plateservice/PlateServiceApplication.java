@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -22,8 +22,6 @@ package eu.openanalytics.phaedra.plateservice;
 
 import javax.sql.DataSource;
 
-import eu.openanalytics.phaedra.metadataservice.client.config.MetadataServiceClientAutoConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -32,7 +30,6 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,6 +37,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 
 import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
+import eu.openanalytics.phaedra.metadataservice.client.config.MetadataServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
 import eu.openanalytics.phaedra.util.auth.AuthenticationConfigHelper;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
@@ -77,24 +75,7 @@ public class PlateServiceApplication {
 
 	@Bean
 	public DataSource dataSource() {
-		String url = environment.getProperty("DB_URL");
-		String username = environment.getProperty("DB_USER");
-		String password = environment.getProperty("DB_PASSWORD");
-
-		if (StringUtils.isEmpty(url)) {
-			throw new RuntimeException("No database URL configured: " + url);
-		}
-		String driverClassName = JDBCUtils.getDriverClassName(url);
-		if (driverClassName == null) {
-			throw new RuntimeException("Unsupported database type: " + url);
-		}
-
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(driverClassName);
-		dataSource.setUrl(url);
-		dataSource.setUsername(username);
-		dataSource.setPassword(password);
-		return dataSource;
+		return JDBCUtils.createDataSource(environment);
 	}
 
 	@Bean

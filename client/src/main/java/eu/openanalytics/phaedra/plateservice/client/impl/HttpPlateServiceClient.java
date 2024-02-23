@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -160,7 +160,37 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     	var response = restTemplate.exchange(UrlFactory.plateTemplatesByName(name), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateTemplateDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
     }
+    
+    @Override
+    public ExperimentDTO createExperiment(String name, long projectId) {
+    	try {
+    		ExperimentDTO experiment = new ExperimentDTO();
+    		experiment.setName(name);
+    		experiment.setProjectId(projectId);
 
+            var response = restTemplate.exchange(UrlFactory.experiment(null), HttpMethod.POST, new HttpEntity<>(experiment, makeHttpHeaders()), ExperimentDTO.class);
+            return response.getBody();
+        } catch (HttpClientErrorException ex) {
+            throw new RuntimeException("Error while creating experiment");
+        }
+    }
+
+    @Override
+    public PlateDTO createPlate(String barcode, long experimentId, int rows, int columns) {
+    	try {
+    		PlateDTO plate = new PlateDTO();
+    		plate.setBarcode(barcode);
+    		plate.setRows(rows);
+    		plate.setColumns(columns);
+    		plate.setExperimentId(experimentId);
+
+            var response = restTemplate.exchange(UrlFactory.plate(null), HttpMethod.POST, new HttpEntity<>(plate, makeHttpHeaders()), PlateDTO.class);
+            return response.getBody();
+        } catch (HttpClientErrorException ex) {
+            throw new RuntimeException("Error while creating plate");
+        }
+    }
+    
     private HttpHeaders makeHttpHeaders() {
     	HttpHeaders httpHeaders = new HttpHeaders();
         String bearerToken = authService.getCurrentBearerToken();

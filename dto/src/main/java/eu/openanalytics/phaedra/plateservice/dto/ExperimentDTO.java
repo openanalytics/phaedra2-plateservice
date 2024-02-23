@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -21,7 +21,6 @@
 package eu.openanalytics.phaedra.plateservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import eu.openanalytics.phaedra.plateservice.enumeration.ExperimentStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,5 +44,6 @@ public class ExperimentDTO {
 	private Date updatedOn;
 	private String updatedBy;
 	private List<String> tags;
+	private List<PropertyDTO> properties;
 	private ExperimentSummaryDTO summary;
 }

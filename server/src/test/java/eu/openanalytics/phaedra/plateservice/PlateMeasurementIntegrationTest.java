@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,10 +20,9 @@
  */
 package eu.openanalytics.phaedra.plateservice;
 
-import eu.openanalytics.phaedra.plateservice.support.AbstractIntegrationTest;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.support.AbstractIntegrationTest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

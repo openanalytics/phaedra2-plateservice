@@ -49,6 +49,11 @@ enum ProjectAccessLevel {
     Admin
 }
 
+type PropertyDTO {
+    propertyName: String
+    propertyValue: String
+}
+
 type ProjectDTO {
     id: ID
     name: String
@@ -59,6 +64,7 @@ type ProjectDTO {
     updatedBy: String
 
     tags: [String]
+    properties: [PropertyDTO]
     access: [ProjectAccessDTO]
 }
 
@@ -83,6 +89,7 @@ type ExperimentDTO {
     updatedBy: String
 
     tags: [String]
+    properties: [PropertyDTO]
     summary: ExperimentSummaryDTO
 }
 
@@ -134,6 +141,7 @@ type PlateDTO {
     updatedBy: String
 
     tags: [String]
+    properties: [PropertyDTO]
 }
 
 type WellDTO {
@@ -204,6 +212,7 @@ type PlateTemplateDTO {
 
     wells: [WellTemplateDTO]
     tags: [String]
+    properties: [PropertyDTO]
 }
 
 type Query {

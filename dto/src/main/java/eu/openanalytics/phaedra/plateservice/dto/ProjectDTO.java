@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -38,5 +38,6 @@ public class ProjectDTO {
     private String updatedBy;
 
     private List<String> tags;
+    private List<PropertyDTO> properties;
     private List<ProjectAccessDTO> access;
 }

@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,10 +20,21 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
+import eu.openanalytics.phaedra.plateservice.dto.*;
+import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateDefinitionLinkEvent;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEvent;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEventType;
+import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -36,22 +47,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
-import eu.openanalytics.phaedra.plateservice.dto.event.PlateDefinitionLinkEvent;
-import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEvent;
-import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEventType;
-import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
-import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PlateService {
@@ -67,7 +66,7 @@ public class PlateService {
 	private final WellSubstanceService wellSubstanceService;
 
 	private final KafkaProducerService kafkaProducerService;
-	
+
 	private final ModelMapper modelMapper = new ModelMapper();
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
@@ -103,8 +102,17 @@ public class PlateService {
 
 		Plate plate = new Plate();
 		modelMapper.typeMap(PlateDTO.class, Plate.class).map(plateDTO, plate);
+		
 		plate.setCreatedBy(authService.getCurrentPrincipalName());
 		plate.setCreatedOn(new Date());
+		
+		if (plate.getSequence() == null) plate.setSequence(1);
+		if (plate.getLinkStatus() == null) plate.setLinkStatus(LinkStatus.NOT_LINKED);
+		if (plate.getCalculationStatus() == null) plate.setCalculationStatus(CalculationStatus.CALCULATION_NEEDED);
+		if (plate.getValidationStatus() == null) plate.setValidationStatus(ValidationStatus.VALIDATION_NOT_SET);
+		if (plate.getApprovalStatus() == null) plate.setApprovalStatus(ApprovalStatus.APPROVAL_NOT_SET);
+		if (plate.getUploadStatus() == null) plate.setUploadStatus(UploadStatus.UPLOAD_NOT_SET);
+		
 		plate = plateRepository.save(plate);
 
 		// Automatically create the corresponding wells
@@ -118,16 +126,16 @@ public class PlateService {
 	public PlateDTO updatePlate(PlateDTO plateDTO) {
 		Plate plate = plateRepository.findById(plateDTO.getId()).orElse(null);
 		if (plate == null) return null;
-		
+
 		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plate.getId()), ProjectAccessLevel.Write);
-		
+
 		modelMapper.typeMap(PlateDTO.class, Plate.class)
 				.setPropertyCondition(Conditions.isNotNull())
 				.map(plateDTO, plate);
 		plate.setUpdatedBy(authService.getCurrentPrincipalName());
 		plate.setUpdatedOn(new Date());
 		plateRepository.save(plate);
-		
+
 		PlateDTO modifiedPlate = modelMapper.map(plate, PlateDTO.class);
 		kafkaProducerService.notifyPlateModified(new PlateModificationEvent(modifiedPlate, PlateModificationEventType.Updated));
 		return modifiedPlate;
@@ -189,10 +197,15 @@ public class PlateService {
 		plateDTO.setLinkSource("layout-template");
 		plateDTO.setLinkStatus(LinkStatus.LINKED);
 		plateDTO.setLinkedOn(new Date());
-		
+
 		PlateDTO updatedPlate = updatePlate(plateDTO);
 		kafkaProducerService.notifyPlateDefinitionLinked(new PlateDefinitionLinkEvent(plateId, plateTemplateId, LinkOutcome.OK));
 		return updatedPlate;
+	}
+
+	public List<PlateDTO> linkPlates(long experimentId, long plateTemplateId) {
+		List<PlateDTO> plates = getPlatesByExperimentId(experimentId);
+		return plates.stream().map(plate -> linkPlate(plate.getId(), plateTemplateId)).collect(Collectors.toList());
 	}
 
 	private void linkWithPlateTemplate(long plateId, long plateTemplateId) {

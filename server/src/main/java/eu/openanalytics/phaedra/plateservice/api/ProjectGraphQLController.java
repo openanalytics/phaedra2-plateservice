@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,20 +20,21 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
+
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectAccessDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import eu.openanalytics.phaedra.plateservice.service.ProjectAccessService;
 import eu.openanalytics.phaedra.plateservice.service.ProjectService;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.stereotype.Controller;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class ProjectGraphQLController {
@@ -86,8 +87,11 @@ public class ProjectGraphQLController {
     }
 
     private void addProjectMetadata(ProjectDTO projectDTO) {
-        List<TagDTO> projectTags = metadataServiceClient.getTags(ObjectClass.PROJECT, projectDTO.getId());
-        projectDTO.setTags(projectTags.stream().map(tagDTO -> tagDTO.getTag()).collect(Collectors.toList()));
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PROJECT.name(), projectDTO.getId());
+        projectDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+        List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.PROJECT.name(), projectDTO.getId());
+        projectDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
 
         List<ProjectAccessDTO> projectAccess = projectAccessService.getProjectAccessForProject(projectDTO.getId());
         projectDTO.setAccess(projectAccess);

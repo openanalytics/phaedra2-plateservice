@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,14 +20,13 @@
  */
 package eu.openanalytics.phaedra.plateservice.repository;
 
-import java.util.List;
-
+import eu.openanalytics.phaedra.plateservice.model.Experiment;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import eu.openanalytics.phaedra.plateservice.model.Experiment;
+import java.util.List;
 
 @Repository
 public interface ExperimentRepository extends CrudRepository<Experiment, Long> {

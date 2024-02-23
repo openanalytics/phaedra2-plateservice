@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,16 +20,15 @@
  */
 package eu.openanalytics.phaedra.plateservice.repository;
 
-import java.util.List;
-
+import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
+import java.util.List;
 
 @Repository
 public interface PlateTemplateRepository extends CrudRepository<PlateTemplate,Long> {
 
 	public List<PlateTemplate> findByName(String name);
-	
+
 }

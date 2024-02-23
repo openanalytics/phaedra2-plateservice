@@ -20,32 +20,5 @@
  */
 package eu.openanalytics.phaedra.plateservice.dto;
 
-import java.util.Date;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@Builder
-@AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class PlateTemplateDTO {
-    private Long id;
-    private String name;
-    private String description;
-    private Integer rows;
-    private Integer columns;
-    private Date createdOn;
-    private String createdBy;
-    private Date updatedOn;
-    private String updatedBy;
-    private List<WellTemplateDTO> wells;
-    private List<String> tags;
-    private List<PropertyDTO> properties;
+public record PropertyDTO(String propertyName, String propertyValue) {
 }

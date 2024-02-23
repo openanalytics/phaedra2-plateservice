@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
@@ -61,10 +62,8 @@ public class PlateGraphQLController {
     public List<PlateDTO> getPlatesByExperimentId(@Argument Long experimentId) {
         List<PlateDTO> result = ObjectUtils.isNotEmpty(experimentId) ? plateService.getPlatesByExperimentId(experimentId) : new ArrayList<>();
         if (CollectionUtils.isNotEmpty(result)) {
-            // Add tags
             result.forEach(plateDTO -> {
-                List<TagDTO> plateTags = metadataServiceClient.getTags(ObjectClass.PLATE, plateDTO.getId());
-                plateDTO.setTags(plateTags.stream().map(TagDTO::getTag).toList());
+                addPlateMetadata(plateDTO);
             });
         }
         return result;
@@ -74,10 +73,8 @@ public class PlateGraphQLController {
     public List<PlateDTO> getPlatesByBarcode(@Argument String barcode) {
         List<PlateDTO> result = StringUtils.isNotEmpty(barcode) ? plateService.getPlatesByBarcode(barcode) : new ArrayList<>();
         if (CollectionUtils.isNotEmpty(result)) {
-            // Add tags
             result.forEach(plateDTO -> {
-                List<TagDTO> plateTags = metadataServiceClient.getTags(ObjectClass.PLATE, plateDTO.getId());
-                plateDTO.setTags(plateTags.stream().map(TagDTO::getTag).toList());
+                addPlateMetadata(plateDTO);
             });
         }
         return result;
@@ -87,8 +84,7 @@ public class PlateGraphQLController {
     public PlateDTO getPlateById(@Argument Long plateId) {
         PlateDTO result = ObjectUtils.isNotEmpty(plateId) ? plateService.getPlateById(plateId) : null;
         if (result != null) {
-            List<TagDTO> plateTags = metadataServiceClient.getTags(ObjectClass.PLATE, result.getId());
-            result.setTags(plateTags.stream().map(TagDTO::getTag).toList());
+            addPlateMetadata(result);
         }
         return result;
     }
@@ -116,5 +112,13 @@ public class PlateGraphQLController {
     @QueryMapping
     public List<PlateMeasurementDTO> getActiveMeasurementsByExperimentId(@Argument Long experimentId) {
         return plateMeasurementService.getActivePlateMeasurementsByExperimentId(experimentId);
+    }
+
+    private void addPlateMetadata(PlateDTO plateDTO) {
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PLATE.name(), plateDTO.getId());
+        plateDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+        List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.PLATE.name(), plateDTO.getId());
+        plateDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
     }
 }

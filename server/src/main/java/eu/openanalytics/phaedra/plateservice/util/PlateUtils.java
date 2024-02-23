@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,9 +20,9 @@
  */
 package eu.openanalytics.phaedra.plateservice.util;
 
-import java.util.Comparator;
-
 import eu.openanalytics.phaedra.plateservice.model.Plate;
+
+import java.util.Comparator;
 
 public class PlateUtils {
 
