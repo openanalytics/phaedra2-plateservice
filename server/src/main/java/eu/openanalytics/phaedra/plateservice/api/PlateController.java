@@ -95,7 +95,7 @@ public class PlateController {
     }
 
     @PutMapping(value = "/{plateId}/wells")
-    public ResponseEntity<Void> updateWell(@PathVariable long plateId, @RequestParam(required = true) List<WellDTO> wells) {
+    public ResponseEntity<Void> updateWell(@PathVariable long plateId, @RequestBody List<WellDTO> wells) {
         wellService.updateWells(wells);
         return new ResponseEntity<>(HttpStatus.OK);
     }
