@@ -94,6 +94,12 @@ public class PlateController {
         return ResponseEntity.ok(wells);
     }
 
+    @PutMapping(value = "/{plateId}/wells")
+    public ResponseEntity<Void> updateWell(@PathVariable long plateId, @RequestParam(required = true) List<WellDTO> wells) {
+        wellService.updateWells(wells);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping(value = "/{plateId}/measurements")
     public ResponseEntity<PlateMeasurementDTO> addMeasurement(@PathVariable long plateId, @RequestBody PlateMeasurementDTO plateMeasurementDTO) {
         PlateMeasurementDTO result = plateMeasurementService.addPlateMeasurement(plateMeasurementDTO, true);
