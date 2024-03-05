@@ -164,7 +164,7 @@ public class PlateServiceTest {
         }
     }
 
-//    @Test
+    @Test
     void movePlateById() {
         PlateDTO original = new PlateDTO();
         original.setBarcode("ORIGINAL");
