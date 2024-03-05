@@ -25,13 +25,9 @@ import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateDefinitionLinkEvent;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEvent;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEventType;
-import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
-import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
-import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.*;
+import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
@@ -51,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class PlateService {
@@ -70,9 +67,9 @@ public class PlateService {
 	private final ModelMapper modelMapper = new ModelMapper();
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
-						ProjectAccessService projectAccessService, IAuthorizationService authService,
-						PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService,
-						KafkaProducerService kafkaProducerService) {
+                        ProjectAccessService projectAccessService, IAuthorizationService authService,
+                        PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService,
+                        KafkaProducerService kafkaProducerService) {
 
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
@@ -82,7 +79,7 @@ public class PlateService {
 		this.plateTemplateService = plateTemplateService;
 		this.wellTemplateService = wellTemplateService;
 		this.wellSubstanceService = wellSubstanceService;
-		this.kafkaProducerService = kafkaProducerService;
+        this.kafkaProducerService = kafkaProducerService;
 
 		// TODO move to dedicated ModelMapper service
 		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
@@ -102,17 +99,17 @@ public class PlateService {
 
 		Plate plate = new Plate();
 		modelMapper.typeMap(PlateDTO.class, Plate.class).map(plateDTO, plate);
-		
+
 		plate.setCreatedBy(authService.getCurrentPrincipalName());
 		plate.setCreatedOn(new Date());
-		
+
 		if (plate.getSequence() == null) plate.setSequence(1);
 		if (plate.getLinkStatus() == null) plate.setLinkStatus(LinkStatus.NOT_LINKED);
 		if (plate.getCalculationStatus() == null) plate.setCalculationStatus(CalculationStatus.CALCULATION_NEEDED);
 		if (plate.getValidationStatus() == null) plate.setValidationStatus(ValidationStatus.VALIDATION_NOT_SET);
 		if (plate.getApprovalStatus() == null) plate.setApprovalStatus(ApprovalStatus.APPROVAL_NOT_SET);
 		if (plate.getUploadStatus() == null) plate.setUploadStatus(UploadStatus.UPLOAD_NOT_SET);
-		
+
 		plate = plateRepository.save(plate);
 
 		// Automatically create the corresponding wells
@@ -139,6 +136,25 @@ public class PlateService {
 		PlateDTO modifiedPlate = modelMapper.map(plate, PlateDTO.class);
 		kafkaProducerService.notifyPlateModified(new PlateModificationEvent(modifiedPlate, PlateModificationEventType.Updated));
 		return modifiedPlate;
+	}
+
+	public PlateDTO clonePlateById(long plateId) throws PlateNotFoundException, ClonePlateException {
+		PlateDTO plateDTO = getPlateById(plateId);
+		if (plateDTO == null) {
+			throw new PlateNotFoundException(plateId);
+		}
+		return clonePlate(plateDTO);
+	}
+
+	public PlateDTO clonePlate(PlateDTO plateDTO) throws ClonePlateException {
+		PlateDTO plateCloneDTO = createClonedPlate(plateDTO);
+		if (plateCloneDTO.getId() != null && !plateCloneDTO.getId().equals(plateDTO.getId())) {
+			List<WellDTO> originalWells = wellService.getWellsByPlateId(plateDTO.getId());
+			cloneWells(originalWells, plateCloneDTO.getId());
+			return plateCloneDTO;
+		} else {
+			throw new ClonePlateException("An error occurred while trying to clone a plate!");
+		}
 	}
 
 	public void deletePlate(long plateId) {
@@ -176,7 +192,12 @@ public class PlateService {
 		return plateRepository.findProjectIdByPlateId(plateId);
 	}
 
-	public PlateDTO linkPlate(long plateId, long plateTemplateId) {
+	@Cacheable("plate_project_id")
+	public Long getProjectIdByExperimentId(long experimentId) {
+		return plateRepository.findProjectIdByExperimentId(experimentId);
+	}
+
+	public PlateDTO linkPlateTemplate(long plateId, long plateTemplateId) {
 		Long projectId = getProjectIdByPlateId(plateId);
 		if (projectId != null) projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
 
@@ -205,7 +226,7 @@ public class PlateService {
 
 	public List<PlateDTO> linkPlates(long experimentId, long plateTemplateId) {
 		List<PlateDTO> plates = getPlatesByExperimentId(experimentId);
-		return plates.stream().map(plate -> linkPlate(plate.getId(), plateTemplateId)).collect(Collectors.toList());
+		return plates.stream().map(plate -> linkPlateTemplate(plate.getId(), plateTemplateId)).collect(Collectors.toList());
 	}
 
 	private void linkWithPlateTemplate(long plateId, long plateTemplateId) {
@@ -255,5 +276,46 @@ public class PlateService {
 		wellSubstanceDTO.setName(wellTemplateDTO.getSubstanceName());
 		wellSubstanceDTO.setConcentration(wellTemplateDTO.getConcentration());
 		wellSubstanceService.updateWellSubstance(wellSubstanceDTO);
+	}
+
+	private PlateDTO createClonedPlate(PlateDTO plateDTO) {
+		PlateDTO pClone = new PlateDTO();
+		modelMapper.map(plateDTO, pClone);
+		pClone.setId(null);
+		return createPlate(pClone);
+	}
+
+	private void cloneWells(List<WellDTO> originalWells, Long plateCloneId) {
+		List<WellDTO> clonedWells = wellService.getWellsByPlateId(plateCloneId);
+		IntStream.range(0, originalWells.size()).forEach(i -> {
+			cloneWellProperties(originalWells.get(i), clonedWells.get(i));
+			if (originalWells.get(i).getWellSubstance() != null)
+				cloneWellSubstance(originalWells.get(i), clonedWells.get(i));
+		});
+		wellService.updateWells(clonedWells);
+	}
+
+	private void cloneWellProperties(WellDTO originalWell, WellDTO clonedWell) {
+		clonedWell.setWellType(originalWell.getWellType());
+		clonedWell.setStatus(originalWell.getStatus());
+		clonedWell.setDescription(originalWell.getDescription());
+		clonedWell.setTags(originalWell.getTags());
+	}
+
+	private void cloneWellSubstance(WellDTO originalWell, WellDTO clonedWell) {
+		WellSubstanceDTO wsClone = new WellSubstanceDTO();
+		modelMapper.map(originalWell.getWellSubstance(), wsClone);
+		wsClone.setId(null);
+		wsClone.setWellId(clonedWell.getId());
+		WellSubstanceDTO clonedSubstance = wellSubstanceService.createWellSubstance(wsClone);
+		clonedWell.setWellSubstance(clonedSubstance);
+	}
+
+	public PlateDTO moveByPlateId(Long plateId, Long experimentId) {
+		Long projectId = getProjectIdByExperimentId(experimentId);
+		if (projectId != null) projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
+		PlateDTO plateDTO = getPlateById(plateId);
+		plateDTO.setExperimentId(experimentId);
+		return updatePlate(plateDTO);
 	}
 }

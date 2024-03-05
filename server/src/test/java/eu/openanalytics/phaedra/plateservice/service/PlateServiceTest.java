@@ -21,6 +21,12 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
@@ -41,6 +47,8 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,6 +77,8 @@ public class PlateServiceTest {
     private WellTemplateService wellTemplateService;
     @Autowired
     private WellSubstanceService wellSubstanceService;
+    @Autowired
+    private PlateMeasurementService plateMeasurementService;
 
     @Autowired
     private PlateService plateService;
@@ -93,20 +103,8 @@ public class PlateServiceTest {
         registry.add("DB_PASSWORD", Containers.postgreSQLContainer::getPassword);
     }
 
-//    @BeforeClass
-//    void before() {
-//        plateService = new PlateService(plateRepository, wellService, experimentService,
-//                projectAccessService, authService, plateTemplateService, wellTemplateService, wellSubstanceService);
-//
-//        Configuration builderConfiguration = modelMapper.getConfiguration().copy()
-//                .setDestinationNameTransformer(NameTransformers.builder())
-//                .setDestinationNamingConvention(NamingConventions.builder());
-//        modelMapper.createTypeMap(Plate.class, PlateDTO.PlateDTOBuilder.class, builderConfiguration)
-//                .setPropertyCondition(Conditions.isNotNull());
-//    }
-
     @Test
-    public void contextLoads() {
+    void contextLoads() {
         assertThat(plateRepository).isNotNull();
         assertThat(wellService).isNotNull();
         assertThat(experimentService).isNotNull();
@@ -114,17 +112,81 @@ public class PlateServiceTest {
         assertThat(plateTemplateService).isNotNull();
         assertThat(wellTemplateService).isNotNull();
         assertThat(wellSubstanceService).isNotNull();
+        assertThat(plateMeasurementService).isNotNull();
         assertThat(modelMapper).isNotNull();
     }
 
     @Test
-    public void isInitialized() {
+    void isInitialized() {
         assertThat(this.plateService).isNotNull();
     }
 
     @Test
-    public void linkPlate() {
-        PlateDTO plateDTO = plateService.linkPlate(1000L, 56L);
+    void clonePlateById() throws PlateNotFoundException, ClonePlateException {
+        PlateDTO original = new PlateDTO();
+        original.setBarcode("ORIGINAL");
+        original.setRows(16);
+        original.setColumns(24);
+        original.setTags(List.of("Test", "Clone"));
+        original.setExperimentId(1000L);
+        original.setLinkTemplateId("1000");
+        original.setLinkStatus(LinkStatus.LINKED);
+        original.setCalculationStatus(CalculationStatus.CALCULATION_OK);
+
+        PlateDTO originalCreated = plateService.createPlate(original);
+
+        if (originalCreated != null) {
+            List<WellDTO> originalWells = wellService.getWellsByPlateId(originalCreated.getId());
+
+            WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
+            wellSubstanceDTO.setWellId(originalWells.get(0).getId());
+            wellSubstanceDTO.setType("COMPOUND");
+            wellSubstanceDTO.setName("UnitTest");
+            wellSubstanceDTO.setConcentration(0.0005);
+            wellSubstanceDTO = wellSubstanceService.createWellSubstance(wellSubstanceDTO);
+
+            originalWells.get(0).setWellSubstance(wellSubstanceDTO);
+            wellService.updateWells(originalWells);
+
+            PlateDTO clonedPlate = plateService.clonePlateById(originalCreated.getId());
+            List<WellDTO> clonedWells = wellService.getWellsByPlateId(clonedPlate.getId());
+
+            assertThat(clonedPlate.getId()).isNotEqualTo(originalCreated.getId());
+            assertThat(clonedPlate.getBarcode()).isEqualTo(originalCreated.getBarcode());
+            assertThat(clonedPlate.getRows()).isEqualTo(originalCreated.getRows());
+            assertThat(clonedPlate.getColumns()).isEqualTo(originalCreated.getColumns());
+            assertThat(clonedWells).hasSameSizeAs(originalWells);
+            assertThat(clonedWells.get(0).getWellType()).isEqualTo(originalWells.get(0).getWellType());
+            assertThat(clonedWells.get(0).getWellSubstance().getId()).isNotEqualTo(originalWells.get(0).getWellSubstance().getId());
+            assertThat(clonedWells.get(0).getWellSubstance().getWellId()).isNotEqualTo(originalWells.get(0).getWellSubstance().getWellId());
+            assertThat(clonedWells.get(0).getWellSubstance().getName()).isEqualTo(originalWells.get(0).getWellSubstance().getName());
+            assertThat(clonedWells.get(0).getWellSubstance().getType()).isEqualTo(originalWells.get(0).getWellSubstance().getType());
+        }
+    }
+
+    @Test
+    void movePlateById() {
+        PlateDTO original = new PlateDTO();
+        original.setBarcode("ORIGINAL");
+        original.setRows(16);
+        original.setColumns(24);
+        original.setTags(List.of("Test", "Clone"));
+        original.setExperimentId(1000L);
+        original.setLinkTemplateId("1000");
+        original.setLinkStatus(LinkStatus.LINKED);
+        original.setCalculationStatus(CalculationStatus.CALCULATION_OK);
+
+        PlateDTO created = plateService.createPlate(original);
+        PlateDTO moved = plateService.moveByPlateId(created.getId(), 2000L);
+
+        assertThat(created.getId()).isEqualTo(moved.getId());
+        assertThat(created.getBarcode()).isEqualTo(moved.getBarcode());
+        assertThat(created.getExperimentId()).isNotEqualTo(moved.getExperimentId());
+    }
+
+    @Test
+    void linkPlate() {
+        PlateDTO plateDTO = plateService.linkPlateTemplate(1000L, 56L);
         assertThat(plateDTO).isNotNull();
     }
 }

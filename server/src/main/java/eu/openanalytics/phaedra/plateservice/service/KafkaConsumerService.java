@@ -88,7 +88,7 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateDefLink", filter = "reqPlateDefLinkFilter", errorHandler = "kafkaErrorHandler")
     public void reqPlateDefLink(ReqPlateDefLinkDTO req) {
-    	authService.runInKafkaContext(() -> plateService.linkPlate(req.getPlateId(), req.getTemplateId()));
+    	authService.runInKafkaContext(() -> plateService.linkPlateTemplate(req.getPlateId(), req.getTemplateId()));
     }
 
     @Data

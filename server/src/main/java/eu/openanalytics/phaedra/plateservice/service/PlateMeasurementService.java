@@ -65,7 +65,7 @@ public class PlateMeasurementService {
         this.kafkaProducerService = kafkaProducerService;
     }
 
-    public PlateMeasurementDTO addPlateMeasurement(PlateMeasurementDTO plateMeasurementDTO, boolean setActive) {
+    public PlateMeasurementDTO addPlateMeasurement(PlateMeasurementDTO plateMeasurementDTO, boolean isActive) {
     	try {
 	    	long projectId = plateService.getProjectIdByPlateId(plateMeasurementDTO.getPlateId());
 	    	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
@@ -76,7 +76,7 @@ public class PlateMeasurementService {
 	    	PlateMeasurement plateMeasurement = modelMapper.map(plateMeasurementDTO);
 	        plateMeasurement = plateMeasurementRepository.save(plateMeasurement);
 
-	        if (setActive) {
+	        if (isActive) {
 	        	toggleActiveMeas(plateMeasurement);
 	        }
 
@@ -127,11 +127,11 @@ public class PlateMeasurementService {
     	}
     }
 
-    public PlateMeasurementDTO getActivePlateMeasurement(long plateId) {
+    public PlateMeasurementDTO getPlateMeasurement(long plateId, boolean active) {
         long projectId = plateService.getProjectIdByPlateId(plateId);
         projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 
-        PlateMeasurement activePlateMeasurement = plateMeasurementRepository.findByPlateIdAndActive(plateId, true);
+        PlateMeasurement activePlateMeasurement = plateMeasurementRepository.findByPlateIdAndActive(plateId, active);
         if (activePlateMeasurement != null) {
             return mapToPlateMeasurementDTO(activePlateMeasurement);
         } else {
@@ -175,8 +175,31 @@ public class PlateMeasurementService {
         }
     }
 
-    public List<PlateMeasurementDTO> getActivePlateMeasurementsByExperimentId(Long experimentId) {
+    public List<PlateMeasurementDTO> getPlateMeasurementsByExperimentId(Long experimentId, boolean isActive) {
         List<PlateDTO> plates = plateService.getPlatesByExperimentId(experimentId);
-        return plates.stream().map(plate -> getActivePlateMeasurement(plate.getId())).toList();
+        return plates.stream().map(plate -> getPlateMeasurement(plate.getId(), isActive)).toList();
+    }
+
+    public PlateMeasurementDTO createPlateMeasurement(PlateMeasurementDTO plateMeasurementDTO) {
+        PlateMeasurement plateMeasurement = modelMapper.map(plateMeasurementDTO);
+        PlateMeasurement created = plateMeasurementRepository.save(plateMeasurement);
+        return modelMapper.map(created);
+    }
+
+    public void clonePlateMeasurements(long sourcePlateId, long destinationPlateId) {
+        List<PlateMeasurementDTO> plateMeasurements = getPlateMeasurements(sourcePlateId);
+        if (CollectionUtils.isNotEmpty(plateMeasurements)) {
+            clonePlateMeasurements(plateMeasurements, destinationPlateId);
+        }
+    }
+
+    private void clonePlateMeasurements(List<PlateMeasurementDTO> plateMeasurements, long plateCloneId) {
+        plateMeasurements.forEach(pm -> {
+            PlateMeasurementDTO clone = new PlateMeasurementDTO();
+            modelMapper.map(pm, clone);
+            clone.setId(null);
+            clone.setPlateId(plateCloneId);
+            createPlateMeasurement(clone);
+        });
     }
 }

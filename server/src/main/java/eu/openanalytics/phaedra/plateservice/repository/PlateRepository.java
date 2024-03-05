@@ -43,6 +43,9 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 	@Query("select e.project_id from hca_plate p, hca_experiment e where p.experiment_id = e.id and p.id = :plateId")
 	Long findProjectIdByPlateId(@Param("plateId") long plateId);
 
+	@Query("select e.project_id from hca_experiment e where e.experiment_id = :experimentId")
+	Long findProjectIdByExperimentId(@Param("experimentId") long experimentId);
+
 	List<Plate> findByExperimentId(long experimentId);
 
 	List<Plate> findByBarcode(String barcode);

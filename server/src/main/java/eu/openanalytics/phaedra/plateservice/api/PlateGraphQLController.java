@@ -101,7 +101,7 @@ public class PlateGraphQLController {
 
     @QueryMapping
     public PlateMeasurementDTO getActiveMeasurementByPlateId(@Argument Long plateId) {
-        return plateMeasurementService.getActivePlateMeasurement(plateId);
+        return plateMeasurementService.getPlateMeasurement(plateId, true);
     }
 
     @MutationMapping
@@ -111,7 +111,7 @@ public class PlateGraphQLController {
 
     @QueryMapping
     public List<PlateMeasurementDTO> getActiveMeasurementsByExperimentId(@Argument Long experimentId) {
-        return plateMeasurementService.getActivePlateMeasurementsByExperimentId(experimentId);
+        return plateMeasurementService.getPlateMeasurementsByExperimentId(experimentId, true);
     }
 
     private void addPlateMetadata(PlateDTO plateDTO) {

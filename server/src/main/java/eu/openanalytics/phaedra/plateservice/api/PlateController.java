@@ -23,9 +23,11 @@ package eu.openanalytics.phaedra.plateservice.api;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
+import eu.openanalytics.phaedra.util.exceptionhandling.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +75,32 @@ public class PlateController {
         PlateDTO plate = plateService.getPlateById(plateId);
         if (plate == null) return ResponseEntity.notFound().build();
         return new ResponseEntity<>(plate, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/clone")
+    public ResponseEntity<Void> clonePlate(@RequestParam List<Long> plateIds) {
+        try {
+            for (Long plateId : plateIds) {
+                PlateDTO clone = plateService.clonePlateById(plateId);
+
+                if (clone != null) {
+                    plateMeasurementService.clonePlateMeasurements(plateId, clone.getId());
+                }
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (ClonePlateException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping(value = "/move")
+    public ResponseEntity<Void> movePlate(@RequestParam List<Long> plateIds, @RequestParam Long experimentId) {
+        for (Long plateId : plateIds) {
+            plateService.moveByPlateId(plateId, experimentId);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(params = {"experimentId"})
@@ -131,7 +159,7 @@ public class PlateController {
 
     @PutMapping(value = "/{plateId}/link/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlateDTO> setPlateTemplate(@PathVariable long plateId, @PathVariable long plateTemplateId) {
-        PlateDTO plateDTO = plateService.linkPlate(plateId, plateTemplateId);
+        PlateDTO plateDTO = plateService.linkPlateTemplate(plateId, plateTemplateId);
         return new ResponseEntity<>(plateDTO, HttpStatus.OK);
     }
 }

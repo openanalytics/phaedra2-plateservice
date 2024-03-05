@@ -45,7 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Sql({"/jdbc/test-data.sql"})
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class PlateMeasurementServiceTest {
+class PlateMeasurementServiceTest {
 
     @Autowired
     private PlateMeasurementRepository plateMeasurementRepository;
@@ -85,7 +85,7 @@ public class PlateMeasurementServiceTest {
     }
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
         assertThat(plateMeasurementRepository).isNotNull();
         assertThat(measurementServiceClient).isNotNull();
         assertThat(modelMapper).isNotNull();
@@ -94,20 +94,20 @@ public class PlateMeasurementServiceTest {
     }
 
     @Test
-    public void isInitialized() {
+    void isInitialized() {
         assertThat(this.plateMeasurementService).isNotNull();
     }
 
 //    @Test
     public void getActivePlateMeasurement() {
-        PlateMeasurementDTO activePlateMeasurementDTO = plateMeasurementService.getActivePlateMeasurement(2000L);
+        PlateMeasurementDTO activePlateMeasurementDTO = plateMeasurementService.getPlateMeasurement(2000L, true);
         assertThat(activePlateMeasurementDTO).isNotNull();
         assertThat(activePlateMeasurementDTO.getActive()).isTrue();
     }
 
     @Test
-    public void getActivePlateMeasurementFail() {
-        PlateMeasurementDTO activePlateMeasurementDTO = plateMeasurementService.getActivePlateMeasurement(1000L);
+    void getActivePlateMeasurementFail() {
+        PlateMeasurementDTO activePlateMeasurementDTO = plateMeasurementService.getPlateMeasurement(1000L, true);
         assertThat(activePlateMeasurementDTO).isNull();
     }
 }

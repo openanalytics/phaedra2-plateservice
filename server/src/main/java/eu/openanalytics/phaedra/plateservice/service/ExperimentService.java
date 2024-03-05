@@ -100,7 +100,7 @@ public class ExperimentService {
 	}
 
 	public List<ExperimentDTO> getAllExperiments() {
-		List<Experiment> result = (List<Experiment>) experimentRepository.findAll();
+		List<Experiment> result = experimentRepository.findAll();
 		return result.stream()
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
 				.map(this::mapToExperimentDTO)
