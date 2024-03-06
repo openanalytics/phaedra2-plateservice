@@ -282,7 +282,7 @@ public class PlateService {
 		PlateDTO pClone = new PlateDTO();
 		modelMapper.map(plateDTO, pClone);
 		pClone.setId(null);
-		pClone.setDescription("Copy of plate (id)" + plateDTO.getId());
+		pClone.setDescription("Copy of plate " + plateDTO.getBarcode() + " (" + plateDTO.getId() + ")");
 		return createPlate(pClone);
 	}
 
