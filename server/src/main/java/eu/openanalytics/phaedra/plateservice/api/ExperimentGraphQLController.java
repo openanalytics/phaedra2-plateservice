@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
@@ -105,6 +106,11 @@ public class ExperimentGraphQLController {
 	public ExperimentSummaryDTO getExperimentSummaryByExperimentId(@Argument Long experimentId) {
 		List<ExperimentSummaryDTO> result = experimentService.getExperimentSummaryInExperimentIds(Set.of(experimentId));
 		return CollectionUtils.isNotEmpty(result) ? result.get(0) : new ExperimentSummaryDTO(experimentId, 0, 0, 0, 0);
+	}
+
+	@SchemaMapping
+	public ExperimentSummaryDTO summary(ExperimentDTO experimentDTO) {
+		return experimentService.getExperimentSummaryByExperimentId(experimentDTO.getId());
 	}
 
 	private void addExperimentMetadata(ExperimentDTO experimentDTO) {

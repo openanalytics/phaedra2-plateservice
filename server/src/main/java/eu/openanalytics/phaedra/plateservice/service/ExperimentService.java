@@ -150,4 +150,8 @@ public class ExperimentService {
 				.map(experiment, experimentDTO);
 		return experimentDTO;
 	}
+
+    public ExperimentSummaryDTO getExperimentSummaryByExperimentId(Long experimentId) {
+		return plateRepository.findExperimentSummaryByExperimentId(experimentId);
+    }
 }
