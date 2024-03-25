@@ -20,12 +20,14 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
+import eu.openanalytics.phaedra.util.WellNumberUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -110,16 +112,28 @@ public class WellService {
     	long projectId = Optional.ofNullable(plateService.getProjectIdByPlateId(plateId)).orElse(0l);
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 
+        PlateDTO plate = plateService.getPlateById(plateId);
     	List<WellSubstanceDTO> substances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
 
         return wellRepository.findByPlateId(plateId).stream()
         		.map(well -> modelMapper.map(well, WellDTO.class))
-        		.map(dto -> {
-        			dto.setWellSubstance(substances.stream().filter(s -> s.getWellId().longValue() == dto.getId().longValue()).findAny().orElse(null));
-        			return dto;
+        		.map(wellDTO -> {
+        			wellDTO.setWellSubstance(findWellSubstanceForWell(wellDTO, substances));
+                    wellDTO.setWellNr(calculateWellNumber(wellDTO, plate));
+        			return wellDTO;
         		})
         		.sorted(WELL_COMPARATOR)
         		.toList();
+    }
+
+    private WellSubstanceDTO findWellSubstanceForWell(WellDTO wellDTO, List<WellSubstanceDTO> substances) {
+        return substances.stream()
+                .filter(s -> s.getWellId().longValue() == wellDTO.getId().longValue())
+                .findAny().orElse(null);
+    }
+
+    private Integer calculateWellNumber(WellDTO wellDTO, PlateDTO plate){
+        return WellNumberUtils.getWellNr(wellDTO.getRow(), wellDTO.getColumn(), plate.getColumns());
     }
 
     private Well mapToWell(WellDTO wellDTO) {
@@ -129,7 +143,6 @@ public class WellService {
         well.setDescription(wellDTO.getDescription());
         well.setRow(wellDTO.getRow());
         well.setColumn(wellDTO.getColumn());
-//        well.setCompoundId(wellDTO.getCompoundId());
         well.setStatus(wellDTO.getStatus());
         well.setPlateId(wellDTO.getPlateId());
         return well;
