@@ -20,10 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import eu.openanalytics.phaedra.plateservice.dto.MovePlatesDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.*;
 import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
@@ -161,5 +158,13 @@ public class PlateController {
     public ResponseEntity<PlateDTO> setPlateTemplate(@PathVariable long plateId, @PathVariable long plateTemplateId) {
         PlateDTO plateDTO = plateService.linkPlateTemplate(plateId, plateTemplateId);
         return new ResponseEntity<>(plateDTO, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/link-template", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> linkPlateTemplate(@RequestBody LinkPlateTemplateDTO linkPlateTemplateDTO) {
+        for (Long plateId : linkPlateTemplateDTO.getPlateIds()) {
+            plateService.linkPlateTemplate(plateId, linkPlateTemplateDTO.getPlateTemplateId());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
