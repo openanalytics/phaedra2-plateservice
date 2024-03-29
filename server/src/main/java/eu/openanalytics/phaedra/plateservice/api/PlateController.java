@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
+import eu.openanalytics.phaedra.plateservice.dto.MovePlatesDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
@@ -77,12 +78,11 @@ public class PlateController {
         return new ResponseEntity<>(plate, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/clone")
-    public ResponseEntity<Void> clonePlate(@RequestParam List<Long> plateIds) {
+    @PostMapping(value = "/clone")
+    public ResponseEntity<Void> clonePlate(@RequestBody List<Long> plateIds) {
         try {
             for (Long plateId : plateIds) {
                 PlateDTO clone = plateService.clonePlateById(plateId);
-
                 if (clone != null) {
                     plateMeasurementService.clonePlateMeasurements(plateId, clone.getId());
                 }
@@ -95,10 +95,10 @@ public class PlateController {
         }
     }
 
-    @PutMapping(value = "/move")
-    public ResponseEntity<Void> movePlate(@RequestParam List<Long> plateIds, @RequestParam Long experimentId) {
-        for (Long plateId : plateIds) {
-            plateService.moveByPlateId(plateId, experimentId);
+    @PostMapping(value = "/move")
+    public ResponseEntity<Void> movePlate(@RequestBody MovePlatesDTO movePlatesDTO) {
+        for (Long plateId : movePlatesDTO.getPlateIds()) {
+            plateService.moveByPlateId(plateId, movePlatesDTO.getExperimentId());
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
