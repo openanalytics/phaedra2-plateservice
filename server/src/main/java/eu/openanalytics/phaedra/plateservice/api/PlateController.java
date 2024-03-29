@@ -154,6 +154,14 @@ public class PlateController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/link-measurement")
+    public ResponseEntity<Void> setActiveMeasurement(@RequestBody LinkPlateMeasurementDTO linkPlateMeasurementDTO) {
+        for (Long plateId : linkPlateMeasurementDTO.getPlateIds()) {
+            plateMeasurementService.linkMeasurement(plateId, linkPlateMeasurementDTO.getMeasurementId());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PutMapping(value = "/{plateId}/link/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlateDTO> setPlateTemplate(@PathVariable long plateId, @PathVariable long plateTemplateId) {
         PlateDTO plateDTO = plateService.linkPlateTemplate(plateId, plateTemplateId);

@@ -32,9 +32,9 @@ import org.springframework.kafka.support.converter.BytesJsonMessageConverter;
 @Configuration
 @EnableKafka
 public class KafkaConfig {
-	
+
 	public static final String GROUP_ID = "plate-service";
-	
+
     public static final String TOPIC_PLATES = "plates";
 
     public static final String EVENT_REQ_PLATE_STATUS_UPDATE = "requestPlateCalculationStatusUpdate";
@@ -44,19 +44,19 @@ public class KafkaConfig {
     public static final String EVENT_NOTIFY_PLATE_MODIFIED = "notifyPlateModified";
     public static final String EVENT_NOTIFY_PLATE_MEAS_LINKED = "notifyPlateMeasLinked";
     public static final String EVENT_NOTIFY_PLATE_DEFINITION_LINKED = "notifyPlateDefinitionLinked";
-    
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     @Bean
     public RecordFilterStrategy<String, Object> reqPlateCalculationStatusUpdateFilter() {
         return rec -> !(rec.key().equalsIgnoreCase(EVENT_REQ_PLATE_STATUS_UPDATE));
     }
-    
+
     @Bean
     public RecordFilterStrategy<String, Object> reqPlateMeasLinkFilter() {
         return rec -> !(rec.key().equalsIgnoreCase(EVENT_REQ_PLATE_MEAS_LINK));
     }
-    
+
     @Bean
     public RecordFilterStrategy<String, Object> reqPlateDefLinkFilter() {
         return rec -> !(rec.key().equalsIgnoreCase(EVENT_REQ_PLATE_DEF_LINK));
@@ -65,11 +65,11 @@ public class KafkaConfig {
     @Bean
     public KafkaListenerErrorHandler kafkaErrorHandler() {
     	return (msg, ex) -> {
-    		logger.error(String.format("Error occured while handling event"), ex);
+    		logger.error(String.format("Error occurred while handling event"), ex);
     		return null;
     	};
     }
-    
+
     @Bean
     public BytesJsonMessageConverter messageConverter() {
     	return new BytesJsonMessageConverter();
