@@ -26,9 +26,12 @@ import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
+import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -48,14 +51,16 @@ public class PlateGraphQLController {
     private final WellService wellService;
     private final PlateMeasurementService plateMeasurementService;
     private final MetadataServiceClient metadataServiceClient;
+    private final PlateTemplateService plateTemplateService;
 
     public PlateGraphQLController(PlateService plateService, WellService wellService,
                                   PlateMeasurementService plateMeasurementService,
-                                  MetadataServiceClient metadataServiceClient) {
+                                  MetadataServiceClient metadataServiceClient, PlateTemplateService plateTemplateService) {
         this.plateService = plateService;
         this.wellService = wellService;
         this.plateMeasurementService = plateMeasurementService;
         this.metadataServiceClient = metadataServiceClient;
+        this.plateTemplateService = plateTemplateService;
     }
 
     @QueryMapping
@@ -63,7 +68,7 @@ public class PlateGraphQLController {
         List<PlateDTO> result = ObjectUtils.isNotEmpty(experimentId) ? plateService.getPlatesByExperimentId(experimentId) : new ArrayList<>();
         if (CollectionUtils.isNotEmpty(result)) {
             result.forEach(plateDTO -> {
-                addPlateMetadata(plateDTO);
+                enrichLinkedPlateDTOInfo(plateDTO);
             });
         }
         return result;
@@ -74,7 +79,7 @@ public class PlateGraphQLController {
         List<PlateDTO> result = StringUtils.isNotEmpty(barcode) ? plateService.getPlatesByBarcode(barcode) : new ArrayList<>();
         if (CollectionUtils.isNotEmpty(result)) {
             result.forEach(plateDTO -> {
-                addPlateMetadata(plateDTO);
+                enrichLinkedPlateDTOInfo(plateDTO);
             });
         }
         return result;
@@ -84,7 +89,7 @@ public class PlateGraphQLController {
     public PlateDTO getPlateById(@Argument Long plateId) {
         PlateDTO result = ObjectUtils.isNotEmpty(plateId) ? plateService.getPlateById(plateId) : null;
         if (result != null) {
-            addPlateMetadata(result);
+            enrichLinkedPlateDTOInfo(result);
         }
         return result;
     }
@@ -114,11 +119,18 @@ public class PlateGraphQLController {
         return plateMeasurementService.getPlateMeasurementsByExperimentId(experimentId, true);
     }
 
-    private void addPlateMetadata(PlateDTO plateDTO) {
+    private void enrichLinkedPlateDTOInfo(PlateDTO plateDTO) {
         List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PLATE.name(), plateDTO.getId());
         plateDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
 
         List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.PLATE.name(), plateDTO.getId());
         plateDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
+
+        if (LinkStatus.LINKED.equals(plateDTO.getLinkStatus())) {
+            PlateTemplateDTO plateTemplate = plateTemplateService.getPlateTemplateById(Long.parseLong(plateDTO.getLinkTemplateId()));
+            if (plateTemplate != null) {
+                plateDTO.setLinkTemplateName(plateTemplate.getName());
+            }
+        }
     }
 }

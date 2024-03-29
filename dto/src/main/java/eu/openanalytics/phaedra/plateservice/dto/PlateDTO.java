@@ -49,6 +49,7 @@ public class PlateDTO {
 	private LinkStatus linkStatus;
 	private String linkSource;
 	private String linkTemplateId;
+	private String linkTemplateName;
 	private Date linkedOn;
 
 	private CalculationStatus calculationStatus;

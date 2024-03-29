@@ -114,6 +114,7 @@ type PlateDTO {
     linkStatus: LinkStatus
     linkSource: String
     linkTemplateId: String
+    linkTemplateName: String
     linkedOn: Date
 
     calculationStatus: CalculationStatus
