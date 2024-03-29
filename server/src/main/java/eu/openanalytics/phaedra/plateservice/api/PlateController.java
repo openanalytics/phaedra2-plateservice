@@ -22,10 +22,10 @@ package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.plateservice.dto.*;
 import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
-import eu.openanalytics.phaedra.util.exceptionhandling.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,20 +59,71 @@ public class PlateController {
     	plateDTO.setId(plateId);
         PlateDTO result = plateService.updatePlate(plateDTO);
         if (result == null) return ResponseEntity.notFound().build();
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping(value = "/{plateId}")
     public ResponseEntity<Void> deletePlate(@PathVariable long plateId) {
         plateService.deletePlate(plateId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/{plateId}")
     public ResponseEntity<PlateDTO> getPlate(@PathVariable long plateId) {
-        PlateDTO plate = plateService.getPlateById(plateId);
-        if (plate == null) return ResponseEntity.notFound().build();
-        return new ResponseEntity<>(plate, HttpStatus.OK);
+        try {
+            PlateDTO plate = plateService.getPlateById(plateId);
+            return ResponseEntity.ok(plate);
+        } catch (Throwable e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping(value = "/validate")
+    public ResponseEntity<Void> validatePlates(@RequestBody List<Long> plateIds) {
+        try {
+            for (Long plateId : plateIds) {
+                plateService.validatePlate(plateId);
+            }
+            return ResponseEntity.ok().build();
+        } catch (Throwable e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping(value = "/invalidate")
+    public ResponseEntity<Void> invalidatePlates(@RequestBody List<Long> plateIds) {
+        try {
+            for (Long plateId : plateIds) {
+                plateService.invalidatePlate(plateId);
+            }
+            return ResponseEntity.ok().build();
+        } catch (Throwable e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping(value = "/approve")
+    public ResponseEntity<Void> approvePlates(@RequestBody List<Long> plateIds) {
+        try {
+            for (Long plateId : plateIds) {
+                plateService.approvePlate(plateId);
+            }
+            return ResponseEntity.ok().build();
+        } catch (Throwable e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping(value = "/disapprove")
+    public ResponseEntity<Void> disapprovePlates(@RequestBody List<Long> plateIds) {
+        try {
+            for (Long plateId : plateIds) {
+                plateService.disapprovePlate(plateId);
+            }
+            return ResponseEntity.ok().build();
+        } catch (Throwable e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping(value = "/clone")
@@ -84,45 +135,54 @@ public class PlateController {
                     plateMeasurementService.clonePlateMeasurements(plateId, clone.getId());
                 }
             }
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.ok().build();
+        } catch (PlateNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (ClonePlateException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @PostMapping(value = "/move")
     public ResponseEntity<Void> movePlate(@RequestBody MovePlatesDTO movePlatesDTO) {
-        for (Long plateId : movePlatesDTO.getPlateIds()) {
-            plateService.moveByPlateId(plateId, movePlatesDTO.getExperimentId());
+        try {
+            for (Long plateId : movePlatesDTO.getPlateIds()) {
+                plateService.moveByPlateId(plateId, movePlatesDTO.getExperimentId());
+            }
+            return ResponseEntity.ok().build();
+        } catch (PlateNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(params = {"experimentId"})
     public ResponseEntity<List<PlateDTO>> getPlatesByExperiment(@RequestParam(required = false) long experimentId) {
         List<PlateDTO> response = plateService.getPlatesByExperimentId(experimentId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping(params = {"barcode"})
     public ResponseEntity<List<PlateDTO>> getPlatesByBarcode(@RequestParam(required = false) String barcode) {
         List<PlateDTO> response = plateService.getPlatesByBarcode(barcode);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping(value = "/{plateId}/wells")
     public ResponseEntity<List<WellDTO>> getWells(@PathVariable long plateId) {
-        List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
-        if (wells.isEmpty()) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(wells);
+        try {
+            List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
+            if (wells.isEmpty()) return ResponseEntity.notFound().build();
+
+            return ResponseEntity.ok(wells);
+        } catch (PlateNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping(value = "/{plateId}/wells")
     public ResponseEntity<Void> updateWell(@PathVariable long plateId, @RequestBody List<WellDTO> wells) {
         wellService.updateWells(wells);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/{plateId}/measurements")
@@ -134,7 +194,7 @@ public class PlateController {
     @GetMapping(value = "/{plateId}/measurements")
     public ResponseEntity<List<PlateMeasurementDTO>> getPlateMeasurements(@PathVariable(name = "plateId") long plateId) {
         List<PlateMeasurementDTO> plateMeasurements = plateMeasurementService.getPlateMeasurements(plateId);
-        return new ResponseEntity<>(plateMeasurements, HttpStatus.OK);
+        return ResponseEntity.ok(plateMeasurements);
     }
 
     @GetMapping(value = "/{plateId}/measurements/{measId}")
@@ -142,7 +202,7 @@ public class PlateController {
     		@PathVariable(name = "plateId") long plateId,
     		@PathVariable(name = "measId") long measId) {
         PlateMeasurementDTO result = plateMeasurementService.getPlateMeasurementByMeasId(plateId, measId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping(value = "/{plateId}/measurements/{measId}")
@@ -151,7 +211,7 @@ public class PlateController {
     		@PathVariable(name = "measId") long measId,
     		@RequestBody PlateMeasurementDTO plateMeasurementDTO) {
 		PlateMeasurementDTO result = plateMeasurementService.setActivePlateMeasurement(plateMeasurementDTO);
-		return new ResponseEntity<>(result, HttpStatus.OK);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping(value = "/link-measurement")
@@ -159,20 +219,28 @@ public class PlateController {
         for (Long plateId : linkPlateMeasurementDTO.getPlateIds()) {
             plateMeasurementService.linkMeasurement(plateId, linkPlateMeasurementDTO.getMeasurementId());
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping(value = "/{plateId}/link/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlateDTO> setPlateTemplate(@PathVariable long plateId, @PathVariable long plateTemplateId) {
-        PlateDTO plateDTO = plateService.linkPlateTemplate(plateId, plateTemplateId);
-        return new ResponseEntity<>(plateDTO, HttpStatus.OK);
+        try {
+            PlateDTO plateDTO = plateService.linkPlateTemplate(plateId, plateTemplateId);
+            return ResponseEntity.ok(plateDTO);
+        } catch (PlateNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping(value = "/link-template", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> linkPlateTemplate(@RequestBody LinkPlateTemplateDTO linkPlateTemplateDTO) {
-        for (Long plateId : linkPlateTemplateDTO.getPlateIds()) {
-            plateService.linkPlateTemplate(plateId, linkPlateTemplateDTO.getPlateTemplateId());
+        try {
+            for (Long plateId : linkPlateTemplateDTO.getPlateIds()) {
+                plateService.linkPlateTemplate(plateId, linkPlateTemplateDTO.getPlateTemplateId());
+            }
+            return ResponseEntity.ok().build();
+        } catch (PlateNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

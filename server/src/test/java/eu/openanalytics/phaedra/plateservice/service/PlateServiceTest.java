@@ -165,7 +165,7 @@ public class PlateServiceTest {
     }
 
     @Test
-    void movePlateById() {
+    void movePlateById() throws PlateNotFoundException {
         PlateDTO original = new PlateDTO();
         original.setBarcode("ORIGINAL");
         original.setRows(16);
@@ -185,7 +185,7 @@ public class PlateServiceTest {
     }
 
     @Test
-    void linkPlate() {
+    void linkPlate() throws PlateNotFoundException {
         PlateDTO plateDTO = plateService.linkPlateTemplate(1000L, 56L);
         assertThat(plateDTO).isNotNull();
     }

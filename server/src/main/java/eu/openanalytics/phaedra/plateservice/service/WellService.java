@@ -24,6 +24,7 @@ import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
@@ -108,7 +109,7 @@ public class WellService {
         return wellDTOS;
     }
 
-    public List<WellDTO> getWellsByPlateId(long plateId) {
+    public List<WellDTO> getWellsByPlateId(long plateId) throws PlateNotFoundException {
     	long projectId = Optional.ofNullable(plateService.getProjectIdByPlateId(plateId)).orElse(0l);
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 

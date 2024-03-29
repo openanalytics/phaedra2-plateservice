@@ -29,6 +29,7 @@ import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
@@ -87,16 +88,24 @@ public class PlateGraphQLController {
 
     @QueryMapping
     public PlateDTO getPlateById(@Argument Long plateId) {
-        PlateDTO result = ObjectUtils.isNotEmpty(plateId) ? plateService.getPlateById(plateId) : null;
-        if (result != null) {
-            enrichLinkedPlateDTOInfo(result);
+        try {
+            PlateDTO result = plateService.getPlateById(plateId);
+            if (result != null) {
+                enrichLinkedPlateDTOInfo(result);
+            }
+            return result;
+        } catch (PlateNotFoundException e) {
+            return null;
         }
-        return result;
     }
 
     @QueryMapping
     public List<WellDTO> getPlateWells(@Argument Long plateId) {
-        return ObjectUtils.isNotEmpty(plateId) ? wellService.getWellsByPlateId(plateId) : new ArrayList<>();
+        try {
+            return wellService.getWellsByPlateId(plateId);
+        } catch (PlateNotFoundException e) {
+            return new ArrayList<>();
+        }
     }
 
     @QueryMapping
