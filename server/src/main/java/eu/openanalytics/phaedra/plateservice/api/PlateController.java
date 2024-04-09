@@ -23,6 +23,7 @@ package eu.openanalytics.phaedra.plateservice.api;
 import eu.openanalytics.phaedra.plateservice.dto.*;
 import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
+import eu.openanalytics.phaedra.plateservice.exceptions.WellNotFoundException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
@@ -183,6 +184,26 @@ public class PlateController {
     public ResponseEntity<Void> updateWell(@PathVariable long plateId, @RequestBody List<WellDTO> wells) {
         wellService.updateWells(wells);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/{plateId}/wells/{wellId}/reject")
+    public ResponseEntity<Void> rejectWell(@PathVariable long plateId, @PathVariable long wellId, @RequestBody WellStatusDTO wellStatusDTO) {
+        try {
+            wellService.updateWellStatus(plateId, wellId, wellStatusDTO);
+            return ResponseEntity.ok().build();
+        } catch (WellNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping(value = "/{plateId}/wells/{wellId}/accept")
+    public ResponseEntity<Void> acceptWell(@PathVariable long plateId, @PathVariable long wellId, @RequestBody WellStatusDTO wellStatusDTO) {
+        try {
+            wellService.updateWellStatus(plateId, wellId, wellStatusDTO);
+            return ResponseEntity.ok().build();
+        } catch (WellNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping(value = "/{plateId}/measurements")

@@ -20,11 +20,14 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellStatusDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
+import eu.openanalytics.phaedra.plateservice.exceptions.WellNotFoundException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
@@ -50,12 +53,14 @@ public class WellService {
     private final PlateService plateService;
     private final ProjectAccessService projectAccessService;
     private final WellSubstanceService wellSubstanceService;
+    private final MetadataServiceClient metadataServiceClient;
 
-    public WellService(WellRepository wellRepository, PlateService plateService, ProjectAccessService projectAccessService, WellSubstanceService wellSubstanceService) {
+    public WellService(WellRepository wellRepository, PlateService plateService, ProjectAccessService projectAccessService, WellSubstanceService wellSubstanceService, MetadataServiceClient metadataServiceClient) {
         this.wellRepository = wellRepository;
         this.plateService = plateService;
         this.projectAccessService = projectAccessService;
         this.wellSubstanceService = wellSubstanceService;
+        this.metadataServiceClient = metadataServiceClient;
     }
 
     public WellDTO createWell(WellDTO wellDTO) {
@@ -87,26 +92,41 @@ public class WellService {
     }
 
     public WellDTO updateWell(WellDTO wellDTO) {
-    	long projectId = plateService.getProjectIdByPlateId(wellDTO.getPlateId());
-    	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
+        projectAccessService.checkAccessLevel(
+                plateService.getProjectIdByPlateId(wellDTO.getPlateId()),
+                ProjectAccessLevel.Write
+        );
 
-        //TODO change to map function
-        Well well = new Well(wellDTO.getPlateId());
-        modelMapper.typeMap(WellDTO.class, Well.class)
-                .setPropertyCondition(Conditions.isNotNull())
-                .map(wellDTO, well);
-        well = wellRepository.save(well);
+        Well well = saveWell(wellDTO);
+        WellDTO updatedWellDTO = modelMapper.map(well, WellDTO.class);
+        populateWellSubstance(updatedWellDTO, well);
 
-        WellDTO updatedDTO = modelMapper.map(well, WellDTO.class);
-        updatedDTO.setWellSubstance(wellSubstanceService.getWellSubstanceByWellId(well.getId()));
-
-        return updatedDTO;
+        return updatedWellDTO;
     }
 
     public List<WellDTO> updateWells(List<WellDTO> wellDTOS){
         List<Well> wells = wellDTOS.stream().map(this::mapToWell).toList();
         wellRepository.saveAll(wells);
         return wellDTOS;
+    }
+
+    public WellDTO updateWellStatus(long plateId, long wellId, WellStatusDTO wellStatusDTO) throws WellNotFoundException {
+        projectAccessService.checkAccessLevel(
+                plateService.getProjectIdByPlateId(plateId),
+                ProjectAccessLevel.Write
+        );
+
+        Well well = wellRepository.findById(wellId).orElse(null);
+        if (well == null) throw new WellNotFoundException(wellId);
+
+        well.setStatus(wellStatusDTO.getStatus());
+        well.setDescription(wellStatusDTO.getDescription());
+        well = wellRepository.save(well);
+
+        WellDTO updatedWellDTO = modelMapper.map(well, WellDTO.class);
+        populateWellSubstance(updatedWellDTO, well);
+
+        return updatedWellDTO;
     }
 
     public List<WellDTO> getWellsByPlateId(long plateId) throws PlateNotFoundException {
@@ -147,5 +167,17 @@ public class WellService {
         well.setStatus(wellDTO.getStatus());
         well.setPlateId(wellDTO.getPlateId());
         return well;
+    }
+
+    private Well saveWell(WellDTO wellDTO) {
+        Well well = new Well(wellDTO.getPlateId());
+        modelMapper.typeMap(WellDTO.class, Well.class)
+                .setPropertyCondition(Conditions.isNotNull())
+                .map(wellDTO, well);
+        return wellRepository.save(well);
+    }
+
+    private void populateWellSubstance(WellDTO wellDTO, Well well) {
+        wellDTO.setWellSubstance(wellSubstanceService.getWellSubstanceByWellId(well.getId()));
     }
 }

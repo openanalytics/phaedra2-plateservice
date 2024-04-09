@@ -28,6 +28,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Builder
 @Data
@@ -43,7 +44,10 @@ public class WellDTO {
 	private String wellType;
 	private WellStatus status;
 	private String description;
-	private WellSubstanceDTO wellSubstance;
 
 	private List<String> tags;
+	private Map<String, String> properties;
+
+	private WellSubstanceDTO wellSubstance;
+	private Map<Long, Float> featureValues;
 }
