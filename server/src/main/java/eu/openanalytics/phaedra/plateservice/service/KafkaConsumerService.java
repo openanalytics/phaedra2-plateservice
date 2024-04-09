@@ -23,6 +23,7 @@ package eu.openanalytics.phaedra.plateservice.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eu.openanalytics.phaedra.plateservice.dto.PlateCalculationStatusDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
@@ -88,7 +89,13 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateDefLink", filter = "reqPlateDefLinkFilter", errorHandler = "kafkaErrorHandler")
     public void reqPlateDefLink(ReqPlateDefLinkDTO req) {
-    	authService.runInKafkaContext(() -> plateService.linkPlateTemplate(req.getPlateId(), req.getTemplateId()));
+    	authService.runInKafkaContext(() -> {
+            try {
+                plateService.linkPlateTemplate(req.getPlateId(), req.getTemplateId());
+            } catch (PlateNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Data
