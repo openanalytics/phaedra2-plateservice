@@ -185,25 +185,25 @@ public class PlateController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping(value = "/{plateId}/wells/{wellId}/reject")
+    @PutMapping(value = "/{plateId}/wells/{wellId}/reject")
     public ResponseEntity<Void> rejectWell(@PathVariable long plateId, @PathVariable long wellId, @RequestBody WellStatusDTO wellStatusDTO) {
         wellService.rejectWell(plateId, wellId, wellStatusDTO);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping(value = "/{plateId}/wells/reject")
+    @PutMapping(value = "/{plateId}/wells/reject")
     public ResponseEntity<Void> rejectWells(@PathVariable long plateId, @RequestBody RejectWellsDTO rejectWellsDTO) {
         wellService.rejectWells(plateId, rejectWellsDTO.getWellIds(), rejectWellsDTO.getWellStatusDTO());
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping(value = "/{plateId}/wells/{wellId}/accept")
+    @PutMapping(value = "/{plateId}/wells/{wellId}/accept")
     public ResponseEntity<Void> acceptWell(@PathVariable long plateId, @PathVariable long wellId) {
         wellService.acceptWell(plateId, wellId);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping(value = "/{plateId}/wells/accept")
+    @PutMapping(value = "/{plateId}/wells/accept")
     public ResponseEntity<Void> acceptWells(@PathVariable long plateId, @RequestBody AcceptWellsDTO acceptWellsDTO) {
         wellService.acceptWells(plateId, acceptWellsDTO.getWellIds());
         return ResponseEntity.ok().build();
