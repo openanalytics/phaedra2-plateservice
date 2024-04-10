@@ -115,15 +115,15 @@ public class WellService {
     }
 
     public void rejectWells(long plateId, List<Long> wellIds, WellStatusDTO wellStatusDTO) {
-        wellIds.parallelStream().forEach(wellId -> rejectWell(plateId, wellId, wellStatusDTO));
+        wellIds.forEach(wellId -> rejectWell(plateId, wellId, wellStatusDTO));
     }
 
     public void acceptWell(long plateId, long wellId) {
-        changeWellStatus(plateId,wellId, WellStatus.ACCEPTED, null);
+        changeWellStatus(plateId, wellId, WellStatus.ACCEPTED, null);
     }
 
     public void acceptWells(long plateId, List<Long> wellIds) {
-        wellIds.parallelStream().forEach(wellId -> acceptWell(plateId, wellId));
+        wellIds.forEach(wellId -> acceptWell(plateId, wellId));
     }
 
     public List<WellDTO> getWellsByPlateId(long plateId) throws PlateNotFoundException {
@@ -178,7 +178,7 @@ public class WellService {
         wellDTO.setWellSubstance(wellSubstanceService.getWellSubstanceByWellId(well.getId()));
     }
 
-    private void changeWellStatus(long plateId,long wellId, WellStatus wellStatus, String description) {
+    private void changeWellStatus(long plateId, long wellId, WellStatus wellStatus, String description) {
         projectAccessService.checkAccessLevel(
                 plateService.getProjectIdByPlateId(plateId),
                 ProjectAccessLevel.Write
