@@ -23,7 +23,6 @@ package eu.openanalytics.phaedra.plateservice.api;
 import eu.openanalytics.phaedra.plateservice.dto.*;
 import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
-import eu.openanalytics.phaedra.plateservice.exceptions.WellNotFoundException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
@@ -186,24 +185,28 @@ public class PlateController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/{plateId}/wells/{wellId}/reject")
+    @PatchMapping(value = "/{plateId}/wells/{wellId}/reject")
     public ResponseEntity<Void> rejectWell(@PathVariable long plateId, @PathVariable long wellId, @RequestBody WellStatusDTO wellStatusDTO) {
-        try {
-            wellService.updateWellStatus(plateId, wellId, wellStatusDTO);
-            return ResponseEntity.ok().build();
-        } catch (WellNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        wellService.rejectWell(plateId, wellId, wellStatusDTO);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/{plateId}/wells/{wellId}/accept")
-    public ResponseEntity<Void> acceptWell(@PathVariable long plateId, @PathVariable long wellId, @RequestBody WellStatusDTO wellStatusDTO) {
-        try {
-            wellService.updateWellStatus(plateId, wellId, wellStatusDTO);
-            return ResponseEntity.ok().build();
-        } catch (WellNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @PatchMapping(value = "/{plateId}/wells/reject")
+    public ResponseEntity<Void> rejectWells(@PathVariable long plateId, @RequestBody RejectWellsDTO rejectWellsDTO) {
+        wellService.rejectWells(plateId, rejectWellsDTO.getWellIds(), rejectWellsDTO.getWellStatusDTO());
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping(value = "/{plateId}/wells/{wellId}/accept")
+    public ResponseEntity<Void> acceptWell(@PathVariable long plateId, @PathVariable long wellId) {
+        wellService.acceptWell(plateId, wellId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping(value = "/{plateId}/wells/accept")
+    public ResponseEntity<Void> acceptWells(@PathVariable long plateId, @RequestBody AcceptWellsDTO acceptWellsDTO) {
+        wellService.acceptWells(plateId, acceptWellsDTO.getWellIds());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/{plateId}/measurements")

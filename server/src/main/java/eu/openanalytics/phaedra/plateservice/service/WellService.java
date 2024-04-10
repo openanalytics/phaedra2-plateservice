@@ -26,8 +26,8 @@ import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellStatusDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.WellStatus;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
-import eu.openanalytics.phaedra.plateservice.exceptions.WellNotFoundException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
@@ -110,23 +110,20 @@ public class WellService {
         return wellDTOS;
     }
 
-    public WellDTO updateWellStatus(long plateId, long wellId, WellStatusDTO wellStatusDTO) throws WellNotFoundException {
-        projectAccessService.checkAccessLevel(
-                plateService.getProjectIdByPlateId(plateId),
-                ProjectAccessLevel.Write
-        );
+    public void rejectWell(long plateId, long wellId, WellStatusDTO wellStatusDTO) {
+        changeWellStatus(plateId, wellId, wellStatusDTO.getStatus(), wellStatusDTO.getDescription());
+    }
 
-        Well well = wellRepository.findById(wellId).orElse(null);
-        if (well == null) throw new WellNotFoundException(wellId);
+    public void rejectWells(long plateId, List<Long> wellIds, WellStatusDTO wellStatusDTO) {
+        wellIds.parallelStream().forEach(wellId -> rejectWell(plateId, wellId, wellStatusDTO));
+    }
 
-        well.setStatus(wellStatusDTO.getStatus());
-        well.setDescription(wellStatusDTO.getDescription());
-        well = wellRepository.save(well);
+    public void acceptWell(long plateId, long wellId) {
+        changeWellStatus(plateId,wellId, WellStatus.ACCEPTED, null);
+    }
 
-        WellDTO updatedWellDTO = modelMapper.map(well, WellDTO.class);
-        populateWellSubstance(updatedWellDTO, well);
-
-        return updatedWellDTO;
+    public void acceptWells(long plateId, List<Long> wellIds) {
+        wellIds.parallelStream().forEach(wellId -> acceptWell(plateId, wellId));
     }
 
     public List<WellDTO> getWellsByPlateId(long plateId) throws PlateNotFoundException {
@@ -179,5 +176,18 @@ public class WellService {
 
     private void populateWellSubstance(WellDTO wellDTO, Well well) {
         wellDTO.setWellSubstance(wellSubstanceService.getWellSubstanceByWellId(well.getId()));
+    }
+
+    private void changeWellStatus(long plateId,long wellId, WellStatus wellStatus, String description) {
+        projectAccessService.checkAccessLevel(
+                plateService.getProjectIdByPlateId(plateId),
+                ProjectAccessLevel.Write
+        );
+        Optional<Well> wellOptional = wellRepository.findById(wellId);
+        wellOptional.ifPresent(well -> {
+            well.setStatus(wellStatus);
+            well.setDescription(description);
+            wellRepository.save(well);
+        });
     }
 }
