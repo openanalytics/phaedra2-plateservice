@@ -102,6 +102,18 @@ public class PlateController {
         }
     }
 
+    @PutMapping(value = "/reset-validations")
+    public ResponseEntity<Void> resetPlateValidations(@RequestBody List<Long> plateIds) {
+        try {
+            for (Long plateId : plateIds) {
+                plateService.resetPlateValidation(plateId);
+            }
+            return ResponseEntity.ok().build();
+        } catch (Throwable e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping(value = "/approve")
     public ResponseEntity<Void> approvePlates(@RequestBody List<Long> plateIds) {
         try {
