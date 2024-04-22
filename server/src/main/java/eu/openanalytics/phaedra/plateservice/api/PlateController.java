@@ -68,6 +68,18 @@ public class PlateController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping(value = "/delete")
+    public ResponseEntity<Void> deletePlates(@RequestBody List<Long> plateIds) {
+        try {
+            for (Long plateId: plateIds) {
+                plateService.deletePlate(plateId);
+            }
+            return ResponseEntity.ok().build();
+        } catch (Throwable e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping(value = "/{plateId}")
     public ResponseEntity<PlateDTO> getPlate(@PathVariable long plateId) {
         try {
