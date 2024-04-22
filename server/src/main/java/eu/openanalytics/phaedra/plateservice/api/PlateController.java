@@ -127,10 +127,10 @@ public class PlateController {
     }
 
     @PutMapping(value = "/disapprove")
-    public ResponseEntity<Void> disapprovePlates(@RequestBody List<Long> plateIds) {
+    public ResponseEntity<Void> disapprovePlates(@RequestBody DisapprovePlatesDTO disapprovePlatesDTO) {
         try {
-            for (Long plateId : plateIds) {
-                plateService.disapprovePlate(plateId);
+            for (Long plateId : disapprovePlatesDTO.getPlateIds()) {
+                plateService.disapprovePlate(plateId, disapprovePlatesDTO.getReason());
             }
             return ResponseEntity.ok().build();
         } catch (Throwable e) {

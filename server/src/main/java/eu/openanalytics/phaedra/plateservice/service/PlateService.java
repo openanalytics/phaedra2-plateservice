@@ -213,7 +213,7 @@ public class PlateService {
 		this.updatePlate(plateDTO);
 	}
 
-	public void disapprovePlate(Long plateId) throws ApprovalException, PlateNotFoundException {
+	public void disapprovePlate(Long plateId, String reason) throws ApprovalException, PlateNotFoundException {
 		PlateDTO plateDTO = getPlateById(plateId);
 		if (plateDTO == null) throw new ApprovalException(String.format("Plate with id %s does not exist!", plateId));
 
@@ -222,6 +222,7 @@ public class PlateService {
 		if (plateDTO.getValidationStatus().equals(ValidationStatus.VALIDATED) &&
 				!plateDTO.getApprovalStatus().equals(ApprovalStatus.DISAPPROVED)) {
 			plateDTO.setApprovalStatus(ApprovalStatus.DISAPPROVED);
+			plateDTO.setDisapprovedReason(reason);
 			plateDTO.setApprovedBy(authService.getCurrentPrincipalName());
 			plateDTO.setApprovedOn(new Date());
 		} else {
