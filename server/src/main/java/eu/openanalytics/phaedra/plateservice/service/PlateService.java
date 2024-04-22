@@ -48,7 +48,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -159,7 +158,7 @@ public class PlateService {
 		this.updatePlate(plateDTO);
 	}
 
-	public void invalidatePlate(Long plateId) throws ValidationException, PlateNotFoundException {
+	public void invalidatePlate(Long plateId, String reason) throws ValidationException, PlateNotFoundException {
 		PlateDTO plateDTO = this.getPlateById(plateId);
 		if (plateDTO == null) throw new ValidationException(String.format("Plate with id %s does not exist!", plateId));
 
@@ -168,6 +167,7 @@ public class PlateService {
 		if (plateDTO.getApprovalStatus().equals(ApprovalStatus.APPROVAL_NOT_SET)
 				&& plateDTO.getValidationStatus().equals(ValidationStatus.VALIDATION_NOT_SET)) {
 			plateDTO.setValidationStatus(ValidationStatus.INVALIDATED);
+			plateDTO.setDescription(reason);
 			plateDTO.setValidatedBy(authService.getCurrentPrincipalName());
 			plateDTO.setValidatedOn(new Date());
 		} else {

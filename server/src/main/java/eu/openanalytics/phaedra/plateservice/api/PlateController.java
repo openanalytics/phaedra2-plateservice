@@ -91,10 +91,10 @@ public class PlateController {
     }
 
     @PutMapping(value = "/invalidate")
-    public ResponseEntity<Void> invalidatePlates(@RequestBody List<Long> plateIds) {
+    public ResponseEntity<Void> invalidatePlates(@RequestBody InvalidatePlatesDTO invalidatePlatesDTO) {
         try {
-            for (Long plateId : plateIds) {
-                plateService.invalidatePlate(plateId);
+            for (Long plateId : invalidatePlatesDTO.getPlateIds()) {
+                plateService.invalidatePlate(plateId, invalidatePlatesDTO.getReason());
             }
             return ResponseEntity.ok().build();
         } catch (Throwable e) {
