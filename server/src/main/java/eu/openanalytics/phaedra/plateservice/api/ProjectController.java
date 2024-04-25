@@ -20,17 +20,23 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import eu.openanalytics.phaedra.plateservice.service.ProjectService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/projects")
@@ -38,15 +44,26 @@ public class ProjectController {
 
 	private final ProjectService projectService;
 	private final ExperimentService experimentService;
+	private final MetadataServiceClient metadataServiceClient;
 
-	public ProjectController(ProjectService projectService, ExperimentService experimentService) {
+	public ProjectController(ProjectService projectService, ExperimentService experimentService, MetadataServiceClient metadataServiceClient) {
 		this.projectService = projectService;
 		this.experimentService = experimentService;
-	}
+        this.metadataServiceClient = metadataServiceClient;
+    }
 
 	@PostMapping
 	public ResponseEntity<?> createProject(@RequestBody ProjectDTO projectDTO) {
 		ProjectDTO response = projectService.createProject(projectDTO);
+
+		if (CollectionUtils.isNotEmpty(projectDTO.getTags())) {
+			metadataServiceClient.addTags(ObjectClass.PROJECT.name(), response.getId(), projectDTO.getTags());
+		}
+
+		if (CollectionUtils.isNotEmpty(projectDTO.getProperties())) {
+			Map<String, String> properties = projectDTO.getProperties().stream().collect(Collectors.toMap(PropertyDTO::propertyName, PropertyDTO::propertyValue));
+			metadataServiceClient.addProperties(ObjectClass.PROTOCOL.name(), response.getId(), properties);
+		}
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 
