@@ -62,8 +62,9 @@ public class ProjectController {
 
 		if (CollectionUtils.isNotEmpty(projectDTO.getProperties())) {
 			Map<String, String> properties = projectDTO.getProperties().stream().collect(Collectors.toMap(PropertyDTO::propertyName, PropertyDTO::propertyValue));
-			metadataServiceClient.addProperties(ObjectClass.PROTOCOL.name(), response.getId(), properties);
+			metadataServiceClient.addProperties(ObjectClass.PROJECT.name(), response.getId(), properties);
 		}
+
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 

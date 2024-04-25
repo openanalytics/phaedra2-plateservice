@@ -20,16 +20,22 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
 import eu.openanalytics.phaedra.plateservice.service.WellTemplateService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/platetemplates")
@@ -37,15 +43,27 @@ public class PlateTemplateController {
 
     private final PlateTemplateService plateTemplateService;
     private final WellTemplateService wellTemplateService;
+    private final MetadataServiceClient metadataServiceClient;
 
-    public PlateTemplateController(PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService) {
+    public PlateTemplateController(PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, MetadataServiceClient metadataServiceClient) {
         this.plateTemplateService = plateTemplateService;
         this.wellTemplateService = wellTemplateService;
+        this.metadataServiceClient = metadataServiceClient;
     }
 
     @PostMapping
     public ResponseEntity<PlateTemplateDTO> createPlateTemplate(@RequestBody PlateTemplateDTO plateTemplateDTO) {
         PlateTemplateDTO result = plateTemplateService.createPlateTemplate(plateTemplateDTO);
+
+        if (CollectionUtils.isNotEmpty(plateTemplateDTO.getTags())) {
+            metadataServiceClient.addTags(ObjectClass.PLATE_TEMPLATE.name(), result.getId(), plateTemplateDTO.getTags());
+        }
+
+        if (CollectionUtils.isNotEmpty(plateTemplateDTO.getProperties())) {
+            Map<String, String> properties = plateTemplateDTO.getProperties().stream().collect(Collectors.toMap(PropertyDTO::propertyName, PropertyDTO::propertyValue));
+            metadataServiceClient.addProperties(ObjectClass.PLATE_TEMPLATE.name(), result.getId(), properties);
+        }
+
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 

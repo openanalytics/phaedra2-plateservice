@@ -20,10 +20,14 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,20 +35,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/experiments")
 public class ExperimentController {
 
-	@Autowired
-	private ExperimentService experimentService;
+	private final ExperimentService experimentService;
+	private final PlateService plateService;
+	private final MetadataServiceClient metadataServiceClient;
 
-	@Autowired
-	private PlateService plateService;
+	public ExperimentController(ExperimentService experimentService, PlateService plateService, MetadataServiceClient metadataServiceClient) {
+		this.experimentService = experimentService;
+		this.plateService = plateService;
+		this.metadataServiceClient = metadataServiceClient;
+	}
 
 	@PostMapping
 	public ResponseEntity<ExperimentDTO> createExperiment(@RequestBody ExperimentDTO experimentDTO) {
 		ExperimentDTO response = experimentService.createExperiment(experimentDTO);
+
+		if (CollectionUtils.isNotEmpty(experimentDTO.getTags())) {
+			metadataServiceClient.addTags(ObjectClass.EXPERIMENT.name(), response.getId(), experimentDTO.getTags());
+		}
+
+		if (CollectionUtils.isNotEmpty(experimentDTO.getProperties())) {
+			Map<String, String> properties = experimentDTO.getProperties().stream().collect(Collectors.toMap(PropertyDTO::propertyName, PropertyDTO::propertyValue));
+			metadataServiceClient.addProperties(ObjectClass.EXPERIMENT.name(), response.getId(), properties);
+		}
+
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 

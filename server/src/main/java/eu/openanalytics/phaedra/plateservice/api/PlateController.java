@@ -20,18 +20,23 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.*;
 import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/plates")
@@ -40,17 +45,31 @@ public class PlateController {
     private final PlateService plateService;
     private final WellService wellService;
     private final PlateMeasurementService plateMeasurementService;
+    private final MetadataServiceClient metadataServiceClient;
 
-    public PlateController(PlateService plateService, WellService wellService, PlateMeasurementService plateMeasurementService) {
+    public PlateController(PlateService plateService, WellService wellService,
+                           PlateMeasurementService plateMeasurementService,
+                           MetadataServiceClient metadataServiceClient) {
         this.plateService = plateService;
         this.wellService = wellService;
         this.plateMeasurementService = plateMeasurementService;
+        this.metadataServiceClient = metadataServiceClient;
     }
 
     @PostMapping
     public ResponseEntity<PlateDTO> createPlate(@RequestBody PlateDTO plateDTO) {
         PlateDTO result = plateService.createPlate(plateDTO);
         if (result == null) return ResponseEntity.notFound().build();
+
+        if (CollectionUtils.isNotEmpty(plateDTO.getTags())) {
+            metadataServiceClient.addTags(ObjectClass.PLATE.name(), result.getId(), plateDTO.getTags());
+        }
+
+        if (CollectionUtils.isNotEmpty(plateDTO.getProperties())) {
+            Map<String, String> properties = plateDTO.getProperties().stream().collect(Collectors.toMap(PropertyDTO::propertyName, PropertyDTO::propertyValue));
+            metadataServiceClient.addProperties(ObjectClass.PLATE.name(), result.getId(), properties);
+        }
+
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
