@@ -65,4 +65,8 @@ public enum WellStatus {
         }
         return null;
     }
+
+    public static boolean isRejected(WellStatus wellStatus) {
+        return wellStatus.getCode() < 0;
+    }
 }

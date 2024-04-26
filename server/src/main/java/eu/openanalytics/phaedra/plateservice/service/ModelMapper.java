@@ -55,8 +55,9 @@ public class ModelMapper {
 		modelMapper.createTypeMap(Plate.class, PlateDTO.PlateDTOBuilder.class, builderConfiguration)
 				.setPropertyCondition(Conditions.isNotNull());
 
+        modelMapper.createTypeMap(PlateMeasurementDTO.class, PlateMeasurementDTO.class);
 
-//        modelMapper.validate();
+        modelMapper.createTypeMap(PlateMeasurement.class, PlateMeasurement.class);
     }
 
     public PlateMeasurementDTO map(PlateMeasurement plateMeasurement, MeasurementDTO measurementDTO) {
@@ -114,5 +115,13 @@ public class ModelMapper {
         wellSubstanceDTO.setConcentration(wellSubstance.getConcentration());
         wellSubstanceDTO.setWellId(wellSubstance.getWellId());
         return wellSubstanceDTO;
+    }
+
+    public void map(PlateMeasurementDTO source, PlateMeasurementDTO destination) {
+        modelMapper.map(source, destination);
+    }
+
+    public void map(PlateMeasurement source, PlateMeasurement destination) {
+        modelMapper.map(source, destination);
     }
 }

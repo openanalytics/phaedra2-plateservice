@@ -172,7 +172,7 @@ public class ProjectControllerTest {
                 .andReturn();
         List<ProjectDTO> projectDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         assertThat(projectDTO).isNotEmpty();
-        assertThat(projectDTO.size()).isEqualTo(1);
+        assertThat(projectDTO.size()).isEqualTo(2);
     }
 
     @Test

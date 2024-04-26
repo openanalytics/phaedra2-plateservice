@@ -26,6 +26,9 @@ values (1000,'SBE_0001','Saša First Test Project','2021-09-30 07:48:19.978','sa
 insert into plates.hca_experiment (id,name,description,status,multiplo_method,multiplo_parameter,created_on,created_by,updated_on,updated_by,project_id)
 values (1000,'SBE_0001_EXP1','Experiment 1 project SBE_0001','OPEN',null,null,'2021-10-01 07:36:17.854','sasa.berberovic','2021-10-01 07:36:17.854','sasa.berberovic',1000);
 
+insert into plates.hca_experiment (id,name,description,status,multiplo_method,multiplo_parameter,created_on,created_by,updated_on,updated_by,project_id)
+values (2000,'SBE_0003_EXP2','Experiment 2 project SBE_0003','OPEN',null,null,'2021-10-01 07:36:17.854','sasa.berberovic','2021-10-01 07:36:17.854','sasa.berberovic',1000);
+
 insert into plates.hca_plate (id,barcode,description,experiment_id,rows,columns,sequence,link_status,link_template_id,
                             link_source,linked_on,calculation_status,calculation_error,calculated_by,calculated_on,
                             validation_status,validated_by,validated_on,invalidated_reason,approval_status,approved_by,approved_on,disapproved_reason,

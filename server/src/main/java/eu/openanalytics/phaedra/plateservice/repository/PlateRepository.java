@@ -43,6 +43,9 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 	@Query("select e.project_id from hca_plate p, hca_experiment e where p.experiment_id = e.id and p.id = :plateId")
 	Long findProjectIdByPlateId(@Param("plateId") long plateId);
 
+	@Query("select e.project_id from hca_experiment e where e.id = :experimentId")
+	Long findProjectIdByExperimentId(@Param("experimentId") long experimentId);
+
 	List<Plate> findByExperimentId(long experimentId);
 
 	List<Plate> findByBarcode(String barcode);
@@ -69,4 +72,16 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 			group by experiment_id
 		   """)
 	List<ExperimentSummaryDTO> findExperimentSummariesInExperimentIds(Set<Long> experimentIds);
+
+	@Query("""
+ 			select experiment_id, 
+				count(id) as nr_plates, 
+				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated, 
+				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated, 
+				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved 
+			from hca_plate 
+			where experiment_id = :experimentId
+			group by experiment_id
+		   """)
+	ExperimentSummaryDTO findExperimentSummaryByExperimentId(Long experimentId);
 }

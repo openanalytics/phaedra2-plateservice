@@ -149,14 +149,17 @@ public class ExperimentControllerTest {
                 .andReturn();
         List<ExperimentDTO> experimentDTOS = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         assertThat(experimentDTOS).isNotEmpty();
-        assertThat(experimentDTOS.size()).isEqualTo(1);
+        assertThat(experimentDTOS.size()).isEqualTo(2);
     }
 
     @Test
     public void experimentsGetNoneFound() throws Exception {
         //Delete only project
-        Long experimentId = 1000L;
-        this.mockMvc.perform(delete("/experiments/{experimentId}", experimentId))
+        this.mockMvc.perform(delete("/experiments/{experimentId}", 1000L))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(delete("/experiments/{experimentId}", 2000L))
                 .andDo(print())
                 .andExpect(status().isOk());
 
