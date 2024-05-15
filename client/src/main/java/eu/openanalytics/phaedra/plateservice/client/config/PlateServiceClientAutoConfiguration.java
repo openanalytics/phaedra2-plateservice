@@ -26,13 +26,14 @@ import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 @Configuration
 public class PlateServiceClientAutoConfiguration {
 
     @Bean
-    public PlateServiceClient plateServiceClient(PhaedraRestTemplate phaedraRestTemplate, IAuthorizationService authService) {
-        return new HttpPlateServiceClient(phaedraRestTemplate, authService);
+    public PlateServiceClient plateServiceClient(PhaedraRestTemplate phaedraRestTemplate, IAuthorizationService authService, Environment environment) {
+        return new HttpPlateServiceClient(phaedraRestTemplate, authService, environment);
     }
 
 }
