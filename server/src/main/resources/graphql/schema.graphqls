@@ -96,6 +96,7 @@ type ExperimentDTO {
 type ExperimentSummaryDTO {
     experimentId: ID
     nrPlates: Int
+    nrPlatesLinkedLayout: Int
     nrPlatesCalculated: Int
     nrPlatesValidated: Int
     nrPlatesApproved: Int
