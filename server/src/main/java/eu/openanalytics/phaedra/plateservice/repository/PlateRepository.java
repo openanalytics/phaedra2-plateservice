@@ -53,6 +53,7 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 	@Query("""
  			select experiment_id, 
 				count(id) as nr_plates, 
+				count(id) filter (where link_status = 'LINKED') as nr_plates_linked_layout,
 				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated, 
 				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated, 
 				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved 
@@ -64,6 +65,7 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 	@Query("""
  			select experiment_id, 
 				count(id) as nr_plates, 
+				count(id) filter (where link_status = 'LINKED') as nr_plates_linked_layout,
 				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated, 
 				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated, 
 				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved 
@@ -75,7 +77,8 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 
 	@Query("""
  			select experiment_id, 
-				count(id) as nr_plates, 
+				count(id) as nr_plates,
+				count(id) filter (where link_status = 'LINKED') as nr_plates_linked_layout,				
 				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated, 
 				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated, 
 				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved 
