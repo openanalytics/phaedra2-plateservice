@@ -235,6 +235,7 @@ type Query {
     getPlateWells(plateId: ID): [WellDTO]
     getMeasurementsByPlateId(plateId: ID): [PlateMeasurementDTO]
     getActiveMeasurementByPlateId(plateId: ID): PlateMeasurementDTO
+    getActiveMeasurementByPlateIds(plateIds: [ID]): [PlateMeasurementDTO]
     getActiveMeasurementsByExperimentId(experimentId: ID): [PlateMeasurementDTO]
     getPlateTemplates: [PlateTemplateDTO]
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
