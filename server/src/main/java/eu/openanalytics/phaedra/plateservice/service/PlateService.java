@@ -39,6 +39,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -67,6 +69,7 @@ public class PlateService {
 	private final KafkaProducerService kafkaProducerService;
 
 	private final ModelMapper modelMapper = new ModelMapper();
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
                         ProjectAccessService projectAccessService, IAuthorizationService authService,
@@ -366,6 +369,7 @@ public class PlateService {
 	}
 
 	private void createNewWellSubstance(WellDTO wellDTO, WellTemplateDTO wellTemplateDTO) {
+		logger.info("Create new well substance $s", wellTemplateDTO.getSubstanceName());
 		WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
 		wellSubstanceDTO.setWellId(wellDTO.getId());
 		wellSubstanceDTO.setType(StringUtils.isBlank(wellTemplateDTO.getSubstanceType()) ? SubstanceType.COMPOUND.name() : wellTemplateDTO.getSubstanceType());
@@ -375,6 +379,7 @@ public class PlateService {
 	}
 
 	private void updateExistingWellSubstance(WellSubstanceDTO wellSubstanceDTO, WellTemplateDTO wellTemplateDTO) {
+		logger.info("Update existing well substance $s to $s", wellSubstanceDTO.getName(), wellTemplateDTO.getSubstanceName());
 		wellSubstanceDTO.setType(wellTemplateDTO.getSubstanceType());
 		wellSubstanceDTO.setName(wellTemplateDTO.getSubstanceName());
 		wellSubstanceDTO.setConcentration(wellTemplateDTO.getConcentration());
