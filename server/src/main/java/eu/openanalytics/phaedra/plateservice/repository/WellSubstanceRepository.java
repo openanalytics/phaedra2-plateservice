@@ -34,16 +34,16 @@ public interface WellSubstanceRepository extends CrudRepository<WellSubstance, L
 
     @Query("select s.* from hca_well_substance s where s.well_id = :wellId order by s.id desc")
     List<WellSubstance> findByWellId(long wellId);
-    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and name = :name by s.id desc")
+    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and name = :name order by s.id desc")
     List<WellSubstance> findWellSubstanceByPlateIdAndName(long plateId, String name);
-    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and type = :type by s.id desc")
+    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and type = :type order by s.id desc")
     List<WellSubstance> findWellSubstanceByPlateIdAndType(long plateId, SubstanceType type);
-    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and name = :name and type = :type by s.id desc")
+    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and name = :name and type = :type order by s.id desc")
     List<WellSubstance> findWellSubstanceByPlateIdAndNameAndType(long plateId, String name, SubstanceType type);
 
     @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId order by s.id desc")
     List<WellSubstance> findByPlateId(long plateId);
-    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and w.welltype in (:wellTypes) by s.id desc")
+    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and w.welltype in (:wellTypes) order by s.id desc")
     List<WellSubstance> findByPlateIdAndWellType(long plateId, Collection<String> wellTypes);
 
 }
