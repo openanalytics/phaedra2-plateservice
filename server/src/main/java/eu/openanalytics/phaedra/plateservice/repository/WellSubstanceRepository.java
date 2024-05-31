@@ -32,7 +32,8 @@ import java.util.List;
 @Repository
 public interface WellSubstanceRepository extends CrudRepository<WellSubstance, Long> {
 
-    WellSubstance findByWellId(long wellId);
+    @Query("select s.* from hca_well_substance s where s.well_id = :wellId order by s.id desc")
+    List<WellSubstance> findByWellId(long wellId);
     @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and name = :name")
     List<WellSubstance> findWellSubstanceByPlateIdAndName(long plateId, String name);
     @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and type = :type")
