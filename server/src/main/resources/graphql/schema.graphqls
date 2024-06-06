@@ -96,6 +96,7 @@ type ExperimentDTO {
 type ExperimentSummaryDTO {
     experimentId: ID
     nrPlates: Int
+    nrPlatesLinkedLayout: Int
     nrPlatesCalculated: Int
     nrPlatesValidated: Int
     nrPlatesApproved: Int
@@ -150,6 +151,7 @@ type WellDTO {
     plateId: ID
     row: Int
     column: Int
+    wellNr: Int
     wellType: String
     status: WellStatus
     description: String
@@ -234,6 +236,7 @@ type Query {
     getPlateWells(plateId: ID): [WellDTO]
     getMeasurementsByPlateId(plateId: ID): [PlateMeasurementDTO]
     getActiveMeasurementByPlateId(plateId: ID): PlateMeasurementDTO
+    getActiveMeasurementByPlateIds(plateIds: [ID]): [PlateMeasurementDTO]
     getActiveMeasurementsByExperimentId(experimentId: ID): [PlateMeasurementDTO]
     getPlateTemplates: [PlateTemplateDTO]
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO

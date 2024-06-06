@@ -30,6 +30,7 @@ import lombok.NoArgsConstructor;
 public class ExperimentSummaryDTO {
 	public long experimentId;
 	public int nrPlates;
+	public int nrPlatesLinkedLayout;
 	public int nrPlatesCalculated;
 	public int nrPlatesValidated;
 	public int nrPlatesApproved;

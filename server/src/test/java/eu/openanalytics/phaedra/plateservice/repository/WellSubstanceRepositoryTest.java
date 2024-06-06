@@ -71,9 +71,9 @@ public class WellSubstanceRepositoryTest {
     public void testFindByWellId() {
         long wellId = 38587L;
 
-        WellSubstance result = wellSubstanceRepository.findByWellId(wellId);
+        List<WellSubstance> result = wellSubstanceRepository.findByWellId(wellId);
         assertThat(result).isNotNull();
-        assertThat(result.getWellId()).isEqualTo(wellId);
+        assertThat(result.get(0).getWellId()).isEqualTo(wellId);
     }
 
     @Test

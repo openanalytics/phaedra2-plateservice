@@ -20,10 +20,13 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
 import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
 import eu.openanalytics.phaedra.plateservice.repository.WellSubstanceRepository;
+import java.util.Collections;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -43,9 +46,15 @@ public class WellSubstanceService {
     }
 
     public WellSubstanceDTO getWellSubstanceByWellId(long wellId) {
-        WellSubstance result = wellSubstanceRepository.findByWellId(wellId);
-        if (result == null) return null;
-        return mapToWellSubstanceDTO(result);
+        List<WellSubstance> results = wellSubstanceRepository.findByWellId(wellId);
+        if (CollectionUtils.isEmpty(results)) return null;
+        return mapToWellSubstanceDTO(results.get(0));
+    }
+
+    public List<WellSubstanceDTO> getWellSubstancesByWellId(long wellId) {
+        List<WellSubstance> results = wellSubstanceRepository.findByWellId(wellId);
+        if (CollectionUtils.isEmpty(results)) return Collections.emptyList();
+        return results.stream().map(wellSubstance -> mapToWellSubstanceDTO(wellSubstance)).toList();
     }
 
     public List<WellSubstanceDTO> getWellSubstancesByPlateId(long plateId) {

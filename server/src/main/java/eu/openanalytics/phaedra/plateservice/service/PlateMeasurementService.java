@@ -139,6 +139,15 @@ public class PlateMeasurementService {
         }
     }
 
+  public List<PlateMeasurementDTO> getPlateMeasurements(List<Long> plateIds, boolean active) {
+      List<PlateMeasurementDTO> result = new ArrayList<>();
+      for (Long plateId: plateIds) {
+        PlateMeasurementDTO plateMeasurementDTO = getPlateMeasurement(plateId, active);
+        if (plateMeasurementDTO != null) result.add(plateMeasurementDTO);
+      }
+      return result;
+  }
+
     private PlateMeasurementDTO mapToPlateMeasurementDTO(PlateMeasurement plateMeasurement) {
         List<MeasurementDTO> measurementDTOs = measurementServiceClient.getMeasurementsByMeasIds(plateMeasurement.getMeasurementId());
         return modelMapper.map(plateMeasurement, measurementDTOs.get(0));

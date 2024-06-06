@@ -33,12 +33,15 @@ import eu.openanalytics.phaedra.plateservice.exceptions.ValidationException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -67,6 +70,7 @@ public class PlateService {
 	private final KafkaProducerService kafkaProducerService;
 
 	private final ModelMapper modelMapper = new ModelMapper();
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
                         ProjectAccessService projectAccessService, IAuthorizationService authService,
@@ -338,34 +342,44 @@ public class PlateService {
 		List<WellTemplateDTO> wellTemplates  = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
 
 		for (int i = 0; i < wells.size(); i++) {
-			WellDTO well = wells.get(i);
-			WellSubstanceDTO previousSubstance = wellSubstances.stream()
-					.filter(w -> w.getWellId() == well.getId())
-					.findAny().orElse(null);
-
 			// Update wellType
 			if (!wellTemplates.get(i).isSkipped())
 				wells.get(i).setWellType(wellTemplates.get(i).getWellType());
 			else
 				wells.get(i).setWellType("EMPTY");
 
-			// Update substance (if needed)
-			String newSubstanceType = wellTemplates.get(i).getSubstanceType();
-			if (newSubstanceType != null && !newSubstanceType.isEmpty()) {
-				if (previousSubstance == null) {
-					createNewWellSubstance(wells.get(i), wellTemplates.get(i));
-				} else {
-					updateExistingWellSubstance(previousSubstance, wellTemplates.get(i));
-				}
-			} else if (previousSubstance != null) {
-				wellSubstanceService.deleteWellSubstance(previousSubstance.getId());
+			List<WellSubstanceDTO> existing = wellSubstanceService.getWellSubstancesByWellId(wells.get(i).getId());
+			if (CollectionUtils.isEmpty(existing)) {
+				createNewWellSubstance(wells.get(i), wellTemplates.get(i));
+			} else {
+				//ToDO: Check if there are calculations available with previous template, if so handle this issue correctly?
+				updateExistingWellSubstance(existing.get(0), wellTemplates.get(i));
 			}
+
+//			WellSubstanceDTO previousSubstance = wellSubstances.stream()
+//					.filter(w -> w.getWellId() == well.getId())
+//					.findAny().orElse(null);
+//
+//
+//
+//			// Update substance (if needed)
+//			String newSubstanceType = wellTemplates.get(i).getSubstanceType();
+//			if (newSubstanceType != null && !newSubstanceType.isEmpty()) {
+//				if (previousSubstance == null) {
+//					createNewWellSubstance(wells.get(i), wellTemplates.get(i));
+//				} else {
+//					updateExistingWellSubstance(previousSubstance, wellTemplates.get(i));
+//				}
+//			} else if (previousSubstance != null) {
+//				wellSubstanceService.deleteWellSubstance(previousSubstance.getId());
+//			}
 		}
 
 		wellService.updateWells(wells);
 	}
 
 	private void createNewWellSubstance(WellDTO wellDTO, WellTemplateDTO wellTemplateDTO) {
+		logger.info("Create new well substance %s", wellTemplateDTO.getSubstanceName());
 		WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
 		wellSubstanceDTO.setWellId(wellDTO.getId());
 		wellSubstanceDTO.setType(StringUtils.isBlank(wellTemplateDTO.getSubstanceType()) ? SubstanceType.COMPOUND.name() : wellTemplateDTO.getSubstanceType());
@@ -375,6 +389,7 @@ public class PlateService {
 	}
 
 	private void updateExistingWellSubstance(WellSubstanceDTO wellSubstanceDTO, WellTemplateDTO wellTemplateDTO) {
+		logger.info("Update existing well substance %s to %s", wellSubstanceDTO.getName(), wellTemplateDTO.getSubstanceName());
 		wellSubstanceDTO.setType(wellTemplateDTO.getSubstanceType());
 		wellSubstanceDTO.setName(wellTemplateDTO.getSubstanceName());
 		wellSubstanceDTO.setConcentration(wellTemplateDTO.getConcentration());

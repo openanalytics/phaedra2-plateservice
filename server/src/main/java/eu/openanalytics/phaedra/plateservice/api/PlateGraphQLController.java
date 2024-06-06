@@ -118,6 +118,11 @@ public class PlateGraphQLController {
         return plateMeasurementService.getPlateMeasurement(plateId, true);
     }
 
+    @QueryMapping
+    public List<PlateMeasurementDTO> getActiveMeasurementByPlateIds(@Argument List<Long> plateIds) {
+        return plateMeasurementService.getPlateMeasurements(plateIds, true);
+    }
+
     @MutationMapping
     public PlateMeasurementDTO linkMeasurement(@Argument Long plateId, @Argument Long measurementId) {
         return plateMeasurementService.linkMeasurement(plateId, measurementId);

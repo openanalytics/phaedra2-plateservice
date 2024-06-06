@@ -105,7 +105,7 @@ public class ExperimentGraphQLController {
 	@QueryMapping
 	public ExperimentSummaryDTO getExperimentSummaryByExperimentId(@Argument Long experimentId) {
 		ExperimentSummaryDTO result = experimentService.getExperimentSummaryByExperimentId(experimentId);
-		return result != null ? result : new ExperimentSummaryDTO(experimentId, 0, 0, 0, 0);
+		return result != null ? result : new ExperimentSummaryDTO(experimentId, 0, 0, 0, 0, 0);
 	}
 
 	@SchemaMapping

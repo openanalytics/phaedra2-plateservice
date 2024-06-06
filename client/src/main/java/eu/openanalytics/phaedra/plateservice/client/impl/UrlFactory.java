@@ -22,48 +22,52 @@ package eu.openanalytics.phaedra.plateservice.client.impl;
 
 public class UrlFactory {
 
-    private static final String PLATE_SERVICE = "http://phaedra-plate-service:8080/phaedra/plate-service";
-
-    public static String plate(Long plateId) {
+    private String baseURL;
+    
+    public UrlFactory(String baseURL) {
+    	this.baseURL = baseURL;
+	}
+    
+    public String plate(Long plateId) {
         if (plateId != null)
-            return String.format("%s/plates/%s", PLATE_SERVICE, plateId);
+            return String.format("%s/plates/%s", baseURL, plateId);
         else
-            return String.format("%s/plates", PLATE_SERVICE);
+            return String.format("%s/plates", baseURL);
     }
 
-    public static String wells(Long plateId) {
-        return String.format("%s/plates/%s/wells", PLATE_SERVICE, plateId);
+    public String wells(Long plateId) {
+        return String.format("%s/plates/%s/wells", baseURL, plateId);
     }
 
-    public static String wellSubstances(Long plateId) {
-        return String.format("%s/wellsubstances?plateId=%s", PLATE_SERVICE, plateId);
+    public String wellSubstances(Long plateId) {
+        return String.format("%s/wellsubstances?plateId=%s", baseURL, plateId);
     }
 
-    public static String plateMeasurements(Long plateId) {
-        return String.format("%s/plates/%s/measurements", PLATE_SERVICE, plateId);
+    public String plateMeasurements(Long plateId) {
+        return String.format("%s/plates/%s/measurements", baseURL, plateId);
     }
 
-    public static String experiment(Long experimentId) {
+    public String experiment(Long experimentId) {
     	if (experimentId == null) {
-    		return String.format("%s/experiments", PLATE_SERVICE);
+    		return String.format("%s/experiments", baseURL);
     	} else {
-    		return String.format("%s/experiments/%s", PLATE_SERVICE, experimentId);
+    		return String.format("%s/experiments/%s", baseURL, experimentId);
     	}
     }
     
-    public static String experiments(Long projectId) {
-    	return String.format("%s/projects/%s/experiments", PLATE_SERVICE, projectId);
+    public String experiments(Long projectId) {
+    	return String.format("%s/projects/%s/experiments", baseURL, projectId);
     }
 
-    public static String platesByBarcode(String barcode) {
-    	return String.format("%s/plates?barcode=%s", PLATE_SERVICE, barcode);
+    public String platesByBarcode(String barcode) {
+    	return String.format("%s/plates?barcode=%s", baseURL, barcode);
     }
 
-    public static String experimentPlates(long eperimentId) {
-        return String.format("%s/experiments/%s/plates", PLATE_SERVICE, eperimentId);
+    public String experimentPlates(long eperimentId) {
+        return String.format("%s/experiments/%s/plates", baseURL, eperimentId);
     }
 
-    public static String plateTemplatesByName(String name) {
-    	return String.format("%s/platetemplates?name=%s", PLATE_SERVICE, name);
+    public String plateTemplatesByName(String name) {
+    	return String.format("%s/platetemplates?name=%s", baseURL, name);
     }
 }
