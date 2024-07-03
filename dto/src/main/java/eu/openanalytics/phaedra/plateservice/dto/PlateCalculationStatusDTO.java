@@ -23,11 +23,15 @@ package eu.openanalytics.phaedra.plateservice.dto;
 import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 import eu.openanalytics.phaedra.util.dto.validation.OnCreate;
 import eu.openanalytics.phaedra.util.dto.validation.OnUpdate;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+import lombok.With;
 import lombok.experimental.NonFinal;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 @Value
 @Builder
