@@ -173,7 +173,7 @@ public class PlateControllerTest {
     public void getPlatesByExperimentFoundTest() throws Exception {
         Long experimentId = 1000L;
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plates/").param("experimentId", experimentId.toString()))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates").param("experimentId", experimentId.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -187,7 +187,7 @@ public class PlateControllerTest {
     public void getPlatesByExperimentNotFoundTest() throws Exception {
         Long experimentId = 1111L;
 
-        MvcResult mvcResult = this.mockMvc.perform(get("/plates/").param("experimentId", experimentId.toString()))
+        MvcResult mvcResult = this.mockMvc.perform(get("/plates").param("experimentId", experimentId.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
