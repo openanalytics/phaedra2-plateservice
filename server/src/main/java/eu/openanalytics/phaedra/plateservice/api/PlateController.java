@@ -29,6 +29,7 @@ import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +69,10 @@ public class PlateController {
         if (CollectionUtils.isNotEmpty(plateDTO.getProperties())) {
             Map<String, String> properties = plateDTO.getProperties().stream().collect(Collectors.toMap(PropertyDTO::propertyName, PropertyDTO::propertyValue));
             metadataServiceClient.addProperties(ObjectClass.PLATE.name(), result.getId(), properties);
+        }
+
+        if (ObjectUtils.isNotEmpty(plateDTO.getMeasurementId())) {
+            plateMeasurementService.linkMeasurement(result.getId(), plateDTO.getMeasurementId());
         }
 
         return new ResponseEntity<>(result, HttpStatus.CREATED);
