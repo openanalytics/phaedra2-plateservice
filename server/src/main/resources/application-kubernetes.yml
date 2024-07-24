@@ -10,4 +10,10 @@ spring:
   graphql:
     graphiql:
       enabled: true
+  kafka:
+    bootstrap-servers: kafka-service:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      value-deserializer: org.apache.kafka.common.serialization.BytesDeserializer
 
