@@ -10,6 +10,11 @@ spring:
   graphql:
     graphiql:
       enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://keycloak.phaedra.poc.openanalytics.io/auth/realms/phaedra2/protocol/openid-connect/certs
   kafka:
     bootstrap-servers: kafka-service:9092
     producer:
