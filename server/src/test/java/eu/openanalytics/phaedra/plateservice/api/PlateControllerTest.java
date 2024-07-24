@@ -62,6 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql({"/jdbc/test-data.sql"})
 @AutoConfigureMockMvc(addFilters = false)
 @TestPropertySource(locations = "classpath:application-test.properties")
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 public class PlateControllerTest {
 
     @Autowired
@@ -69,6 +70,9 @@ public class PlateControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Value("${test.topic}")
     private String topic;
