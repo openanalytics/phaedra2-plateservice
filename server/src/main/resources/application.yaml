@@ -1,7 +1,7 @@
 server:
   servlet:
     context-path: /phaedra/plate-service
-  port: 3003
+  port: 8080
 
 spring:
   application:
@@ -11,7 +11,7 @@ spring:
       indent_output: true
   cloud:
     kubernetes:
-      enabled: false
+      enabled: true
   liquibase:
     enabled: false
   security:
