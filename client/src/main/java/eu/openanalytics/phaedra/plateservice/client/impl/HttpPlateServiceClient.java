@@ -33,7 +33,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.client.exception.UnresolvableObjectException;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
@@ -49,10 +49,10 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     private final RestTemplate restTemplate;
     private final IAuthorizationService authService;
     private final UrlFactory urlFactory;
-    
+
     private static final String PROP_BASE_URL = "phaedra.plate-service.base-url";
     private static final String DEFAULT_BASE_URL = "http://phaedra-plate-service:8080/phaedra/plate-service";
-    
+
     public HttpPlateServiceClient(RestTemplate restTemplate, IAuthorizationService authService, Environment environment) {
         this.restTemplate = restTemplate;
         this.authService = authService;
@@ -60,38 +60,38 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     }
 
     @Override
-    public PlateDTO getPlate(long plateId) throws PlateUnresolvableException {
+    public PlateDTO getPlate(long plateId) throws UnresolvableObjectException {
         try {
             var plate = restTemplate.exchange(urlFactory.plate(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateDTO.class);
             if (plate.getStatusCode().isError()) {
-                throw new PlateUnresolvableException("Plate could not be converted");
+                throw new UnresolvableObjectException("Plate could not be converted");
             }
             return plate.getBody();
         } catch (HttpClientErrorException.NotFound ex) {
-            throw new PlateUnresolvableException("Plate not found");
+            throw new UnresolvableObjectException("Plate not found");
         } catch (HttpClientErrorException ex) {
-            throw new PlateUnresolvableException("Error while fetching plate");
+            throw new UnresolvableObjectException("Error while fetching plate");
         }
     }
 
     @Override
-    public List<WellDTO> getWells(long plateId) throws PlateUnresolvableException {
+    public List<WellDTO> getWells(long plateId) throws UnresolvableObjectException {
     	try {
             var wells = restTemplate.exchange(urlFactory.wells(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), WellDTO[].class);
             if (wells.getStatusCode().isError()) {
-                throw new PlateUnresolvableException("Plate could not be converted");
+                throw new UnresolvableObjectException("Plate could not be converted");
             }
 
             return Arrays.stream(wells.getBody()).toList();
         } catch (HttpClientErrorException.NotFound ex) {
-            throw new PlateUnresolvableException("Plate not found");
+            throw new UnresolvableObjectException("Plate not found");
         } catch (HttpClientErrorException ex) {
-            throw new PlateUnresolvableException("Error while fetching plate");
+            throw new UnresolvableObjectException("Error while fetching plate");
         }
     }
 
     @Override
-    public PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws PlateUnresolvableException {
+    public PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws UnresolvableObjectException {
         try {
             PlateDTO plateDTO = getPlate(plateId);
             plateDTO.setCalculationStatus(status);
@@ -100,46 +100,46 @@ public class HttpPlateServiceClient implements PlateServiceClient {
 
             var response = restTemplate.exchange(urlFactory.plate(null), HttpMethod.PUT, new HttpEntity<>(plateDTO, makeHttpHeaders()), PlateDTO.class);
             if (response.getStatusCode().isError()) {
-                throw new PlateUnresolvableException("Plate could not be converted");
+                throw new UnresolvableObjectException("Plate could not be converted");
             }
 
             return response.getBody();
         } catch (HttpClientErrorException.NotFound ex) {
-            throw new PlateUnresolvableException("Plate not found");
-        } catch (HttpClientErrorException | PlateUnresolvableException ex) {
-            throw new PlateUnresolvableException("Error while fetching plate");
+            throw new UnresolvableObjectException("Plate not found");
+        } catch (HttpClientErrorException | UnresolvableObjectException ex) {
+            throw new UnresolvableObjectException("Error while fetching plate");
         }
     }
 
     @Override
-    public List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws PlateUnresolvableException {
+    public List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws UnresolvableObjectException {
         try {
             var plateMeasurements = restTemplate.exchange(urlFactory.plateMeasurements(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()),PlateMeasurementDTO[].class);
             if (plateMeasurements.getStatusCode().isError()) {
-                throw new PlateUnresolvableException("Plate could not be converted");
+                throw new UnresolvableObjectException("Plate could not be converted");
             }
 
             return Arrays.stream(plateMeasurements.getBody()).toList();
         } catch (HttpClientErrorException.NotFound ex) {
-            throw new PlateUnresolvableException("Plate not found");
+            throw new UnresolvableObjectException("Plate not found");
         } catch (HttpClientErrorException ex) {
-            throw new PlateUnresolvableException("Error while fetching plate");
+            throw new UnresolvableObjectException("Error while fetching plate");
         }
     }
 
     @Override
-    public List<WellSubstanceDTO> getWellSubstances(long plateId) throws PlateUnresolvableException {
+    public List<WellSubstanceDTO> getWellSubstances(long plateId) throws UnresolvableObjectException {
         try {
             var wellSubstances = restTemplate.exchange(urlFactory.wellSubstances(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), WellSubstanceDTO[].class);
             if (wellSubstances.getStatusCode().isError()) {
-                throw new PlateUnresolvableException("Plate could not be converted");
+                throw new UnresolvableObjectException("Plate could not be converted");
             }
 
             return Arrays.stream(wellSubstances.getBody()).toList();
         } catch (HttpClientErrorException.NotFound ex) {
-            throw new PlateUnresolvableException("Plate not found");
+            throw new UnresolvableObjectException("Plate not found");
         } catch (HttpClientErrorException ex) {
-            throw new PlateUnresolvableException("Error while fetching plate");
+            throw new UnresolvableObjectException("Error while fetching plate");
         }
     }
 
@@ -166,7 +166,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     	var response = restTemplate.exchange(urlFactory.plateTemplatesByName(name), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateTemplateDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
     }
-    
+
     @Override
     public ExperimentDTO createExperiment(String name, long projectId) {
     	try {
@@ -196,7 +196,22 @@ public class HttpPlateServiceClient implements PlateServiceClient {
             throw new RuntimeException("Error while creating plate");
         }
     }
-    
+
+    @Override
+    public ExperimentDTO getExperiment(long experimentId) throws UnresolvableObjectException {
+        try {
+            var experiment = restTemplate.exchange(urlFactory.experiment(experimentId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), ExperimentDTO.class);
+            if (experiment.getStatusCode().isError()) {
+                throw new UnresolvableObjectException("Experiment could not be converted");
+            }
+            return experiment.getBody();
+        } catch (HttpClientErrorException.NotFound ex) {
+            throw new UnresolvableObjectException("Experiment not found");
+        } catch (HttpClientErrorException ex) {
+            throw new UnresolvableObjectException("Error while fetching plate");
+        }
+    }
+
     private HttpHeaders makeHttpHeaders() {
     	HttpHeaders httpHeaders = new HttpHeaders();
         String bearerToken = authService.getCurrentBearerToken();
