@@ -63,8 +63,7 @@ public class PlateServiceApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication app = new SpringApplication(PlateServiceApplication.class);
-		app.run(args);
+		SpringApplication.run(PlateServiceApplication.class, args);
 	}
 
 	@Bean

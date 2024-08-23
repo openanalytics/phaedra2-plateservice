@@ -20,7 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.client;
 
-import eu.openanalytics.phaedra.plateservice.client.exception.PlateUnresolvableException;
+import eu.openanalytics.phaedra.plateservice.client.exception.UnresolvableObjectException;
 import eu.openanalytics.phaedra.plateservice.dto.*;
 import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 
@@ -28,26 +28,28 @@ import java.util.List;
 
 public interface PlateServiceClient {
 
-    PlateDTO getPlate(long plateId) throws PlateUnresolvableException;
+    PlateDTO getPlate(long plateId) throws UnresolvableObjectException;
 
-    List<WellDTO> getWells(long plateId) throws PlateUnresolvableException;
+    List<WellDTO> getWells(long plateId) throws UnresolvableObjectException;
 
-    PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws PlateUnresolvableException;
+    PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws UnresolvableObjectException;
 
-    List<WellSubstanceDTO> getWellSubstances(long plateId) throws PlateUnresolvableException;
+    List<WellSubstanceDTO> getWellSubstances(long plateId) throws UnresolvableObjectException;
 
-    List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws PlateUnresolvableException;
-
-    List<ExperimentDTO> getExperiments(long projectId);
+    List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws UnresolvableObjectException;
 
     List<PlateDTO> getPlatesByBarcode(String barcode);
 
     List<PlateDTO> getPlatesByExperiment(long experimentId);
 
     List<PlateTemplateDTO> getPlateTemplatesByName(String name);
-    
+
     ExperimentDTO createExperiment(String name, long projectId);
-    
+
     PlateDTO createPlate(String barcode, long experimentId, int rows, int columns);
+
+    ExperimentDTO getExperiment(long experimentId) throws UnresolvableObjectException;
+
+    List<ExperimentDTO> getExperiments(long projectId);
 
 }

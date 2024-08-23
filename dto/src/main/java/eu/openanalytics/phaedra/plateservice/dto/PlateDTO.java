@@ -76,6 +76,8 @@ public class PlateDTO {
 	private Date updatedOn;
 	private String updatedBy;
 
+	private Long measurementId;
+
 	private List<String> tags;
 	private List<PropertyDTO> properties;
 }

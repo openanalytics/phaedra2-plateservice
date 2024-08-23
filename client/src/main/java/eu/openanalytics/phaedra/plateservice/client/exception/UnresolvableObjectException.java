@@ -20,8 +20,8 @@
  */
 package eu.openanalytics.phaedra.plateservice.client.exception;
 
-public class PlateUnresolvableException extends Exception {
-    public PlateUnresolvableException(String msg) {
+public class UnresolvableObjectException extends Exception {
+    public UnresolvableObjectException(String msg) {
         super(msg);
     }
 }
