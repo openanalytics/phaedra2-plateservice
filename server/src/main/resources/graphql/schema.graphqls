@@ -240,7 +240,7 @@ type Query {
     getPlateTemplates: [PlateTemplateDTO]
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
     getWellTemplatesByPlateTemplateId(plateTemplateId: ID): [WellTemplateDTO]
-    getWellById(wellId: ID): [WellDTO]
+    getWellById(wellId: ID): WellDTO
 }
 
 input PlateTemplateInput {
