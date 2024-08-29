@@ -30,6 +30,7 @@ import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
+import eu.openanalytics.phaedra.plateservice.exceptions.WellNotFoundException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
@@ -131,6 +132,11 @@ public class PlateGraphQLController {
     @QueryMapping
     public List<PlateMeasurementDTO> getActiveMeasurementsByExperimentId(@Argument Long experimentId) {
         return plateMeasurementService.getPlateMeasurementsByExperimentId(experimentId, true);
+    }
+
+    @QueryMapping
+    public WellDTO getWellById(@Argument Long wellId) throws WellNotFoundException {
+        return wellService.getWellById(wellId);
     }
 
     private void enrichLinkedPlateDTOInfo(PlateDTO plateDTO) {

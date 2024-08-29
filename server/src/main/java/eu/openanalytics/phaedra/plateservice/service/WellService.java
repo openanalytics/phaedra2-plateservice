@@ -28,6 +28,7 @@ import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.enumeration.WellStatus;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
+import eu.openanalytics.phaedra.plateservice.exceptions.WellNotFoundException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
@@ -102,6 +103,13 @@ public class WellService {
         populateWellSubstance(updatedWellDTO, well);
 
         return updatedWellDTO;
+    }
+
+    public WellDTO getWellById(Long wellId) throws WellNotFoundException {
+        Well well = wellRepository.findById(wellId).orElseThrow(() -> new WellNotFoundException(String.format("Well with id %d not found!", wellId)));
+        WellDTO wellDTO = modelMapper.map(well, WellDTO.class);
+        populateWellSubstance(wellDTO, well);
+        return wellDTO;
     }
 
     public List<WellDTO> updateWells(List<WellDTO> wellDTOS){

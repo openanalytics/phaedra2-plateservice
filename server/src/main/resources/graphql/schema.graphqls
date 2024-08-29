@@ -156,7 +156,6 @@ type WellDTO {
     status: WellStatus
     description: String
     wellSubstance: WellSubstanceDTO
-
     tags: [String]
 }
 
@@ -241,6 +240,7 @@ type Query {
     getPlateTemplates: [PlateTemplateDTO]
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
     getWellTemplatesByPlateTemplateId(plateTemplateId: ID): [WellTemplateDTO]
+    getWellById(wellId: ID): [WellDTO]
 }
 
 input PlateTemplateInput {
