@@ -22,6 +22,7 @@ package eu.openanalytics.phaedra.plateservice.repository;
 
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
+import java.util.Collection;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -48,7 +49,12 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 
 	List<Plate> findByExperimentId(long experimentId);
 
+	@Query("select p from hca_plate p where p.experiment_id in (:experimentIds)")
+	List<Plate> findByExperimentIds(Collection<Long> experimentIds);
+
 	List<Plate> findByBarcode(String barcode);
+
+	List<Plate> findByBarcodeAndExperimentId(String barcode, long experimentId);
 
 	@Query("""
  			select experiment_id, 

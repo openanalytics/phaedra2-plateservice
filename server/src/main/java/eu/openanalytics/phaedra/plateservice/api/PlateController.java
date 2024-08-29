@@ -28,6 +28,7 @@ import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
+import java.util.Collections;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
@@ -76,6 +77,24 @@ public class PlateController {
         }
 
         return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PlateDTO>> getPlates(
+        @RequestParam(required = false) String barcode,
+        @RequestParam(required = false) Long experimentId) {
+
+        if (barcode != null && experimentId != null) {
+            List<PlateDTO> response = plateService.getPlatesByBarcodeAndExperiment(barcode, experimentId);
+            return ResponseEntity.ok(response);
+        } else if (barcode != null && experimentId == null) {
+            List<PlateDTO> response = plateService.getPlatesByBarcode(barcode);
+            return ResponseEntity.ok(response);
+        } else if (barcode == null && experimentId != null) {
+            List<PlateDTO> response = plateService.getPlatesByExperimentId(experimentId);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.ok(Collections.EMPTY_LIST);
     }
 
     @PutMapping(value = "/{plateId}")
@@ -201,18 +220,6 @@ public class PlateController {
         } catch (PlateNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @GetMapping(params = {"experimentId"})
-    public ResponseEntity<List<PlateDTO>> getPlatesByExperiment(@RequestParam(required = false) long experimentId) {
-        List<PlateDTO> response = plateService.getPlatesByExperimentId(experimentId);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping(params = {"barcode"})
-    public ResponseEntity<List<PlateDTO>> getPlatesByBarcode(@RequestParam(required = false) String barcode) {
-        List<PlateDTO> response = plateService.getPlatesByBarcode(barcode);
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping(value = "/{plateId}/wells")
