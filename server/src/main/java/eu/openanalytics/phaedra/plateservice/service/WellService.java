@@ -109,7 +109,7 @@ public class WellService {
         Well well = wellRepository.findById(wellId).orElseThrow(() -> new WellNotFoundException(String.format("Well with id %d not found!", wellId)));
         WellDTO wellDTO = modelMapper.map(well, WellDTO.class);
         populateWellSubstance(wellDTO, well);
-        calculateWellNumber(wellDTO, plateService.getPlateById(wellDTO.getPlateId()));
+        wellDTO.setWellNr(calculateWellNumber(wellDTO, plateService.getPlateById(wellDTO.getPlateId())));
         return wellDTO;
     }
 
