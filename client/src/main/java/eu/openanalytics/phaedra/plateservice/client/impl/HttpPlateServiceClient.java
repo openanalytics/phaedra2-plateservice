@@ -150,6 +150,11 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     }
 
     @Override
+    public List<WellDTO> getNWells(int n) throws UnresolvableObjectException {
+        return List.of();
+    }
+
+    @Override
     public List<PlateDTO> getPlatesByBarcode(String barcode) {
     	var response = restTemplate.exchange(urlFactory.platesByBarcode(barcode), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
