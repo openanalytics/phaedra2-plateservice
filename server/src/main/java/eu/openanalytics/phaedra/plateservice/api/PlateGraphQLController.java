@@ -146,8 +146,7 @@ public class PlateGraphQLController {
 
 
     @QueryMapping
-    public List<WellDTO> getWells(@Argument List<Long> wellIds)
-        throws WellNotFoundException, PlateNotFoundException {
+    public List<WellDTO> getWells(@Argument List<Long> wellIds) {
         return wellService.getWells(wellIds);
     }
 

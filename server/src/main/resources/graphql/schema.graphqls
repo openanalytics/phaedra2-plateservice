@@ -157,6 +157,7 @@ type WellDTO {
     description: String
     wellSubstance: WellSubstanceDTO
     tags: [String]
+    properties: [PropertyDTO]
 }
 
 type WellSubstanceDTO {

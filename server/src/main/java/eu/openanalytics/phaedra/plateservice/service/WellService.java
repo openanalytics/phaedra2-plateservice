@@ -21,6 +21,9 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellStatusDTO;
@@ -128,13 +131,19 @@ public class WellService {
         }
     }
 
-    public WellDTO getWellById(Long wellId) throws WellNotFoundException, PlateNotFoundException {
-        Well well = wellRepository.findById(wellId).orElseThrow(() -> new WellNotFoundException(String.format("Well with id %d not found!", wellId)));
-        WellDTO wellDTO = modelMapper.map(well, WellDTO.class);
-        populateWellSubstance(wellDTO, well);
-        wellDTO.setWellNr(calculateWellNumber(well, plateService.getPlateById(wellDTO.getPlateId())));
-        return wellDTO;
-    }
+  public WellDTO getWellById(Long wellId) throws WellNotFoundException, PlateNotFoundException {
+    Well well = wellRepository.findById(wellId).orElseThrow(
+        () -> new WellNotFoundException(String.format("Well with id %d not found!", wellId)));
+
+    PlateDTO plate = plateService.getPlateById(well.getPlateId());
+    List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(well.getPlateId());
+    WellDTO wellDTO = modelMapper.map(well, WellDTO.class)
+        .withWellNr(calculateWellNumber(well, plate))
+        .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
+        .withTags(retrieveWellTags(well))
+        .withProperties(retrieveWellProperties(well));
+    return wellDTO;
+  }
 
     public List<WellDTO> updateWells(List<WellDTO> wellDTOS){
         List<Well> wells = wellDTOS.stream().map(this::mapToWell).toList();
@@ -171,6 +180,20 @@ public class WellService {
                 .withWellNr(calculateWellNumber(well, plate)))
         		.sorted(WELL_COMPARATOR)
         		.toList();
+    }
+
+    private List<eu.openanalytics.phaedra.plateservice.dto.PropertyDTO> retrieveWellProperties(
+        Well well) {
+        List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.WELL.name(),
+            well.getId());
+        return properties.stream().map(
+            prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(),
+                prop.getPropertyValue())).toList();
+    }
+
+    private List<String> retrieveWellTags(Well well) {
+        List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.WELL.name(), well.getId());
+        return tags.stream().map(tagDTO -> tagDTO.getTag()).toList();
     }
 
     private WellSubstanceDTO findWellSubstanceForWell(Well well, List<WellSubstanceDTO> substances) {
