@@ -28,16 +28,17 @@ import eu.openanalytics.phaedra.plateservice.model.Experiment;
 import eu.openanalytics.phaedra.plateservice.repository.ExperimentRepository;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
-import org.modelmapper.Conditions;
-import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ExperimentService {
@@ -99,8 +100,13 @@ public class ExperimentService {
 				.orElse(null);
 	}
 
-	public List<ExperimentDTO> getAllExperiments() {
-		List<Experiment> result = experimentRepository.findAll();
+	public List<ExperimentDTO> getExperiments(List<Long> experimentIds) {
+		List<Experiment> result = new ArrayList<>();
+		if (CollectionUtils.isEmpty(experimentIds)) {
+			result.addAll(experimentRepository.findAll());
+		} else {
+			result.addAll((List<Experiment>) experimentRepository.findAllById(experimentIds));
+		}
 		return result.stream()
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
 				.map(this::mapToExperimentDTO)

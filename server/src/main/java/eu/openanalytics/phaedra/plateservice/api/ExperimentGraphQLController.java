@@ -20,15 +20,6 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.graphql.data.method.annotation.SchemaMapping;
-import org.springframework.stereotype.Controller;
-
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
 import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
@@ -36,6 +27,12 @@ import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
+import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.stereotype.Controller;
 
 @Controller
 public class ExperimentGraphQLController {
@@ -49,8 +46,8 @@ public class ExperimentGraphQLController {
 	}
 
 	@QueryMapping
-	public List<ExperimentDTO> getExperiments() {
-		List<ExperimentDTO> result = experimentService.getAllExperiments();
+	public List<ExperimentDTO> getExperiments(@Argument List<Long> experimentIds) {
+		List<ExperimentDTO> result = experimentService.getExperiments(experimentIds);
 		if (CollectionUtils.isNotEmpty(result)) {
 			result.stream().forEach(experimentDTO -> {
 				addExperimentMetadata(experimentDTO);

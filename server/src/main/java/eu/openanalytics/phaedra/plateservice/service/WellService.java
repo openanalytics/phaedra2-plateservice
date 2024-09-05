@@ -33,15 +33,16 @@ import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.repository.WellRepository;
 import eu.openanalytics.phaedra.util.WellNumberUtils;
-import org.modelmapper.Conditions;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
 @Service
 public class WellService {
@@ -105,11 +106,33 @@ public class WellService {
         return updatedWellDTO;
     }
 
+    public List<WellDTO> getWells(List<Long> wellIds) {
+        List<Well> wells = (List<Well>) wellRepository.findAllById(wellIds);
+        if (CollectionUtils.isNotEmpty(wells)) {
+            List<WellDTO> result = wells.stream()
+                .map(well -> {
+                    try {
+                        return modelMapper.map(well, WellDTO.class)
+                            .withWellSubstance(
+                                wellSubstanceService.getWellSubstanceByWellId(well.getId()))
+                            .withWellNr(calculateWellNumber(well,
+                                plateService.getPlateById(well.getPlateId())));
+                    } catch (PlateNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .toList();
+            return result;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
     public WellDTO getWellById(Long wellId) throws WellNotFoundException, PlateNotFoundException {
         Well well = wellRepository.findById(wellId).orElseThrow(() -> new WellNotFoundException(String.format("Well with id %d not found!", wellId)));
         WellDTO wellDTO = modelMapper.map(well, WellDTO.class);
         populateWellSubstance(wellDTO, well);
-        wellDTO.setWellNr(calculateWellNumber(wellDTO, plateService.getPlateById(wellDTO.getPlateId())));
+        wellDTO.setWellNr(calculateWellNumber(well, plateService.getPlateById(wellDTO.getPlateId())));
         return wellDTO;
     }
 
@@ -143,24 +166,21 @@ public class WellService {
     	List<WellSubstanceDTO> substances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
 
         return wellRepository.findByPlateId(plateId).stream()
-        		.map(well -> modelMapper.map(well, WellDTO.class))
-        		.map(wellDTO -> {
-        			wellDTO.setWellSubstance(findWellSubstanceForWell(wellDTO, substances));
-                    wellDTO.setWellNr(calculateWellNumber(wellDTO, plate));
-        			return wellDTO;
-        		})
+        		.map(well -> modelMapper.map(well, WellDTO.class)
+                .withWellSubstance(findWellSubstanceForWell(well, substances))
+                .withWellNr(calculateWellNumber(well, plate)))
         		.sorted(WELL_COMPARATOR)
         		.toList();
     }
 
-    private WellSubstanceDTO findWellSubstanceForWell(WellDTO wellDTO, List<WellSubstanceDTO> substances) {
+    private WellSubstanceDTO findWellSubstanceForWell(Well well, List<WellSubstanceDTO> substances) {
         return substances.stream()
-                .filter(s -> s.getWellId().longValue() == wellDTO.getId().longValue())
+                .filter(s -> s.getWellId().longValue() == well.getId().longValue())
                 .findAny().orElse(null);
     }
 
-    private Integer calculateWellNumber(WellDTO wellDTO, PlateDTO plate){
-        return WellNumberUtils.getWellNr(wellDTO.getRow(), wellDTO.getColumn(), plate.getColumns());
+    private Integer calculateWellNumber(Well well, PlateDTO plate){
+        return WellNumberUtils.getWellNr(well.getRow(), well.getColumn(), plate.getColumns());
     }
 
     private Well mapToWell(WellDTO wellDTO) {

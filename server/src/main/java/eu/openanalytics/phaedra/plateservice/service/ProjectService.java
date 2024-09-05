@@ -26,14 +26,15 @@ import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.model.Project;
 import eu.openanalytics.phaedra.plateservice.repository.ProjectRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
-import org.modelmapper.Conditions;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectService {
@@ -85,13 +86,17 @@ public class ProjectService {
 
 	public void deleteProject(long projectId) {
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Admin);
-//		experimentService.deleteExperimentsByProjectId(projectId);
 		projectRepository.deleteById(projectId);
 	}
 
-	public List<ProjectDTO> getAllProjects() {
-		List<Project> projects = (List<Project>) projectRepository.findAll();
-		return projects.stream()
+	public List<ProjectDTO> getProjects(List<Long> projectIds) {
+		List<Project> result = new ArrayList<>();
+		if (CollectionUtils.isEmpty(projectIds)) {
+			result.addAll((List<Project>) projectRepository.findAll());
+		} else {
+			result.addAll((List<Project>) projectRepository.findAllById(projectIds));
+		}
+		return result.stream()
 				.filter(p -> projectAccessService.hasAccessLevel(p.getId(), ProjectAccessLevel.Read))
 				.map(this::mapToProjectDTO)
 				.collect(Collectors.toList());
