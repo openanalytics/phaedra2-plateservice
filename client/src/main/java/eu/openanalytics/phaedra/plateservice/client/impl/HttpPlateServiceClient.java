@@ -77,7 +77,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     @Override
     public List<WellDTO> getWells(long plateId) throws UnresolvableObjectException {
     	try {
-            var wells = restTemplate.exchange(urlFactory.wells(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), WellDTO[].class);
+            var wells = restTemplate.exchange(urlFactory.plateWells(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), WellDTO[].class);
             if (wells.getStatusCode().isError()) {
                 throw new UnresolvableObjectException("Plate could not be converted");
             }

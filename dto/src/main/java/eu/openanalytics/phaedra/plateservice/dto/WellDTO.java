@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 import lombok.With;
 
-@With
 @Builder
+@With
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @AllArgsConstructor
@@ -48,7 +48,7 @@ public class WellDTO {
 	private String description;
 
 	private List<String> tags;
-	private Map<String, String> properties;
+	private List<PropertyDTO> properties;
 
 	private WellSubstanceDTO wellSubstance;
 	private Map<Long, Float> featureValues;
