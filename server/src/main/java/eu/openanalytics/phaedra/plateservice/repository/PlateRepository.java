@@ -49,7 +49,7 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 
 	List<Plate> findByExperimentId(long experimentId);
 
-	@Query("select p from hca_plate p where p.experiment_id in (:experimentIds)")
+	@Query("select * from hca_plate p where p.experiment_id in (:experimentIds)")
 	List<Plate> findByExperimentIds(Collection<Long> experimentIds);
 
 	List<Plate> findByBarcode(String barcode);
