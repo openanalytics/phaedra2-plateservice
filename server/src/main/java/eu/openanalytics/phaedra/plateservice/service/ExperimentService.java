@@ -50,8 +50,10 @@ public class ExperimentService {
 	private final ProjectAccessService projectAccessService;
 	private final IAuthorizationService authService;
 
-	public ExperimentService(ExperimentRepository experimentRepository, @Lazy PlateService plateService,
-							 PlateRepository plateRepository, ProjectAccessService projectAccessService, IAuthorizationService authService) {
+	public ExperimentService(ExperimentRepository experimentRepository,
+			@Lazy PlateService plateService,
+			PlateRepository plateRepository, ProjectAccessService projectAccessService,
+			IAuthorizationService authService) {
 
 		this.experimentRepository = experimentRepository;
 		this.plateService = plateService;
@@ -130,6 +132,13 @@ public class ExperimentService {
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 		List<Experiment> result = experimentRepository.findByProjectId(projectId);
 		return result.stream().map(this::mapToExperimentDTO).collect(Collectors.toList());
+	}
+
+	public List<ExperimentDTO> getExperimentByProjectIds(List<Long> projectIds) {
+		List<Experiment> result = experimentRepository.findByProjectIds(projectIds);
+		return result.stream()
+				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
+				.map(this::mapToExperimentDTO).collect(Collectors.toList());
 	}
 
 	public List<ExperimentSummaryDTO> getExperimentSummaries() {

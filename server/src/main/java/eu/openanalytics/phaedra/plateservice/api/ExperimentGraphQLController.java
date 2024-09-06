@@ -89,6 +89,17 @@ public class ExperimentGraphQLController {
 	}
 
 	@QueryMapping
+	public List<ExperimentDTO> getExperimentsByProjectIds(@Argument List<Long> projectIds) {
+		List<ExperimentDTO> result = experimentService.getExperimentByProjectIds(projectIds);
+		if (CollectionUtils.isNotEmpty(result)) {
+			result.stream().forEach(experimentDTO -> {
+				addExperimentMetadata(experimentDTO);
+			});
+		}
+		return result;
+	}
+
+	@QueryMapping
 	public List<ExperimentSummaryDTO> getExperimentSummaries() {
 		return experimentService.getExperimentSummaries();
 	}

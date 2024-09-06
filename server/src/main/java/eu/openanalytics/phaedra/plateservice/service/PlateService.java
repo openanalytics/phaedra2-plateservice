@@ -296,6 +296,14 @@ public class PlateService {
 				.toList();
 	}
 
+	public List<PlateDTO> getPlatesByExperimentIds(List<Long> experimentIds) {
+		List<Plate> result = plateRepository.findByExperimentIds(experimentIds);
+		return result.stream()
+				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
+				.map(p -> modelMapper.map(p, PlateDTO.class))
+				.toList();
+	}
+
 	public List<PlateDTO> getPlatesByBarcode(String barcode) {
 		List<Plate> result = plateRepository.findByBarcode(barcode);
 		return result.stream()

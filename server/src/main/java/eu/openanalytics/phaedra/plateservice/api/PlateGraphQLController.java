@@ -36,6 +36,7 @@ import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -77,7 +78,22 @@ public class PlateGraphQLController {
 
     @QueryMapping
     public List<PlateDTO> getPlatesByExperimentId(@Argument Long experimentId) {
-        List<PlateDTO> result = ObjectUtils.isNotEmpty(experimentId) ? plateService.getPlatesByExperimentId(experimentId) : new ArrayList<>();
+        List<PlateDTO> result =
+            ObjectUtils.isNotEmpty(experimentId) ? plateService.getPlatesByExperimentId(
+                experimentId) : new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.forEach(plateDTO -> {
+                enrichLinkedPlateDTOInfo(plateDTO);
+            });
+        }
+        return result;
+    }
+
+    @QueryMapping
+    public List<PlateDTO> getPlatesByExperimentIds(@Argument List<Long> experimentIds) {
+        List<PlateDTO> result =
+            CollectionUtils.isNotEmpty(experimentIds) ? plateService.getPlatesByExperimentIds(
+                experimentIds) : Collections.emptyList();
         if (CollectionUtils.isNotEmpty(result)) {
             result.forEach(plateDTO -> {
                 enrichLinkedPlateDTOInfo(plateDTO);

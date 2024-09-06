@@ -224,14 +224,16 @@ type Query {
     getProjectById(projectId: ID): ProjectDTO
     getProjectAccess(projectId: ID): [ProjectAccessDTO]
     getExperiments(experimentIds: [ID] = []): [ExperimentDTO]
-    getNMostRecentExperiments(n: Int): [ExperimentDTO]
-    getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
     getExperimentById(experimentId: ID): ExperimentDTO
+    getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
+    getExperimentsByProjectIds(projectIds: [ID]): [ExperimentDTO]
+    getNMostRecentExperiments(n: Int): [ExperimentDTO]
     getExperimentSummaries: [ExperimentSummaryDTO]
     getExperimentSummariesByProjectId(projectId: ID): [ExperimentSummaryDTO]
     getExperimentSummaryByExperimentId(experimentId: ID): ExperimentSummaryDTO
     getPlates(plateIds: [ID] = []): [PlateDTO]
     getPlatesByExperimentId(experimentId: ID): [PlateDTO]
+    getPlatesByExperimentIds(experimentIds: [ID]): [PlateDTO]
     getPlatesByBarcode(barcode: String): [PlateDTO]
     getPlateById(plateId: ID): PlateDTO
     getPlateWells(plateId: ID): [WellDTO]
@@ -242,8 +244,8 @@ type Query {
     getPlateTemplates: [PlateTemplateDTO]
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
     getWells(wellIds: [ID] = []): [WellDTO]
-    getWellTemplatesByPlateTemplateId(plateTemplateId: ID): [WellTemplateDTO]
     getWellById(wellId: ID): WellDTO
+    getWellTemplatesByPlateTemplateId(plateTemplateId: ID): [WellTemplateDTO]
 }
 
 input PlateTemplateInput {
