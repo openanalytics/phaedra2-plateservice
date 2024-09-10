@@ -35,6 +35,9 @@ import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,9 +45,6 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class PlateGraphQLController {
@@ -66,8 +66,34 @@ public class PlateGraphQLController {
     }
 
     @QueryMapping
+    public List<PlateDTO> getPlates(@Argument List<Long> plateIds) {
+        List<PlateDTO> result = plateService.getPlates(plateIds);
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.stream().forEach(plateDTO -> {
+                enrichLinkedPlateDTOInfo(plateDTO);
+            });
+        }
+        return result;
+    }
+
+    @QueryMapping
     public List<PlateDTO> getPlatesByExperimentId(@Argument Long experimentId) {
-        List<PlateDTO> result = ObjectUtils.isNotEmpty(experimentId) ? plateService.getPlatesByExperimentId(experimentId) : new ArrayList<>();
+        List<PlateDTO> result =
+            ObjectUtils.isNotEmpty(experimentId) ? plateService.getPlatesByExperimentId(
+                experimentId) : new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(result)) {
+            result.forEach(plateDTO -> {
+                enrichLinkedPlateDTOInfo(plateDTO);
+            });
+        }
+        return result;
+    }
+
+    @QueryMapping
+    public List<PlateDTO> getPlatesByExperimentIds(@Argument List<Long> experimentIds) {
+        List<PlateDTO> result =
+            CollectionUtils.isNotEmpty(experimentIds) ? plateService.getPlatesByExperimentIds(
+                experimentIds) : Collections.emptyList();
         if (CollectionUtils.isNotEmpty(result)) {
             result.forEach(plateDTO -> {
                 enrichLinkedPlateDTOInfo(plateDTO);
@@ -132,6 +158,12 @@ public class PlateGraphQLController {
     @QueryMapping
     public List<PlateMeasurementDTO> getActiveMeasurementsByExperimentId(@Argument Long experimentId) {
         return plateMeasurementService.getPlateMeasurementsByExperimentId(experimentId, true);
+    }
+
+
+    @QueryMapping
+    public List<WellDTO> getWells(@Argument List<Long> wellIds) {
+        return wellService.getWells(wellIds);
     }
 
     @QueryMapping

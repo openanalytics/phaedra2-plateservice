@@ -223,7 +223,7 @@ public class PlateController {
     }
 
     @GetMapping(value = "/{plateId}/wells")
-    public ResponseEntity<List<WellDTO>> getWells(@PathVariable long plateId) {
+    public ResponseEntity<List<WellDTO>> getPlateWells(@PathVariable long plateId) {
         try {
             List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
             if (wells.isEmpty()) return ResponseEntity.notFound().build();

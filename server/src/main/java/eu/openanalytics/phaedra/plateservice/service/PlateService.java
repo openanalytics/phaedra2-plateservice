@@ -20,12 +20,23 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.plateservice.dto.*;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateDefinitionLinkEvent;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEvent;
 import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEventType;
-import eu.openanalytics.phaedra.plateservice.enumeration.*;
+import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
 import eu.openanalytics.phaedra.plateservice.exceptions.ApprovalException;
 import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
@@ -33,6 +44,12 @@ import eu.openanalytics.phaedra.plateservice.exceptions.ValidationException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
@@ -47,12 +64,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class PlateService {
@@ -72,10 +83,12 @@ public class PlateService {
 	private final ModelMapper modelMapper = new ModelMapper();
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService, ExperimentService experimentService,
-                        ProjectAccessService projectAccessService, IAuthorizationService authService,
-                        PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService, WellSubstanceService wellSubstanceService,
-                        KafkaProducerService kafkaProducerService) {
+	public PlateService(PlateRepository plateRepository, @Lazy WellService wellService,
+			ExperimentService experimentService,
+			ProjectAccessService projectAccessService, IAuthorizationService authService,
+			PlateTemplateService plateTemplateService, WellTemplateService wellTemplateService,
+			WellSubstanceService wellSubstanceService,
+			KafkaProducerService kafkaProducerService) {
 
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
@@ -261,8 +274,30 @@ public class PlateService {
 		kafkaProducerService.notifyPlateModified(new PlateModificationEvent(PlateDTO.builder().id(plateId).build(), PlateModificationEventType.Deleted));
 	}
 
+	public List<PlateDTO> getPlates(List<Long> plateIds) {
+		List<Plate> result = new ArrayList<>();
+		if (CollectionUtils.isEmpty(plateIds)) {
+			result.addAll((List<Plate>) plateRepository.findAll());
+		} else {
+			result.addAll((List<Plate>) plateRepository.findAllById(plateIds));
+		}
+		return result.stream()
+				.filter(p -> projectAccessService.hasAccessLevel(p.getId(), ProjectAccessLevel.Read))
+				.map(p -> modelMapper.map(p, PlateDTO.class))
+				.collect(Collectors.toList());
+	}
+
+
 	public List<PlateDTO> getPlatesByExperimentId(long experimentId) {
 		List<Plate> result = plateRepository.findByExperimentId(experimentId);
+		return result.stream()
+				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
+				.map(p -> modelMapper.map(p, PlateDTO.class))
+				.toList();
+	}
+
+	public List<PlateDTO> getPlatesByExperimentIds(List<Long> experimentIds) {
+		List<Plate> result = plateRepository.findByExperimentIds(experimentIds);
 		return result.stream()
 				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))

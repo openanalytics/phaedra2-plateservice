@@ -23,11 +23,11 @@ package eu.openanalytics.phaedra.plateservice.client.impl;
 public class UrlFactory {
 
     private String baseURL;
-    
+
     public UrlFactory(String baseURL) {
     	this.baseURL = baseURL;
 	}
-    
+
     public String plate(Long plateId) {
         if (plateId != null)
             return String.format("%s/plates/%s", baseURL, plateId);
@@ -35,8 +35,12 @@ public class UrlFactory {
             return String.format("%s/plates", baseURL);
     }
 
-    public String wells(Long plateId) {
+    public String plateWells(Long plateId) {
         return String.format("%s/plates/%s/wells", baseURL, plateId);
+    }
+
+    public String nWells(Integer n) {
+      return String.format("%s/wells?n=%s", baseURL, n);
     }
 
     public String wellSubstances(Long plateId) {
@@ -54,7 +58,7 @@ public class UrlFactory {
     		return String.format("%s/experiments/%s", baseURL, experimentId);
     	}
     }
-    
+
     public String experiments(Long projectId) {
     	return String.format("%s/projects/%s/experiments", baseURL, projectId);
     }
