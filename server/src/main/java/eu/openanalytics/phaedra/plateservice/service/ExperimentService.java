@@ -29,6 +29,7 @@ import eu.openanalytics.phaedra.plateservice.repository.ExperimentRepository;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -135,10 +136,12 @@ public class ExperimentService {
 	}
 
 	public List<ExperimentDTO> getExperimentByProjectIds(List<Long> projectIds) {
-		List<Experiment> result = experimentRepository.findByProjectIds(projectIds);
-		return result.stream()
+		return Optional.ofNullable(experimentRepository.findByProjectIds(projectIds))
+				.orElseGet(Collections::emptyList)
+				.stream()
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
-				.map(this::mapToExperimentDTO).collect(Collectors.toList());
+				.map(this::mapToExperimentDTO)
+				.toList();
 	}
 
 	public List<ExperimentSummaryDTO> getExperimentSummaries() {
