@@ -28,6 +28,8 @@ import java.util.List;
 
 public interface PlateServiceClient {
 
+    List<ProjectDTO> getProjects();
+
     PlateDTO getPlate(long plateId) throws UnresolvableObjectException;
 
     List<WellDTO> getWells(long plateId) throws UnresolvableObjectException;
