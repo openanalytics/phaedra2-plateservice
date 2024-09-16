@@ -91,6 +91,7 @@ public class PlateGraphQLController {
 
     @QueryMapping
     public List<PlateDTO> getPlatesByExperimentIds(@Argument List<Long> experimentIds) {
+        if (CollectionUtils.isEmpty(experimentIds)) return Collections.emptyList();
         List<PlateDTO> result =
             CollectionUtils.isNotEmpty(experimentIds) ? plateService.getPlatesByExperimentIds(
                 experimentIds) : Collections.emptyList();

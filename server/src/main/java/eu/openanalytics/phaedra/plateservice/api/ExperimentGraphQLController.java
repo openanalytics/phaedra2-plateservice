@@ -27,6 +27,7 @@ import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -90,6 +91,7 @@ public class ExperimentGraphQLController {
 
 	@QueryMapping
 	public List<ExperimentDTO> getExperimentsByProjectIds(@Argument List<Long> projectIds) {
+		if (CollectionUtils.isEmpty(projectIds)) return Collections.emptyList();
 		List<ExperimentDTO> result = experimentService.getExperimentByProjectIds(projectIds);
 		if (CollectionUtils.isNotEmpty(result)) {
 			result.stream().forEach(experimentDTO -> {

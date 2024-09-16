@@ -172,7 +172,7 @@ public class WellService {
     	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 
         PlateDTO plate = plateService.getPlateById(plateId);
-    	List<WellSubstanceDTO> substances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
+    	  List<WellSubstanceDTO> substances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
 
         return wellRepository.findByPlateId(plateId).stream()
         		.map(well -> modelMapper.map(well, WellDTO.class)
