@@ -21,6 +21,9 @@
 package eu.openanalytics.phaedra.plateservice.service;
 
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.model.Project;
@@ -99,7 +102,8 @@ public class ProjectService {
 		return result.stream()
 				.filter(p -> projectAccessService.hasAccessLevel(p.getId(), ProjectAccessLevel.Read))
 				.map(this::mapToProjectDTO)
-				.collect(Collectors.toList());
+				.map(this::withMetadata)
+				.toList();
 	}
 
 	public List<ProjectDTO> getNMostRecentlyUpdatedProjects(int n) {
@@ -121,6 +125,16 @@ public class ProjectService {
 	private ProjectDTO mapToProjectDTO(Project project) {
 		ProjectDTO projectDTO = new ProjectDTO();
 		modelMapper.typeMap(Project.class, ProjectDTO.class).map(project, projectDTO);
+		return projectDTO;
+	}
+
+	private ProjectDTO withMetadata(ProjectDTO projectDTO) {
+		List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PROJECT.name(), projectDTO.getId());
+		projectDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+		List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.PROJECT.name(), projectDTO.getId());
+		projectDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
+
 		return projectDTO;
 	}
 }
