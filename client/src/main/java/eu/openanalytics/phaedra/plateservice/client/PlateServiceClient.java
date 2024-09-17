@@ -52,6 +52,8 @@ public interface PlateServiceClient {
 
     ExperimentDTO getExperiment(long experimentId) throws UnresolvableObjectException;
 
+    List<ExperimentDTO> getExperiments();
+
     List<ExperimentDTO> getExperiments(long projectId);
 
     List<WellDTO> getNWells(int n) throws UnresolvableObjectException;

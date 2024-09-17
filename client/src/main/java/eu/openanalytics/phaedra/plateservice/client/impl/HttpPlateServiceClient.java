@@ -151,6 +151,13 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     }
 
     @Override
+    public List<ExperimentDTO> getExperiments() {
+        var response = restTemplate.exchange(urlFactory.experiments(), HttpMethod.GET,
+            new HttpEntity<String>(makeHttpHeaders()), ExperimentDTO[].class);
+        return Arrays.stream(response.getBody()).toList();
+    }
+
+    @Override
     public List<ExperimentDTO> getExperiments(long projectId) {
     	var response = restTemplate.exchange(urlFactory.experiments(projectId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), ExperimentDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
