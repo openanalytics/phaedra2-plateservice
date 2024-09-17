@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.client.impl;
 
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +58,12 @@ public class HttpPlateServiceClient implements PlateServiceClient {
         this.restTemplate = restTemplate;
         this.authService = authService;
         this.urlFactory = new UrlFactory(environment.getProperty(PROP_BASE_URL, DEFAULT_BASE_URL));
+    }
+
+    @Override
+    public List<ProjectDTO> getProjects() {
+        var response = restTemplate.exchange(urlFactory.projects(), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), ProjectDTO[].class);
+        return Arrays.stream(response.getBody()).toList();
     }
 
     @Override
