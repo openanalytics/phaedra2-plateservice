@@ -21,24 +21,47 @@
 package eu.openanalytics.phaedra.plateservice.api;
 
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
+import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
-import eu.openanalytics.phaedra.plateservice.dto.*;
+import eu.openanalytics.phaedra.plateservice.dto.AcceptWellsDTO;
+import eu.openanalytics.phaedra.plateservice.dto.DisapprovePlatesDTO;
+import eu.openanalytics.phaedra.plateservice.dto.InvalidatePlatesDTO;
+import eu.openanalytics.phaedra.plateservice.dto.LinkPlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.LinkPlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.MovePlatesDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.plateservice.dto.RejectWellsDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellStatusDTO;
 import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import eu.openanalytics.phaedra.plateservice.service.WellService;
-import java.util.Collections;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/plates")
@@ -47,15 +70,21 @@ public class PlateController {
     private final PlateService plateService;
     private final WellService wellService;
     private final PlateMeasurementService plateMeasurementService;
-    private final MetadataServiceClient metadataServiceClient;
+    private final MetadataServiceClient metadataServiceHttpClient;
+    private final MetadataServiceGraphQlClient metadataServiceGraphQlClient;
 
-    public PlateController(PlateService plateService, WellService wellService,
-                           PlateMeasurementService plateMeasurementService,
-                           MetadataServiceClient metadataServiceClient) {
+    public PlateController(
+        PlateService plateService,
+        WellService wellService,
+        PlateMeasurementService plateMeasurementService,
+        MetadataServiceClient metadataServiceClient,
+        MetadataServiceGraphQlClient metadataServiceGraphQlClient)
+    {
         this.plateService = plateService;
         this.wellService = wellService;
         this.plateMeasurementService = plateMeasurementService;
-        this.metadataServiceClient = metadataServiceClient;
+        this.metadataServiceHttpClient = metadataServiceClient;
+        this.metadataServiceGraphQlClient = metadataServiceGraphQlClient;
     }
 
     @PostMapping
@@ -64,12 +93,12 @@ public class PlateController {
         if (result == null) return ResponseEntity.notFound().build();
 
         if (CollectionUtils.isNotEmpty(plateDTO.getTags())) {
-            metadataServiceClient.addTags(ObjectClass.PLATE.name(), result.getId(), plateDTO.getTags());
+            metadataServiceHttpClient.addTags(ObjectClass.PLATE.name(), result.getId(), plateDTO.getTags());
         }
 
         if (CollectionUtils.isNotEmpty(plateDTO.getProperties())) {
             Map<String, String> properties = plateDTO.getProperties().stream().collect(Collectors.toMap(PropertyDTO::propertyName, PropertyDTO::propertyValue));
-            metadataServiceClient.addProperties(ObjectClass.PLATE.name(), result.getId(), properties);
+            metadataServiceHttpClient.addProperties(ObjectClass.PLATE.name(), result.getId(), properties);
         }
 
         if (ObjectUtils.isNotEmpty(plateDTO.getMeasurementId())) {
@@ -84,17 +113,19 @@ public class PlateController {
         @RequestParam(required = false) String barcode,
         @RequestParam(required = false) Long experimentId) {
 
-        if (barcode != null && experimentId != null) {
-            List<PlateDTO> response = plateService.getPlatesByBarcodeAndExperiment(barcode, experimentId);
-            return ResponseEntity.ok(response);
-        } else if (barcode != null && experimentId == null) {
-            List<PlateDTO> response = plateService.getPlatesByBarcode(barcode);
-            return ResponseEntity.ok(response);
-        } else if (barcode == null && experimentId != null) {
-            List<PlateDTO> response = plateService.getPlatesByExperimentId(experimentId);
-            return ResponseEntity.ok(response);
+        List<PlateDTO> results = new ArrayList<>();
+
+        if (StringUtils.isNotBlank(barcode))
+            results.addAll(plateService.getPlatesByBarcode(barcode));
+        if (ObjectUtils.isNotEmpty(experimentId))
+            results.addAll(plateService.getPlatesByExperimentId(experimentId));
+        if (StringUtils.isBlank(barcode) && ObjectUtils.isEmpty(experimentId)) {
+            results.addAll(plateService.getPlates(List.of()));
         }
-        return ResponseEntity.ok(Collections.EMPTY_LIST);
+
+        enrichWithMetadata(results);
+
+        return ResponseEntity.ok(results);
     }
 
     @PutMapping(value = "/{plateId}")
@@ -320,6 +351,32 @@ public class PlateController {
             return ResponseEntity.ok().build();
         } catch (PlateNotFoundException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    private void enrichWithMetadata(List<PlateDTO> plates) {
+        if (CollectionUtils.isNotEmpty(plates)) {
+            // Create a map of plate ID to PlateDTO for quick lookup
+            Map<Long, PlateDTO> plateMap = new HashMap<>();
+            List<Long> plateIds = new ArrayList<>(plates.size());
+            for (PlateDTO plate : plates) {
+                plateMap.put(plate.getId(), plate);
+                plateIds.add(plate.getId());
+            }
+
+            // Retrieve the metadata using the list of plate IDs
+            List<MetadataDTO> plateMetadataList = metadataServiceGraphQlClient.getMetadata(plateIds, ObjectClass.PLATE);
+            for (MetadataDTO metadata : plateMetadataList) {
+                PlateDTO plate = plateMap.get(metadata.getObjectId());
+                if (plate != null) {
+                    plate.setTags(metadata.getTags().stream().map(TagDTO::getTag).collect(Collectors.toList()));
+                    List<PropertyDTO> propertyDTOs = new ArrayList<>(metadata.getProperties().size());
+                    for (eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO property : metadata.getProperties()) {
+                        propertyDTOs.add(new PropertyDTO(property.getPropertyName(), property.getPropertyValue()));
+                    }
+                    plate.setProperties(propertyDTOs);
+                }
+            }
         }
     }
 }

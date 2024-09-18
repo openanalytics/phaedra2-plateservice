@@ -70,6 +70,10 @@ public class UrlFactory {
     return String.format("%s/projects/%s/experiments", baseURL, projectId);
   }
 
+  public String plates() {
+    return String.format("%s/plates", baseURL);
+  }
+
   public String platesByBarcode(String barcode) {
     return String.format("%s/plates?barcode=%s", baseURL, barcode);
   }

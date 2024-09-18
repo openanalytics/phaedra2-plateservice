@@ -42,6 +42,8 @@ public interface PlateServiceClient {
 
     List<PlateDTO> getPlatesByBarcode(String barcode);
 
+    List<PlateDTO> getPlates();
+
     List<PlateDTO> getPlatesByExperiment(long experimentId);
 
     List<PlateTemplateDTO> getPlateTemplatesByName(String name);
