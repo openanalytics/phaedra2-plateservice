@@ -62,6 +62,10 @@ public class UrlFactory {
     }
   }
 
+  public String experiments() {
+    return String.format("%s/experiments", baseURL);
+  }
+
   public String experiments(Long projectId) {
     return String.format("%s/projects/%s/experiments", baseURL, projectId);
   }

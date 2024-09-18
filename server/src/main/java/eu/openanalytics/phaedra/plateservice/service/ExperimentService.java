@@ -20,6 +20,10 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.ExperimentStatus;
@@ -50,18 +54,20 @@ public class ExperimentService {
 	private final PlateRepository plateRepository;
 	private final ProjectAccessService projectAccessService;
 	private final IAuthorizationService authService;
+	private final MetadataServiceClient metadataServiceClient;
 
 	public ExperimentService(ExperimentRepository experimentRepository,
 			@Lazy PlateService plateService,
 			PlateRepository plateRepository, ProjectAccessService projectAccessService,
-			IAuthorizationService authService) {
+			IAuthorizationService authService, MetadataServiceClient metadataServiceClient) {
 
 		this.experimentRepository = experimentRepository;
 		this.plateService = plateService;
 		this.plateRepository = plateRepository;
 		this.projectAccessService = projectAccessService;
 		this.authService = authService;
-	}
+    this.metadataServiceClient = metadataServiceClient;
+  }
 
 	public ExperimentDTO createExperiment(ExperimentDTO experimentDTO) {
 		Experiment experiment = new Experiment();
@@ -113,6 +119,7 @@ public class ExperimentService {
 		return result.stream()
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
 				.map(this::mapToExperimentDTO)
+				.map(this::withMetadata)
 				.toList();
 	}
 
@@ -162,6 +169,10 @@ public class ExperimentService {
 		return result;
 	}
 
+	public ExperimentSummaryDTO getExperimentSummaryByExperimentId(Long experimentId) {
+		return plateRepository.findExperimentSummaryByExperimentId(experimentId);
+	}
+
 	private ExperimentDTO mapToExperimentDTO(Experiment experiment) {
 		ExperimentDTO experimentDTO = new ExperimentDTO();
 		modelMapper.typeMap(Experiment.class, ExperimentDTO.class)
@@ -169,7 +180,13 @@ public class ExperimentService {
 		return experimentDTO;
 	}
 
-    public ExperimentSummaryDTO getExperimentSummaryByExperimentId(Long experimentId) {
-		return plateRepository.findExperimentSummaryByExperimentId(experimentId);
-    }
+	private ExperimentDTO withMetadata(ExperimentDTO experimentDTO) {
+		List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT.name(), experimentDTO.getId());
+		experimentDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+
+		List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.PROJECT.name(), experimentDTO.getId());
+		experimentDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
+
+		return experimentDTO;
+	}
 }
