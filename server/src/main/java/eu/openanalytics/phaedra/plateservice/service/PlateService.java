@@ -348,15 +348,10 @@ public class PlateService {
 
 	public PlateDTO getPlateById(long plateId) throws PlateNotFoundException {
 		Optional<Plate> result = plateRepository.findById(plateId);
-
-		PlateDTO plateDTO = result
+		return result
 				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.orElseThrow(() -> new PlateNotFoundException(plateId));
-
-		enrichWithMetadata(List.of(plateDTO));
-
-		return plateDTO;
 	}
 
 	@Cacheable("plate_project_id")
