@@ -173,6 +173,12 @@ public class PlateGraphQLController {
         return wellService.getWellById(wellId);
     }
 
+    @QueryMapping
+    public List<WellDTO> getWellsByPlateIds(@Argument List<Long> plateIds) {
+        if (CollectionUtils.isEmpty(plateIds)) return Collections.emptyList();
+        return wellService.getWellsByPlateIds(plateIds);
+    }
+
     private void enrichLinkedPlateDTOInfo(PlateDTO plateDTO) {
         List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.PLATE.name(), plateDTO.getId());
         plateDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());

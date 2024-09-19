@@ -20,8 +20,8 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
-import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
+import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
@@ -35,7 +35,9 @@ import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,19 +56,21 @@ public class ExperimentService {
 	private final PlateRepository plateRepository;
 	private final ProjectAccessService projectAccessService;
 	private final IAuthorizationService authService;
-	private final MetadataServiceClient metadataServiceClient;
+	private final MetadataServiceGraphQlClient metadataServiceGraphQlClient;
 
 	public ExperimentService(ExperimentRepository experimentRepository,
 			@Lazy PlateService plateService,
-			PlateRepository plateRepository, ProjectAccessService projectAccessService,
-			IAuthorizationService authService, MetadataServiceClient metadataServiceClient) {
+			PlateRepository plateRepository,
+			ProjectAccessService projectAccessService,
+			IAuthorizationService authService,
+      MetadataServiceGraphQlClient metadataServiceGraphQlClient) {
 
 		this.experimentRepository = experimentRepository;
 		this.plateService = plateService;
 		this.plateRepository = plateRepository;
 		this.projectAccessService = projectAccessService;
 		this.authService = authService;
-    this.metadataServiceClient = metadataServiceClient;
+    this.metadataServiceGraphQlClient = metadataServiceGraphQlClient;
   }
 
 	public ExperimentDTO createExperiment(ExperimentDTO experimentDTO) {
@@ -110,17 +114,21 @@ public class ExperimentService {
 	}
 
 	public List<ExperimentDTO> getExperiments(List<Long> experimentIds) {
-		List<Experiment> result = new ArrayList<>();
+		List<Experiment> experiments = new ArrayList<>();
 		if (CollectionUtils.isEmpty(experimentIds)) {
-			result.addAll(experimentRepository.findAll());
+			experiments.addAll(experimentRepository.findAll());
 		} else {
-			result.addAll((List<Experiment>) experimentRepository.findAllById(experimentIds));
+			experiments.addAll((List<Experiment>) experimentRepository.findAllById(experimentIds));
 		}
-		return result.stream()
+
+		List<ExperimentDTO> experimentDTOs = experiments.stream()
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
 				.map(this::mapToExperimentDTO)
-				.map(this::withMetadata)
 				.toList();
+
+		enrichWithMetadata(experimentDTOs);
+
+		return experimentDTOs;
 	}
 
 	/**
@@ -138,17 +146,27 @@ public class ExperimentService {
 
 	public List<ExperimentDTO> getExperimentByProjectId(long projectId) {
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
-		List<Experiment> result = experimentRepository.findByProjectId(projectId);
-		return result.stream().map(this::mapToExperimentDTO).collect(Collectors.toList());
+		List<Experiment> experiments = experimentRepository.findByProjectId(projectId);
+		List<ExperimentDTO> experimentDTOs = experiments.stream()
+				.map(this::mapToExperimentDTO)
+				.toList();
+
+		enrichWithMetadata(experimentDTOs);
+
+		return experimentDTOs;
 	}
 
 	public List<ExperimentDTO> getExperimentByProjectIds(List<Long> projectIds) {
-		return Optional.ofNullable(experimentRepository.findByProjectIds(projectIds))
+		List<ExperimentDTO> experimentDTOs = Optional.ofNullable(experimentRepository.findByProjectIds(projectIds))
 				.orElseGet(Collections::emptyList)
 				.stream()
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
 				.map(this::mapToExperimentDTO)
 				.toList();
+
+		enrichWithMetadata(experimentDTOs);
+		
+		return experimentDTOs;
 	}
 
 	public List<ExperimentSummaryDTO> getExperimentSummaries() {
@@ -180,13 +198,29 @@ public class ExperimentService {
 		return experimentDTO;
 	}
 
-	private ExperimentDTO withMetadata(ExperimentDTO experimentDTO) {
-		List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.EXPERIMENT.name(), experimentDTO.getId());
-		experimentDTO.setTags(tags.stream().map(tagDTO -> tagDTO.getTag()).toList());
+	private void enrichWithMetadata(List<ExperimentDTO> experiments) {
+		if (CollectionUtils.isNotEmpty(experiments)) {
+			// Create a map of experiment ID to ExperimentDTO for quick lookup
+			Map<Long, ExperimentDTO> experimentMap = new HashMap<>();
+			List<Long> experimentIds = new ArrayList<>(experiments.size());
+			for (ExperimentDTO experiment : experiments) {
+				experimentMap.put(experiment.getId(), experiment);
+				experimentIds.add(experiment.getId());
+			}
 
-		List<PropertyDTO> properties = metadataServiceClient.getProperties(ObjectClass.PROJECT.name(), experimentDTO.getId());
-		experimentDTO.setProperties(properties.stream().map(prop -> new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(prop.getPropertyName(), prop.getPropertyValue())).toList());
-
-		return experimentDTO;
+			// Retrieve the metadata using the list of experiment IDs
+			List<MetadataDTO> experimentsMetadata = metadataServiceGraphQlClient.getMetadata(experimentIds, ObjectClass.EXPERIMENT);
+			for (MetadataDTO metadata : experimentsMetadata) {
+				ExperimentDTO experiment = experimentMap.get(metadata.getObjectId());
+				if (experiment != null) {
+					experiment.setTags(metadata.getTags().stream().map(TagDTO::getTag).collect(Collectors.toList()));
+					List<eu.openanalytics.phaedra.plateservice.dto.PropertyDTO> propertyDTOs = new ArrayList<>(metadata.getProperties().size());
+					for (eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO property : metadata.getProperties()) {
+						propertyDTOs.add(new eu.openanalytics.phaedra.plateservice.dto.PropertyDTO(property.getPropertyName(), property.getPropertyValue()));
+					}
+					experiment.setProperties(propertyDTOs);
+				}
+			}
+		}
 	}
 }

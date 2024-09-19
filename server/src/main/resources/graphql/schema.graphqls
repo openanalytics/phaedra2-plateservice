@@ -245,6 +245,7 @@ type Query {
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
     getWells(wellIds: [ID] = []): [WellDTO]
     getWellById(wellId: ID): WellDTO
+    getWellsByPlateIds(plateIds: [ID] = []): [WellDTO]
     getWellTemplatesByPlateTemplateId(plateTemplateId: ID): [WellTemplateDTO]
 }
 
