@@ -38,6 +38,7 @@ public class PlateServiceClientAutoConfiguration {
         return new HttpPlateServiceClient(phaedraRestTemplate, authService, environment);
     }
 
+    @Bean
     public PlateServiceGraphQLClient plateServiceGraphQLClient(IAuthorizationService authService, Environment environment) {
         return new PlateServiceGraphQLClientImpl(authService, environment);
     }
