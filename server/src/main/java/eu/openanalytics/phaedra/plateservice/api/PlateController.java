@@ -71,20 +71,18 @@ public class PlateController {
     private final WellService wellService;
     private final PlateMeasurementService plateMeasurementService;
     private final MetadataServiceClient metadataServiceHttpClient;
-    private final MetadataServiceGraphQlClient metadataServiceGraphQlClient;
 
-    public PlateController(
+    public PlateController (
         PlateService plateService,
         WellService wellService,
         PlateMeasurementService plateMeasurementService,
-        MetadataServiceClient metadataServiceClient,
-        MetadataServiceGraphQlClient metadataServiceGraphQlClient)
+        MetadataServiceClient metadataServiceClient
+    )
     {
         this.plateService = plateService;
         this.wellService = wellService;
         this.plateMeasurementService = plateMeasurementService;
         this.metadataServiceHttpClient = metadataServiceClient;
-        this.metadataServiceGraphQlClient = metadataServiceGraphQlClient;
     }
 
     @PostMapping
@@ -122,8 +120,6 @@ public class PlateController {
         if (StringUtils.isBlank(barcode) && ObjectUtils.isEmpty(experimentId)) {
             results.addAll(plateService.getPlates(List.of()));
         }
-
-        enrichWithMetadata(results);
 
         return ResponseEntity.ok(results);
     }
@@ -351,32 +347,6 @@ public class PlateController {
             return ResponseEntity.ok().build();
         } catch (PlateNotFoundException e) {
             return ResponseEntity.notFound().build();
-        }
-    }
-
-    private void enrichWithMetadata(List<PlateDTO> plates) {
-        if (CollectionUtils.isNotEmpty(plates)) {
-            // Create a map of plate ID to PlateDTO for quick lookup
-            Map<Long, PlateDTO> plateMap = new HashMap<>();
-            List<Long> plateIds = new ArrayList<>(plates.size());
-            for (PlateDTO plate : plates) {
-                plateMap.put(plate.getId(), plate);
-                plateIds.add(plate.getId());
-            }
-
-            // Retrieve the metadata using the list of plate IDs
-            List<MetadataDTO> plateMetadataList = metadataServiceGraphQlClient.getMetadata(plateIds, ObjectClass.PLATE);
-            for (MetadataDTO metadata : plateMetadataList) {
-                PlateDTO plate = plateMap.get(metadata.getObjectId());
-                if (plate != null) {
-                    plate.setTags(metadata.getTags().stream().map(TagDTO::getTag).collect(Collectors.toList()));
-                    List<PropertyDTO> propertyDTOs = new ArrayList<>(metadata.getProperties().size());
-                    for (eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO property : metadata.getProperties()) {
-                        propertyDTOs.add(new PropertyDTO(property.getPropertyName(), property.getPropertyValue()));
-                    }
-                    plate.setProperties(propertyDTOs);
-                }
-            }
         }
     }
 }

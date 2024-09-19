@@ -146,17 +146,27 @@ public class ExperimentService {
 
 	public List<ExperimentDTO> getExperimentByProjectId(long projectId) {
 		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
-		List<Experiment> result = experimentRepository.findByProjectId(projectId);
-		return result.stream().map(this::mapToExperimentDTO).collect(Collectors.toList());
+		List<Experiment> experiments = experimentRepository.findByProjectId(projectId);
+		List<ExperimentDTO> experimentDTOs = experiments.stream()
+				.map(this::mapToExperimentDTO)
+				.toList();
+
+		enrichWithMetadata(experimentDTOs);
+
+		return experimentDTOs;
 	}
 
 	public List<ExperimentDTO> getExperimentByProjectIds(List<Long> projectIds) {
-		return Optional.ofNullable(experimentRepository.findByProjectIds(projectIds))
+		List<ExperimentDTO> experimentDTOs = Optional.ofNullable(experimentRepository.findByProjectIds(projectIds))
 				.orElseGet(Collections::emptyList)
 				.stream()
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
 				.map(this::mapToExperimentDTO)
 				.toList();
+
+		enrichWithMetadata(experimentDTOs);
+		
+		return experimentDTOs;
 	}
 
 	public List<ExperimentSummaryDTO> getExperimentSummaries() {

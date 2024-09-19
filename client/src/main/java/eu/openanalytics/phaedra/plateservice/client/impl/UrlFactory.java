@@ -78,8 +78,8 @@ public class UrlFactory {
     return String.format("%s/plates?barcode=%s", baseURL, barcode);
   }
 
-  public String experimentPlates(long eperimentId) {
-    return String.format("%s/experiments/%s/plates", baseURL, eperimentId);
+  public String experimentPlates(long experimentId) {
+    return String.format("%s/experiments/%s/plates", baseURL, experimentId);
   }
 
   public String plateTemplatesByName(String name) {
