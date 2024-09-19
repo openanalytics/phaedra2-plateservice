@@ -289,16 +289,21 @@ public class PlateService {
 	}
 
 	public List<PlateDTO> getPlates(List<Long> plateIds) {
-		List<Plate> result = new ArrayList<>();
+		List<Plate> plates = new ArrayList<>();
 		if (CollectionUtils.isEmpty(plateIds)) {
-			result.addAll((List<Plate>) plateRepository.findAll());
+			plates.addAll((List<Plate>) plateRepository.findAll());
 		} else {
-			result.addAll((List<Plate>) plateRepository.findAllById(plateIds));
+			plates.addAll((List<Plate>) plateRepository.findAllById(plateIds));
 		}
-		return result.stream()
+
+		List<PlateDTO> plateDTOs = plates.stream()
 				.filter(p -> projectAccessService.hasAccessLevel(p.getId(), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.collect(Collectors.toList());
+
+		enrichWithMetadata(plateDTOs);
+
+		return plateDTOs;
 	}
 
 
