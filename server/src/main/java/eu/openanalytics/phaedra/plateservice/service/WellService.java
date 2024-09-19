@@ -109,27 +109,27 @@ public class WellService {
         return updatedWellDTO;
     }
 
-    public List<WellDTO> getWells(List<Long> wellIds) {
-        List<Well> wells = (List<Well>) wellRepository.findAllById(wellIds);
-        if (CollectionUtils.isNotEmpty(wells)) {
-            List<WellDTO> result = wells.stream()
-                .map(well -> {
-                    try {
-                        return modelMapper.map(well, WellDTO.class)
-                            .withWellSubstance(
-                                wellSubstanceService.getWellSubstanceByWellId(well.getId()))
-                            .withWellNr(calculateWellNumber(well,
-                                plateService.getPlateById(well.getPlateId())));
-                    } catch (PlateNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .toList();
-            return result;
-        } else {
-            return Collections.emptyList();
-        }
+  public List<WellDTO> getWells(List<Long> wellIds) {
+    List<Well> wells = (List<Well>) wellRepository.findAllById(wellIds);
+    if (CollectionUtils.isNotEmpty(wells)) {
+      List<WellDTO> result = wells.stream()
+          .map(well -> {
+            try {
+              return modelMapper.map(well, WellDTO.class)
+                  .withWellSubstance(
+                      wellSubstanceService.getWellSubstanceByWellId(well.getId()))
+                  .withWellNr(calculateWellNumber(well,
+                      plateService.getPlateById(well.getPlateId())));
+            } catch (PlateNotFoundException e) {
+              throw new RuntimeException(e);
+            }
+          })
+          .toList();
+      return result;
+    } else {
+      return Collections.emptyList();
     }
+  }
 
   public WellDTO getWellById(Long wellId) throws WellNotFoundException, PlateNotFoundException {
     Well well = wellRepository.findById(wellId).orElseThrow(
@@ -143,6 +143,27 @@ public class WellService {
         .withTags(retrieveWellTags(well))
         .withProperties(retrieveWellProperties(well));
     return wellDTO;
+  }
+
+  public List<WellDTO> getWellsByPlateId(long plateId) throws PlateNotFoundException {
+    long projectId = Optional.ofNullable(plateService.getProjectIdByPlateId(plateId)).orElse(0l);
+    projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
+
+    PlateDTO plate = plateService.getPlateById(plateId);
+    List<WellSubstanceDTO> substances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
+
+    return wellRepository.findByPlateId(plateId).stream()
+        .map(well -> modelMapper.map(well, WellDTO.class)
+            .withWellSubstance(findWellSubstanceForWell(well, substances))
+            .withWellNr(calculateWellNumber(well, plate)))
+        .sorted(WELL_COMPARATOR)
+        .toList();
+  }
+
+  public List<WellDTO> getWellsByPlateIds(List<Long> plateIds) {
+    return wellRepository.findByPlateIds(plateIds).stream()
+        .map(well -> modelMapper.map(well, WellDTO.class))
+        .toList();
   }
 
     public List<WellDTO> updateWells(List<WellDTO> wellDTOS){
@@ -165,21 +186,6 @@ public class WellService {
 
     public void acceptWells(long plateId, List<Long> wellIds) {
         wellIds.forEach(wellId -> acceptWell(plateId, wellId));
-    }
-
-    public List<WellDTO> getWellsByPlateId(long plateId) throws PlateNotFoundException {
-    	long projectId = Optional.ofNullable(plateService.getProjectIdByPlateId(plateId)).orElse(0l);
-    	projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
-
-        PlateDTO plate = plateService.getPlateById(plateId);
-    	  List<WellSubstanceDTO> substances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
-
-        return wellRepository.findByPlateId(plateId).stream()
-        		.map(well -> modelMapper.map(well, WellDTO.class)
-                .withWellSubstance(findWellSubstanceForWell(well, substances))
-                .withWellNr(calculateWellNumber(well, plate)))
-        		.sorted(WELL_COMPARATOR)
-        		.toList();
     }
 
     private List<eu.openanalytics.phaedra.plateservice.dto.PropertyDTO> retrieveWellProperties(
