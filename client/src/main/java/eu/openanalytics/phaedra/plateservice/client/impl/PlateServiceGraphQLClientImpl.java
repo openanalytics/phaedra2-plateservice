@@ -28,7 +28,34 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
 
   @Override
   public WellDTO getWell(long wellId) {
-    return null;
+    String document = """
+       {
+         getWellById(wellId: %d) {
+           wellNr
+           wellType
+           wellSubstance {
+             name
+             concentration
+           }
+           tags
+           properties {
+             propertyName
+             propertyValue
+           }
+         }
+       }
+        """.formatted(wellId);
+
+    String bearerToken = authService.getCurrentBearerToken();
+    HttpGraphQlClient httpGraphQlClient = HttpGraphQlClient.builder(this.webClient)
+        .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", bearerToken))
+        .build();
+    WellDTO result = httpGraphQlClient
+        .document(document)
+        .retrieveSync("metadata")
+        .toEntity(WellDTO.class);
+
+    return result;
   }
 
   @Override
