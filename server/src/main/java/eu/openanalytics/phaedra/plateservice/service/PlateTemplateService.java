@@ -122,10 +122,10 @@ public class PlateTemplateService {
     }
 
     public PlateTemplateDTO getPlateTemplateById(long plateTemplateId) {
-    	authService.performAccessCheck(p -> authService.hasUserAccess());
+      authService.performAccessCheck(p -> authService.hasUserAccess());
 
-        Optional<PlateTemplate> result = plateTemplateRepository.findById(plateTemplateId);
-        return result.map(this::mapToPlateTemplateDTO).orElse(null);
+      Optional<PlateTemplate> result = plateTemplateRepository.findById(plateTemplateId);
+      return result.map(this::mapToPlateTemplateDTO).orElse(null);
     }
 
     private PlateTemplateDTO mapToPlateTemplateDTO(PlateTemplate plateTemplate) {
