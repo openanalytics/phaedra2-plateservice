@@ -31,26 +31,12 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
     String document = """
        {
          getWellById(wellId: %d) {
-           wellNr
-           wellType
-           wellSubstance {
-             name
-             concentration
-           }
-           tags
-           properties {
-             propertyName
-             propertyValue
-           }
+           %s
          }
        }
-       """.formatted(wellId);
+       """.formatted(wellId, buildGraphQLDocumentBody());
 
-    String bearerToken = authService.getCurrentBearerToken();
-    HttpGraphQlClient httpGraphQlClient = HttpGraphQlClient.builder(this.webClient)
-        .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", bearerToken))
-        .build();
-    return httpGraphQlClient
+    return httpGraphQlClient()
         .document(document)
         .retrieveSync("getWellById")
         .toEntity(WellDTO.class);
@@ -61,26 +47,12 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
     String document = """
        {
          getWells(wellIds: %s) {
-           wellNr
-           wellType
-           wellSubstance {
-             name
-             concentration
-           }
-           tags
-           properties {
-             propertyName
-             propertyValue
-           }
+           %s
          }
        }
-       """.formatted(wellIds);
+       """.formatted(wellIds, buildGraphQLDocumentBody());
 
-    String bearerToken = authService.getCurrentBearerToken();
-    HttpGraphQlClient httpGraphQlClient = HttpGraphQlClient.builder(this.webClient)
-        .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", bearerToken))
-        .build();
-    WellDTO[] results = httpGraphQlClient
+    WellDTO[] results = httpGraphQlClient()
         .document(document)
         .retrieveSync("getWells")
         .toEntity(WellDTO[].class);
@@ -93,26 +65,12 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
     String document = """
        {
          getPlateWells(plateId: %d) {
-           wellNr
-           wellType
-           wellSubstance {
-             name
-             concentration
-           }
-           tags
-           properties {
-             propertyName
-             propertyValue
-           }
+           %s
          }
        }
-       """.formatted(plateId);
+       """.formatted(plateId, buildGraphQLDocumentBody());
 
-    String bearerToken = authService.getCurrentBearerToken();
-    HttpGraphQlClient httpGraphQlClient = HttpGraphQlClient.builder(this.webClient)
-        .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", bearerToken))
-        .build();
-    WellDTO[] results = httpGraphQlClient
+    WellDTO[] results = httpGraphQlClient()
         .document(document)
         .retrieveSync("getPlateWells")
         .toEntity(WellDTO[].class);
@@ -123,28 +81,14 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
   @Override
   public List<WellDTO> getWellsByPlateIds(List<Long> plateIds) {
     String document = """
-       {
-         getWellsByPlateIds(plateIds: %s) {
-           wellNr
-           wellType
-           wellSubstance {
-             name
-             concentration
-           }
-           tags
-           properties {
-             propertyName
-             propertyValue
-           }
-         }
-       }
-       """.formatted(plateIds);
+          {
+            getWellsByPlateIds(plateIds: %s) {
+              %s
+            }
+          }
+       """.formatted(plateIds, buildGraphQLDocumentBody());
 
-    String bearerToken = authService.getCurrentBearerToken();
-    HttpGraphQlClient httpGraphQlClient = HttpGraphQlClient.builder(this.webClient)
-        .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", bearerToken))
-        .build();
-    WellDTO[] results = httpGraphQlClient
+    WellDTO[] results = httpGraphQlClient()
         .document(document)
         .retrieveSync("getWellsByPlateIds")
         .toEntity(WellDTO[].class);
@@ -155,28 +99,14 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
   @Override
   public List<WellDTO> getWellsByExperimentId(long experimentId) {
     String document = """
-       {
-         getWellsByExperimentId(experimentId: %d) {
-           wellNr
-           wellType
-           wellSubstance {
-             name
-             concentration
-           }
-           tags
-           properties {
-             propertyName
-             propertyValue
-           }
-         }
-       }
-       """.formatted(experimentId);
+        {
+          getWellsByExperimentId(experimentId: %d) {
+            %s
+          }
+        }
+       """.formatted(experimentId, buildGraphQLDocumentBody());
 
-    String bearerToken = authService.getCurrentBearerToken();
-    HttpGraphQlClient httpGraphQlClient = HttpGraphQlClient.builder(this.webClient)
-        .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", bearerToken))
-        .build();
-    WellDTO[] results = httpGraphQlClient
+    WellDTO[] results = httpGraphQlClient()
         .document(document)
         .retrieveSync("getWellsByExperimentId")
         .toEntity(WellDTO[].class);
@@ -189,31 +119,33 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
     String document = """
        {
          getWellsByExperimentIds(experimentIds: %s) {
-           wellNr
-           wellType
-           wellSubstance {
-             name
-             concentration
-           }
-           tags
-           properties {
-             propertyName
-             propertyValue
-           }
+           %s
          }
        }
-       """.formatted(experimentIds);
+       """.formatted(experimentIds, buildGraphQLDocumentBody());
 
-    String bearerToken = authService.getCurrentBearerToken();
-    HttpGraphQlClient httpGraphQlClient = HttpGraphQlClient.builder(this.webClient)
-        .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", bearerToken))
-        .build();
-    WellDTO[] results = httpGraphQlClient
+    WellDTO[] results = httpGraphQlClient()
         .document(document)
         .retrieveSync("getWellsByExperimentId")
         .toEntity(WellDTO[].class);
 
     return List.of(results);
+  }
+
+  private String buildGraphQLDocumentBody() {
+    return """
+            wellNr
+            wellType
+            wellSubstance {
+              name
+              concentration
+            }
+            tags
+            properties {
+              propertyName
+              propertyValue
+            }
+            """;
   }
 
   private HttpGraphQlClient httpGraphQlClient() {
