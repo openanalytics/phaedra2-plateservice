@@ -146,6 +146,14 @@ type PlateDTO {
     properties: [PropertyDTO]
 }
 
+type WellSubstanceDTO {
+    id: ID
+    wellId: ID
+    type: String
+    name: String
+    concentration: Float
+}
+
 type WellDTO {
     id: ID
     plateId: ID
@@ -158,14 +166,6 @@ type WellDTO {
     wellSubstance: WellSubstanceDTO
     tags: [String]
     properties: [PropertyDTO]
-}
-
-type WellSubstanceDTO {
-    id: ID
-    wellId: ID
-    type: String
-    name: String
-    concentration: Float
 }
 
 type PlateMeasurementDTO {
