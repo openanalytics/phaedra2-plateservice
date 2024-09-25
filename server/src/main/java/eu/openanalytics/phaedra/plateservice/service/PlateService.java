@@ -351,6 +351,7 @@ public class PlateService {
 				.toList();
 	}
 
+	@Cacheable("plate_id")
 	public PlateDTO getPlateById(long plateId) throws PlateNotFoundException {
 		Optional<Plate> result = plateRepository.findById(plateId);
 		return result
