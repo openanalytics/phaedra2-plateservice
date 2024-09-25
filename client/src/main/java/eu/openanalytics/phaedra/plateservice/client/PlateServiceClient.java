@@ -30,27 +30,7 @@ public interface PlateServiceClient {
 
     List<ProjectDTO> getProjects();
 
-    PlateDTO getPlate(long plateId) throws UnresolvableObjectException;
-
-    List<WellDTO> getWells(long plateId) throws UnresolvableObjectException;
-
-    PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws UnresolvableObjectException;
-
-    List<WellSubstanceDTO> getWellSubstances(long plateId) throws UnresolvableObjectException;
-
-    List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws UnresolvableObjectException;
-
-    List<PlateDTO> getPlatesByBarcode(String barcode);
-
-    List<PlateDTO> getPlates();
-
-    List<PlateDTO> getPlatesByExperiment(long experimentId);
-
-    List<PlateTemplateDTO> getPlateTemplatesByName(String name);
-
     ExperimentDTO createExperiment(String name, long projectId);
-
-    PlateDTO createPlate(String barcode, long experimentId, int rows, int columns);
 
     ExperimentDTO getExperiment(long experimentId) throws UnresolvableObjectException;
 
@@ -58,6 +38,25 @@ public interface PlateServiceClient {
 
     List<ExperimentDTO> getExperiments(long projectId);
 
+    PlateDTO createPlate(String barcode, long experimentId, int rows, int columns);
+
+    PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws UnresolvableObjectException;
+
+    PlateDTO getPlate(long plateId) throws UnresolvableObjectException;
+
+    List<PlateDTO> getPlates();
+
+    List<PlateDTO> getPlatesByBarcode(String barcode);
+
+    List<PlateDTO> getPlatesByExperiment(long experimentId);
+
+    List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws UnresolvableObjectException;
+
+    List<PlateTemplateDTO> getPlateTemplatesByName(String name);
+
+    List<WellDTO> getWells(long plateId) throws UnresolvableObjectException;
+
     List<WellDTO> getNWells(int n) throws UnresolvableObjectException;
 
+    List<WellSubstanceDTO> getWellSubstances(long plateId) throws UnresolvableObjectException;
 }

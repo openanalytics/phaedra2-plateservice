@@ -351,6 +351,7 @@ public class PlateService {
 				.toList();
 	}
 
+	@Cacheable("plate_id")
 	public PlateDTO getPlateById(long plateId) throws PlateNotFoundException {
 		Optional<Plate> result = plateRepository.findById(plateId);
 		return result
@@ -505,11 +506,15 @@ public class PlateService {
 			}
 
 			// Retrieve the metadata using the list of plate IDs
-			List<MetadataDTO> plateMetadataList = metadataServiceGraphQlClient.getMetadata(plateIds, ObjectClass.PLATE);
+			List<MetadataDTO> plateMetadataList = metadataServiceGraphQlClient
+					.getMetadata(plateIds, ObjectClass.PLATE);
+
 			for (MetadataDTO metadata : plateMetadataList) {
 				PlateDTO plate = plateMap.get(metadata.getObjectId());
 				if (plate != null) {
-					plate.setTags(metadata.getTags().stream().map(TagDTO::getTag).collect(Collectors.toList()));
+					plate.setTags(metadata.getTags().stream()
+							.map(TagDTO::getTag)
+							.toList());
 					List<PropertyDTO> propertyDTOs = new ArrayList<>(metadata.getProperties().size());
 					for (eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO property : metadata.getProperties()) {
 						propertyDTOs.add(new PropertyDTO(property.getPropertyName(), property.getPropertyValue()));

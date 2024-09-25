@@ -35,4 +35,10 @@ public interface WellRepository extends CrudRepository<Well, Long> {
 	@Query("select * from hca_well w where w.plate_id in (:plateIds)")
 	List<Well> findByPlateIds(List<Long> plateIds);
 
+	@Query("select * from hca_well w where w.plate_id in (select p.id from hca_plate p where p.experiment_id = :experimentId)")
+	List<Well> findByExperimentId(Long experimentId);
+
+	@Query("select * from hca_well w where w.plate_id in (select p.id from hca_plate p where p.experiment_id in (:experimentIds))")
+	List<Well> findByExperimentIds(List<Long> experimentIds);
+
 }

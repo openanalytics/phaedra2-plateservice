@@ -112,7 +112,7 @@ public class WellService {
   public List<WellDTO> getWells(List<Long> wellIds) {
     List<Well> wells = (List<Well>) wellRepository.findAllById(wellIds);
     if (CollectionUtils.isNotEmpty(wells)) {
-      List<WellDTO> result = wells.stream()
+      return wells.stream()
           .map(well -> {
             try {
               return modelMapper.map(well, WellDTO.class)
@@ -125,7 +125,6 @@ public class WellService {
             }
           })
           .toList();
-      return result;
     } else {
       return Collections.emptyList();
     }
@@ -137,16 +136,15 @@ public class WellService {
 
     PlateDTO plate = plateService.getPlateById(well.getPlateId());
     List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(well.getPlateId());
-    WellDTO wellDTO = modelMapper.map(well, WellDTO.class)
+    return modelMapper.map(well, WellDTO.class)
         .withWellNr(calculateWellNumber(well, plate))
         .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
         .withTags(retrieveWellTags(well))
         .withProperties(retrieveWellProperties(well));
-    return wellDTO;
   }
 
   public List<WellDTO> getWellsByPlateId(long plateId) throws PlateNotFoundException {
-    long projectId = Optional.ofNullable(plateService.getProjectIdByPlateId(plateId)).orElse(0l);
+    long projectId = Optional.ofNullable(plateService.getProjectIdByPlateId(plateId)).orElse(0L);
     projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
 
     PlateDTO plate = plateService.getPlateById(plateId);
@@ -162,7 +160,22 @@ public class WellService {
 
   public List<WellDTO> getWellsByPlateIds(List<Long> plateIds) {
     return wellRepository.findByPlateIds(plateIds).stream()
-        .map(well -> modelMapper.map(well, WellDTO.class))
+        .map(well -> modelMapper.map(well, WellDTO.class)
+            .withWellNr(calculateWellNumber(well, null)))
+        .toList();
+  }
+
+  public List<WellDTO> getWellsbyExperimentId(Long experimentId) {
+      return wellRepository.findByExperimentId(experimentId).stream()
+          .map(well -> modelMapper.map(well, WellDTO.class)
+              .withWellNr(calculateWellNumber(well, null)))
+          .toList();
+  }
+
+  public List<WellDTO> getWellsbyExperimentIds(List<Long> experimentIds) {
+    return wellRepository.findByExperimentIds(experimentIds).stream()
+        .map(well -> modelMapper.map(well, WellDTO.class)
+            .withWellNr(calculateWellNumber(well, null)))
         .toList();
   }
 
@@ -199,7 +212,7 @@ public class WellService {
 
     private List<String> retrieveWellTags(Well well) {
         List<TagDTO> tags = metadataServiceClient.getTags(ObjectClass.WELL.name(), well.getId());
-        return tags.stream().map(tagDTO -> tagDTO.getTag()).toList();
+        return tags.stream().map(TagDTO::getTag).toList();
     }
 
     private WellSubstanceDTO findWellSubstanceForWell(Well well, List<WellSubstanceDTO> substances) {
@@ -208,8 +221,15 @@ public class WellService {
                 .findAny().orElse(null);
     }
 
-    private Integer calculateWellNumber(Well well, PlateDTO plate){
-        return WellNumberUtils.getWellNr(well.getRow(), well.getColumn(), plate.getColumns());
+    private Integer calculateWellNumber(Well well, PlateDTO plate) {
+      if (plate == null) {
+        try {
+          plate = plateService.getPlateById(well.getPlateId());
+        } catch (PlateNotFoundException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      return WellNumberUtils.getWellNr(well.getRow(), well.getColumn(), plate.getColumns());
     }
 
     private Well mapToWell(WellDTO wellDTO) {
