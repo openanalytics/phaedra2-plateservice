@@ -136,7 +136,13 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
 
   private String buildGraphQLDocumentBody() {
     return """
+            id
+            plateId
             wellNr
+            row
+            column
+            status
+            description
             wellType
             wellSubstance {
               name
