@@ -152,14 +152,11 @@ public class PlateControllerTest {
         plateDTOGet.setDisapprovedReason("test2");
 
         String requestBody = objectMapper.writeValueAsString(plateDTOGet);
-        this.mockMvc.perform(put("/plates/{plateId}", plateId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
-                .andDo(print())
-                .andExpect(status().isOk());
+        mvcResult = this.mockMvc.perform(put("/plates/{plateId}", plateId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andReturn();
 
-        mvcResult = this.mockMvc.perform(get("/plates/{plateId}", plateDTOGet.getId()))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
         PlateDTO plateDTO = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateDTO.class);
         assertThat(plateDTO.getSequence()).isEqualTo(newSequence);
         assertThat(plateDTO.getInvalidatedReason()).isEqualTo("test");
