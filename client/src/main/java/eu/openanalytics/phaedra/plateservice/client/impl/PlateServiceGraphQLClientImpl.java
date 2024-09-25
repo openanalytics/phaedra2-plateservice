@@ -17,12 +17,14 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
   private final WebClient webClient;
   private static final String PROP_BASE_URL = "phaedra.plate-service.base-url";
   private static final String DEFAULT_BASE_URL = "http://phaedra-plate-service:8080/phaedra/plate-service";
+  private static final int MAX_IN_MEMORY_SIZE = 10 * 1024 * 1024;
 
   public PlateServiceGraphQLClientImpl(IAuthorizationService authService, Environment environment) {
     String baseUrl = environment.getProperty(PROP_BASE_URL, DEFAULT_BASE_URL);
     this.authService = authService;
     this.webClient = WebClient.builder()
         .baseUrl(String.format("%s/graphql", baseUrl))
+        .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE))
         .build();
   }
 
