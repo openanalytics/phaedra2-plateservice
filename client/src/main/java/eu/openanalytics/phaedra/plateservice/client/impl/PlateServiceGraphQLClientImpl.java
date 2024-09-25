@@ -128,7 +128,7 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
 
     WellDTO[] results = httpGraphQlClient()
         .document(document)
-        .retrieveSync("getWellsByExperimentId")
+        .retrieveSync("getWellsByExperimentIds")
         .toEntity(WellDTO[].class);
 
     return List.of(results);
