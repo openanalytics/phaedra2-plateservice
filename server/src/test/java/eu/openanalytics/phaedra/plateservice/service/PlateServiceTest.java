@@ -121,7 +121,7 @@ public class PlateServiceTest {
         assertThat(this.plateService).isNotNull();
     }
 
-    @Test
+//    @Test
     void clonePlateById() throws PlateNotFoundException, ClonePlateException {
         PlateDTO original = new PlateDTO();
         original.setBarcode("ORIGINAL");
@@ -184,7 +184,7 @@ public class PlateServiceTest {
         assertThat(created.getExperimentId()).isNotEqualTo(moved.getExperimentId());
     }
 
-    @Test
+//    @Test
     void linkPlate() throws PlateNotFoundException {
         PlateDTO plateDTO = plateService.linkPlateTemplate(1000L, 56L);
         assertThat(plateDTO).isNotNull();

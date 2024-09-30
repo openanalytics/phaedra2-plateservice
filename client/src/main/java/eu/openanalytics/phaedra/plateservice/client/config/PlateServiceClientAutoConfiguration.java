@@ -21,7 +21,9 @@
 package eu.openanalytics.phaedra.plateservice.client.config;
 
 import eu.openanalytics.phaedra.plateservice.client.PlateServiceClient;
+import eu.openanalytics.phaedra.plateservice.client.PlateServiceGraphQLClient;
 import eu.openanalytics.phaedra.plateservice.client.impl.HttpPlateServiceClient;
+import eu.openanalytics.phaedra.plateservice.client.impl.PlateServiceGraphQLClientImpl;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +36,11 @@ public class PlateServiceClientAutoConfiguration {
     @Bean
     public PlateServiceClient plateServiceClient(PhaedraRestTemplate phaedraRestTemplate, IAuthorizationService authService, Environment environment) {
         return new HttpPlateServiceClient(phaedraRestTemplate, authService, environment);
+    }
+
+    @Bean
+    public PlateServiceGraphQLClient plateServiceGraphQLClient(IAuthorizationService authService, Environment environment) {
+        return new PlateServiceGraphQLClientImpl(authService, environment);
     }
 
 }

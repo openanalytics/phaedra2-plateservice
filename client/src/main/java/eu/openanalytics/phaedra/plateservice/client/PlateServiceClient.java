@@ -28,28 +28,35 @@ import java.util.List;
 
 public interface PlateServiceClient {
 
-    PlateDTO getPlate(long plateId) throws UnresolvableObjectException;
+    List<ProjectDTO> getProjects();
 
-    List<WellDTO> getWells(long plateId) throws UnresolvableObjectException;
+    ExperimentDTO createExperiment(String name, long projectId);
+
+    ExperimentDTO getExperiment(long experimentId) throws UnresolvableObjectException;
+
+    List<ExperimentDTO> getExperiments();
+
+    List<ExperimentDTO> getExperiments(long projectId);
+
+    PlateDTO createPlate(String barcode, long experimentId, int rows, int columns);
 
     PlateDTO updatePlateCalculationStatus(long plateId, CalculationStatus status, String details) throws UnresolvableObjectException;
 
-    List<WellSubstanceDTO> getWellSubstances(long plateId) throws UnresolvableObjectException;
+    PlateDTO getPlate(long plateId) throws UnresolvableObjectException;
 
-    List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws UnresolvableObjectException;
+    List<PlateDTO> getPlates();
 
     List<PlateDTO> getPlatesByBarcode(String barcode);
 
     List<PlateDTO> getPlatesByExperiment(long experimentId);
 
+    List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws UnresolvableObjectException;
+
     List<PlateTemplateDTO> getPlateTemplatesByName(String name);
 
-    ExperimentDTO createExperiment(String name, long projectId);
+    List<WellDTO> getWells(long plateId) throws UnresolvableObjectException;
 
-    PlateDTO createPlate(String barcode, long experimentId, int rows, int columns);
+    List<WellDTO> getNWells(int n) throws UnresolvableObjectException;
 
-    ExperimentDTO getExperiment(long experimentId) throws UnresolvableObjectException;
-
-    List<ExperimentDTO> getExperiments(long projectId);
-
+    List<WellSubstanceDTO> getWellSubstances(long plateId) throws UnresolvableObjectException;
 }

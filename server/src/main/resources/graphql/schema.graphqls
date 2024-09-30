@@ -146,6 +146,14 @@ type PlateDTO {
     properties: [PropertyDTO]
 }
 
+type WellSubstanceDTO {
+    id: ID
+    wellId: ID
+    type: String
+    name: String
+    concentration: Float
+}
+
 type WellDTO {
     id: ID
     plateId: ID
@@ -156,16 +164,8 @@ type WellDTO {
     status: WellStatus
     description: String
     wellSubstance: WellSubstanceDTO
-
     tags: [String]
-}
-
-type WellSubstanceDTO {
-    id: ID
-    wellId: ID
-    type: String
-    name: String
-    concentration: Float
+    properties: [PropertyDTO]
 }
 
 type PlateMeasurementDTO {
@@ -219,27 +219,35 @@ type PlateTemplateDTO {
 }
 
 type Query {
-    getProjects: [ProjectDTO]
+    getProjects(projectIds: [ID] = []): [ProjectDTO]
     getNMostRecentlyUpdatedProjects(n: Int): [ProjectDTO]
     getProjectById(projectId: ID): ProjectDTO
     getProjectAccess(projectId: ID): [ProjectAccessDTO]
-    getExperiments: [ExperimentDTO]
-    getNMostRecentExperiments(n: Int): [ExperimentDTO]
-    getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
+    getExperiments(experimentIds: [ID] = []): [ExperimentDTO]
     getExperimentById(experimentId: ID): ExperimentDTO
+    getExperimentsByProjectId(projectId: ID): [ExperimentDTO]
+    getExperimentsByProjectIds(projectIds: [ID] = []): [ExperimentDTO]
+    getNMostRecentExperiments(n: Int): [ExperimentDTO]
     getExperimentSummaries: [ExperimentSummaryDTO]
     getExperimentSummariesByProjectId(projectId: ID): [ExperimentSummaryDTO]
     getExperimentSummaryByExperimentId(experimentId: ID): ExperimentSummaryDTO
+    getPlates(plateIds: [ID] = []): [PlateDTO]
     getPlatesByExperimentId(experimentId: ID): [PlateDTO]
+    getPlatesByExperimentIds(experimentIds: [ID] = []): [PlateDTO]
     getPlatesByBarcode(barcode: String): [PlateDTO]
     getPlateById(plateId: ID): PlateDTO
     getPlateWells(plateId: ID): [WellDTO]
     getMeasurementsByPlateId(plateId: ID): [PlateMeasurementDTO]
     getActiveMeasurementByPlateId(plateId: ID): PlateMeasurementDTO
-    getActiveMeasurementByPlateIds(plateIds: [ID]): [PlateMeasurementDTO]
+    getActiveMeasurementByPlateIds(plateIds: [ID] = []): [PlateMeasurementDTO]
     getActiveMeasurementsByExperimentId(experimentId: ID): [PlateMeasurementDTO]
     getPlateTemplates: [PlateTemplateDTO]
     getPlateTemplateById(plateTemplateId: ID): PlateTemplateDTO
+    getWells(wellIds: [ID] = []): [WellDTO]
+    getWellById(wellId: ID): WellDTO
+    getWellsByPlateIds(plateIds: [ID] = []): [WellDTO]
+    getWellsByExperimentId(experimentId: ID): [WellDTO]
+    getWellsByExperimentIds(experimentIds: [ID] = []): [WellDTO]
     getWellTemplatesByPlateTemplateId(plateTemplateId: ID): [WellTemplateDTO]
 }
 

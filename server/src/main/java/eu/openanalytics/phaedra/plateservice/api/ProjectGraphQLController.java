@@ -20,13 +20,6 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import java.util.List;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.stereotype.Controller;
-
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
 import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
@@ -35,6 +28,11 @@ import eu.openanalytics.phaedra.plateservice.dto.ProjectAccessDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import eu.openanalytics.phaedra.plateservice.service.ProjectAccessService;
 import eu.openanalytics.phaedra.plateservice.service.ProjectService;
+import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
 
 @Controller
 public class ProjectGraphQLController {
@@ -51,10 +49,10 @@ public class ProjectGraphQLController {
     }
 
     @QueryMapping
-    public List<ProjectDTO> getProjects() {
-        List<ProjectDTO> result = projectService.getAllProjects();
+    public List<ProjectDTO> getProjects(@Argument List<Long> projectIds) {
+        List<ProjectDTO> result = projectService.getProjects(projectIds);
         if (CollectionUtils.isNotEmpty(result)) {
-			result.stream().forEach(projectDTO -> {
+            result.stream().forEach(projectDTO -> {
                 addProjectMetadata(projectDTO);
             });
         }

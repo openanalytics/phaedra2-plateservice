@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice.client.impl;
 
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +61,12 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     }
 
     @Override
+    public List<ProjectDTO> getProjects() {
+        var response = restTemplate.exchange(urlFactory.projects(), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), ProjectDTO[].class);
+        return Arrays.stream(response.getBody()).toList();
+    }
+
+    @Override
     public PlateDTO getPlate(long plateId) throws UnresolvableObjectException {
         try {
             var plate = restTemplate.exchange(urlFactory.plate(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateDTO.class);
@@ -77,7 +84,7 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     @Override
     public List<WellDTO> getWells(long plateId) throws UnresolvableObjectException {
     	try {
-            var wells = restTemplate.exchange(urlFactory.wells(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), WellDTO[].class);
+            var wells = restTemplate.exchange(urlFactory.plateWells(plateId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), WellDTO[].class);
             if (wells.getStatusCode().isError()) {
                 throw new UnresolvableObjectException("Plate could not be converted");
             }
@@ -144,9 +151,27 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     }
 
     @Override
+    public List<ExperimentDTO> getExperiments() {
+        var response = restTemplate.exchange(urlFactory.experiments(), HttpMethod.GET,
+            new HttpEntity<String>(makeHttpHeaders()), ExperimentDTO[].class);
+        return Arrays.stream(response.getBody()).toList();
+    }
+
+    @Override
     public List<ExperimentDTO> getExperiments(long projectId) {
     	var response = restTemplate.exchange(urlFactory.experiments(projectId), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), ExperimentDTO[].class);
     	return Arrays.stream(response.getBody()).toList();
+    }
+
+    @Override
+    public List<WellDTO> getNWells(int n) throws UnresolvableObjectException {
+        return List.of();
+    }
+
+    @Override
+    public List<PlateDTO> getPlates() {
+        var response = restTemplate.exchange(urlFactory.plates(), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateDTO[].class);
+        return Arrays.stream(response.getBody()).toList();
     }
 
     @Override

@@ -30,6 +30,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -121,11 +122,12 @@ public class PlateTemplateService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable("plate_plate_template_id")
     public PlateTemplateDTO getPlateTemplateById(long plateTemplateId) {
-    	authService.performAccessCheck(p -> authService.hasUserAccess());
+      authService.performAccessCheck(p -> authService.hasUserAccess());
 
-        Optional<PlateTemplate> result = plateTemplateRepository.findById(plateTemplateId);
-        return result.map(this::mapToPlateTemplateDTO).orElse(null);
+      Optional<PlateTemplate> result = plateTemplateRepository.findById(plateTemplateId);
+      return result.map(this::mapToPlateTemplateDTO).orElse(null);
     }
 
     private PlateTemplateDTO mapToPlateTemplateDTO(PlateTemplate plateTemplate) {

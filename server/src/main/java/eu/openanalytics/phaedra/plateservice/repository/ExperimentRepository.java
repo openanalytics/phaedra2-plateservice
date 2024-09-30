@@ -21,12 +21,12 @@
 package eu.openanalytics.phaedra.plateservice.repository;
 
 import eu.openanalytics.phaedra.plateservice.model.Experiment;
+import java.util.Collection;
+import java.util.List;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
@@ -38,6 +38,9 @@ public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
 	List<Experiment> findNMostRecentExperiments(int n);
 
 	List<Experiment> findByProjectId(long projectId);
+
+	@Query("select * from hca_experiment e where e.project_id in (:projectIds)")
+	List<Experiment> findByProjectIds(Collection<Long> projectIds);
 
 	@Query("delete from hca_experiment e where e.project_id = :projectId")
 	void deleteByProjectId(@Param("projectId") long projectId);
