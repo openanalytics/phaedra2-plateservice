@@ -159,22 +159,37 @@ public class WellService {
   }
 
   public List<WellDTO> getWellsByPlateIds(List<Long> plateIds) {
+    List<WellSubstanceDTO> wellSubstances = wellSubstanceService
+        .getWellSubstancesByPlateIds(plateIds);
     return wellRepository.findByPlateIds(plateIds).stream()
         .map(well -> modelMapper.map(well, WellDTO.class)
+            .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
             .withWellNr(calculateWellNumber(well, null)))
         .toList();
   }
 
   public List<WellDTO> getWellsbyExperimentId(Long experimentId) {
-      return wellRepository.findByExperimentId(experimentId).stream()
-          .map(well -> modelMapper.map(well, WellDTO.class)
-              .withWellNr(calculateWellNumber(well, null)))
-          .toList();
+    List<Long> plateIds = plateService.getPlatesByExperimentId(experimentId).stream()
+        .map(plate -> plate.getId())
+        .toList();
+    List<WellSubstanceDTO> wellSubstances = wellSubstanceService
+        .getWellSubstancesByPlateIds(plateIds);
+    return wellRepository.findByExperimentId(experimentId).stream()
+        .map(well -> modelMapper.map(well, WellDTO.class)
+            .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
+            .withWellNr(calculateWellNumber(well, null)))
+        .toList();
   }
 
   public List<WellDTO> getWellsbyExperimentIds(List<Long> experimentIds) {
+    List<Long> plateIds = plateService.getPlatesByExperimentIds(experimentIds).stream()
+        .map(plate -> plate.getId())
+        .toList();
+    List<WellSubstanceDTO> wellSubstances = wellSubstanceService
+        .getWellSubstancesByPlateIds(plateIds);
     return wellRepository.findByExperimentIds(experimentIds).stream()
         .map(well -> modelMapper.map(well, WellDTO.class)
+            .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
             .withWellNr(calculateWellNumber(well, null)))
         .toList();
   }
