@@ -93,6 +93,12 @@ public class ExperimentController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@DeleteMapping()
+	public ResponseEntity<Void> deleteExperiments(@RequestBody List<Long> experimentIds) {
+		experimentService.deleteExperiments(experimentIds);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 	@GetMapping(value="/{experimentId}")
 	public ResponseEntity<ExperimentDTO> getExperiment(@PathVariable Long experimentId) {
 		ExperimentDTO response = experimentService.getExperimentById(experimentId);
