@@ -288,6 +288,12 @@ public class PlateService {
 		kafkaProducerService.notifyPlateModified(new PlateModificationEvent(PlateDTO.builder().id(plateId).build(), PlateModificationEventType.Deleted));
 	}
 
+	public void deletePlates(List<Long> plateIds) {
+		for (Long plateId : plateIds) {
+			deletePlate(plateId);
+		}
+	}
+
 	public List<PlateDTO> getPlates(List<Long> plateIds) {
 		List<Plate> plates = new ArrayList<>();
 		if (CollectionUtils.isEmpty(plateIds)) {
