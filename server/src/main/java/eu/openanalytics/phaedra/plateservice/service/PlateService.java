@@ -288,6 +288,16 @@ public class PlateService {
 		kafkaProducerService.notifyPlateModified(new PlateModificationEvent(PlateDTO.builder().id(plateId).build(), PlateModificationEventType.Deleted));
 	}
 
+	public void deletePlates(List<Long> plateIds) {
+		for (Long plateId : plateIds) {
+			projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateId), ProjectAccessLevel.Write);
+		}
+		plateRepository.deleteAllById(plateIds);
+		for (Long plateId : plateIds) {
+			kafkaProducerService.notifyPlateModified(new PlateModificationEvent(PlateDTO.builder().id(plateId).build(), PlateModificationEventType.Deleted));
+		}
+	}
+
 	public List<PlateDTO> getPlates(List<Long> plateIds) {
 		List<Plate> plates = new ArrayList<>();
 		if (CollectionUtils.isEmpty(plateIds)) {

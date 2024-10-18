@@ -94,6 +94,12 @@ public class ProjectController {
 		return ResponseEntity.ok().build();
 	}
 
+	@DeleteMapping()
+	public ResponseEntity<Void> deleteProjects(@RequestBody List<Long> projectIds) {
+		projectService.deleteProjects(projectIds);
+		return ResponseEntity.ok().build();
+	}
+
 	@GetMapping(value="/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ProjectDTO> getProject(@PathVariable long projectId) {
 		ProjectDTO response = projectService.getProjectById(projectId);

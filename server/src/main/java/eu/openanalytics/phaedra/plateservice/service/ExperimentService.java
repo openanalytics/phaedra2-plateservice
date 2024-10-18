@@ -106,6 +106,15 @@ public class ExperimentService {
 		});
 	}
 
+	public void deleteExperiments(List<Long> experimentIds) {
+		for (Long experimentId : experimentIds) {
+			experimentRepository.findById(experimentId).ifPresent(e -> {
+				projectAccessService.checkAccessLevel(e.getProjectId(), ProjectAccessLevel.Write);
+			});
+		}
+		experimentRepository.deleteAllById(experimentIds);
+	}
+
 	public ExperimentDTO getExperimentById(long experimentId) {
 		return experimentRepository.findById(experimentId)
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
@@ -165,7 +174,7 @@ public class ExperimentService {
 				.toList();
 
 		enrichWithMetadata(experimentDTOs);
-		
+
 		return experimentDTOs;
 	}
 
