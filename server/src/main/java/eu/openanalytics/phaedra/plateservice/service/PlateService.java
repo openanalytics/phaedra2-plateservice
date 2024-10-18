@@ -290,7 +290,11 @@ public class PlateService {
 
 	public void deletePlates(List<Long> plateIds) {
 		for (Long plateId : plateIds) {
-			deletePlate(plateId);
+			projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateId), ProjectAccessLevel.Write);
+		}
+		plateRepository.deleteAllById(plateIds);
+		for (Long plateId : plateIds) {
+			kafkaProducerService.notifyPlateModified(new PlateModificationEvent(PlateDTO.builder().id(plateId).build(), PlateModificationEventType.Deleted));
 		}
 	}
 
