@@ -101,6 +101,13 @@ public class ProjectService {
 		projectRepository.deleteById(projectId);
 	}
 
+	public void deleteProjects(List<Long> projectIds) {
+		for (Long projectId : projectIds) {
+			projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Admin);
+		}
+		projectRepository.deleteAllById(projectIds);
+	}
+
 	public List<ProjectDTO> getProjects(List<Long> projectIds) {
 		List<Project> projects = new ArrayList<>();
 		if (CollectionUtils.isEmpty(projectIds)) {
