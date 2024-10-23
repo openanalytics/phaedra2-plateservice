@@ -20,11 +20,8 @@
  */
 package eu.openanalytics.phaedra.plateservice;
 
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.model.Well;
 import javax.sql.DataSource;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -94,18 +91,5 @@ public class PlateServiceApplication {
 	@Bean
 	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
 		return AuthenticationConfigHelper.configure(http);
-	}
-
-	@Bean
-	public ModelMapper modelMapper() {
-		ModelMapper modelMapper = new ModelMapper();
-
-		modelMapper.typeMap(Well.class, WellDTO.class)
-				.addMapping(src -> src.getPlate().getId(), WellDTO::setPlateId)
-				.addMappings(mapper -> mapper.map(src -> src.getPlate(), WellDTO::setPlate))
-				.addMappings(mapper -> mapper.map(src -> src.getExperiment(), WellDTO::setExperiment))
-				.addMappings(mapper -> mapper.map(src -> src.getProject(), WellDTO::setProject));
-
-		return modelMapper;
 	}
 }

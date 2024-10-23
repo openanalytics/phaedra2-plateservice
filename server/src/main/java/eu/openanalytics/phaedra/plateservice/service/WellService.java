@@ -24,6 +24,7 @@ import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
 import eu.openanalytics.phaedra.metadataservice.dto.PropertyDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellStatusDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
@@ -48,6 +49,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WellService {
+
+    private static final ModelMapper modelMapper = new ModelMapper();
+
     private static final Comparator<WellDTO> WELL_COMPARATOR = Comparator.comparing(WellDTO::getRow).thenComparing(WellDTO::getColumn);
 
     private final WellRepository wellRepository;
@@ -55,19 +59,14 @@ public class WellService {
     private final ProjectAccessService projectAccessService;
     private final WellSubstanceService wellSubstanceService;
     private final MetadataServiceClient metadataServiceClient;
-    private final ModelMapper modelMapper;
 
-  public WellService(WellRepository wellRepository, PlateService plateService,
-      ProjectAccessService projectAccessService, WellSubstanceService wellSubstanceService,
-      MetadataServiceClient metadataServiceClient,
-      ModelMapper modelMapper) {
-    this.wellRepository = wellRepository;
-    this.plateService = plateService;
-    this.projectAccessService = projectAccessService;
-    this.wellSubstanceService = wellSubstanceService;
-    this.metadataServiceClient = metadataServiceClient;
-    this.modelMapper = modelMapper;
-  }
+    public WellService(WellRepository wellRepository, PlateService plateService, ProjectAccessService projectAccessService, WellSubstanceService wellSubstanceService, MetadataServiceClient metadataServiceClient) {
+        this.wellRepository = wellRepository;
+        this.plateService = plateService;
+        this.projectAccessService = projectAccessService;
+        this.wellSubstanceService = wellSubstanceService;
+        this.metadataServiceClient = metadataServiceClient;
+    }
 
     public WellDTO createWell(WellDTO wellDTO) {
     	long projectId = plateService.getProjectIdByPlateId(wellDTO.getPlateId());
