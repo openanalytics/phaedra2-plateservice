@@ -40,7 +40,6 @@ public class PlateDTO {
 	private Long id;
 	private String barcode;
 	private String description;
-	private Long experimentId;
 
 	private Integer rows;
 	private Integer columns;
@@ -80,4 +79,7 @@ public class PlateDTO {
 
 	private List<String> tags;
 	private List<PropertyDTO> properties;
+
+	private Long experimentId;
+	private ExperimentDTO parent;
 }

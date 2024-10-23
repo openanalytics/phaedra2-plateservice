@@ -22,6 +22,9 @@ package eu.openanalytics.phaedra.plateservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eu.openanalytics.phaedra.plateservice.enumeration.WellStatus;
+import eu.openanalytics.phaedra.plateservice.record.ExperimentProjectionRecord;
+import eu.openanalytics.phaedra.plateservice.record.PlateProjectionRecord;
+import eu.openanalytics.phaedra.plateservice.record.ProjectProjectionRecord;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,4 +55,8 @@ public class WellDTO {
 
 	private WellSubstanceDTO wellSubstance;
 	private Map<Long, Float> featureValues;
+
+	private PlateProjectionRecord plate;
+	private ExperimentProjectionRecord experiment;
+	private ProjectProjectionRecord project;
 }

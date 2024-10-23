@@ -159,7 +159,7 @@ public class PlateGraphQLController {
   }
 
   @QueryMapping
-  public WellDTO getWellById(@Argument Long wellId)
+  public WellDTO getWellById(@Argument Long wellId, @Argument boolean includePlate)
       throws WellNotFoundException, PlateNotFoundException {
     return wellService.getWellById(wellId);
   }

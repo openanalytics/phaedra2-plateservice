@@ -52,6 +52,10 @@ public class Well {
 	private Long compoundId;
 	private String description;
 
+	private PlateProjection plate;
+	private ExperimentProjection experiment;
+	private ProjectProjection project;
+
 	public Well(Long plateId) {
 		this.plateId = plateId;
 	}

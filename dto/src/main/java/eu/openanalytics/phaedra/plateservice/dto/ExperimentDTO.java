@@ -36,14 +36,19 @@ public class ExperimentDTO {
 	private String name;
 	private String description;
 	private ExperimentStatus status;
-	private Long projectId;
+
 	private String multiploMethod;
 	private String multiploParameter;
+
 	private Date createdOn;
 	private String createdBy;
 	private Date updatedOn;
 	private String updatedBy;
+
 	private List<String> tags;
 	private List<PropertyDTO> properties;
 	private ExperimentSummaryDTO summary;
+
+	private Long projectId;
+	private ProjectDTO parent;
 }
