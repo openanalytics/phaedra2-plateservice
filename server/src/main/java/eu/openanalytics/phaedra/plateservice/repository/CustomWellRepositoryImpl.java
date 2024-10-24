@@ -27,7 +27,7 @@ public class CustomWellRepositoryImpl implements CustomWellRepository {
     StringBuilder sql = new StringBuilder(BASE_QUERY);
     sql.append("WHERE w.id = :id");
 
-    return queryForWell(sql.toString(), buildParams("id", id));
+    return queryForObject(sql.toString(), buildParams("id", id));
   }
 
   @Override
@@ -76,7 +76,7 @@ public class CustomWellRepositoryImpl implements CustomWellRepository {
     return params;
   }
 
-  private Well queryForWell(String sql, Map<String, Object> params) {
+  private Well queryForObject(String sql, Map<String, Object> params) {
     return jdbcTemplate.queryForObject(sql, params, new WellRowMapper());
   }
 

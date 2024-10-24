@@ -22,17 +22,15 @@ package eu.openanalytics.phaedra.plateservice.repository;
 
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
-import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Set;
-
 @Repository
-public interface PlateRepository extends CrudRepository<Plate, Long> {
+public interface PlateRepository extends CustomPlateRepository, CrudRepository<Plate, Long> {
 
 	@Query("delete from hca_plate p where p.experiment_id = :experimentId")
 	void deleteByExperimentId(@Param("experimentId") long experimentId);
@@ -47,48 +45,39 @@ public interface PlateRepository extends CrudRepository<Plate, Long> {
 	@Query("select e.project_id from hca_experiment e where e.id = :experimentId")
 	Long findProjectIdByExperimentId(@Param("experimentId") long experimentId);
 
-	List<Plate> findByExperimentId(long experimentId);
-
-	@Query("select * from hca_plate p where p.experiment_id in (:experimentIds)")
-	List<Plate> findByExperimentIds(Collection<Long> experimentIds);
-
-	List<Plate> findByBarcode(String barcode);
-
-	List<Plate> findByBarcodeAndExperimentId(String barcode, long experimentId);
-
 	@Query("""
- 			select experiment_id, 
-				count(id) as nr_plates, 
+ 			select experiment_id,
+				count(id) as nr_plates,
 				count(id) filter (where link_status = 'LINKED') as nr_plates_linked_layout,
-				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated, 
-				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated, 
-				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved 
-			from hca_plate 
+				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated,
+				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated,
+				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved
+			from hca_plate
 			group by experiment_id
 		   """)
 	List<ExperimentSummaryDTO> findExperimentSummaries();
 
 	@Query("""
- 			select experiment_id, 
-				count(id) as nr_plates, 
+ 			select experiment_id,
+				count(id) as nr_plates,
 				count(id) filter (where link_status = 'LINKED') as nr_plates_linked_layout,
-				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated, 
-				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated, 
-				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved 
-			from hca_plate 
+				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated,
+				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated,
+				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved
+			from hca_plate
 			where experiment_id in (:experimentIds)
 			group by experiment_id
 		   """)
 	List<ExperimentSummaryDTO> findExperimentSummariesInExperimentIds(Set<Long> experimentIds);
 
 	@Query("""
- 			select experiment_id, 
+ 			select experiment_id,
 				count(id) as nr_plates,
-				count(id) filter (where link_status = 'LINKED') as nr_plates_linked_layout,				
-				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated, 
-				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated, 
-				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved 
-			from hca_plate 
+				count(id) filter (where link_status = 'LINKED') as nr_plates_linked_layout,
+				count(id) filter (where calculation_status = 'CALCULATION_OK') as nr_plates_calculated,
+				count(id) filter (where validation_status = 'VALIDATED') as nr_plates_validated,
+				count(id) filter (where approval_status = 'APPROVED') as nr_plates_approved
+			from hca_plate
 			where experiment_id = :experimentId
 			group by experiment_id
 		   """)

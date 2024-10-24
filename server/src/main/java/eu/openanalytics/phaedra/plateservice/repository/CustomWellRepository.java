@@ -22,8 +22,6 @@ package eu.openanalytics.phaedra.plateservice.repository;
 
 import eu.openanalytics.phaedra.plateservice.model.Well;
 import java.util.List;
-import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

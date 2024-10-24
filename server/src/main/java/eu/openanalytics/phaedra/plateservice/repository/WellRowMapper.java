@@ -17,10 +17,10 @@ public class WellRowMapper implements RowMapper<Well> {
     well.setPlateId(rs.getLong("plate_id"));
     well.setRow(rs.getInt("row"));
     well.setColumn(rs.getInt("column"));
-    well.setWellType(rs.getString("welltype"));
     well.setStatus(WellStatus.valueOf(rs.getString("status")));
     well.setCompoundId(rs.getLong("compound_id"));
     well.setDescription(rs.getString("description"));
+    well.setWellType(rs.getString("welltype"));
 
     PlateProjection plate = new PlateProjection(
         rs.getLong("plate_id"),

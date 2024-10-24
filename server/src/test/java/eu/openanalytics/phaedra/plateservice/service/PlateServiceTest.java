@@ -20,6 +20,9 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
+import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
@@ -31,7 +34,12 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.plateservice.support.Containers;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +59,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @Testcontainers
 @SpringBootTest
@@ -58,6 +69,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql({"/jdbc/test-data.sql"})
 @TestPropertySource(locations = "classpath:application-test.properties")
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
+@ExtendWith(MockitoExtension.class)
 public class PlateServiceTest {
     private final org.modelmapper.ModelMapper modelMapper = new ModelMapper();
 
@@ -81,7 +93,11 @@ public class PlateServiceTest {
     private PlateMeasurementService plateMeasurementService;
 
     @Autowired
+    @InjectMocks
     private PlateService plateService;
+
+    @Mock
+    private MetadataServiceGraphQlClient metadataServiceGraphQlClient;
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -188,5 +204,15 @@ public class PlateServiceTest {
     void linkPlate() throws PlateNotFoundException {
         PlateDTO plateDTO = plateService.linkPlateTemplate(1000L, 56L);
         assertThat(plateDTO).isNotNull();
+    }
+
+    @Test
+    void getPlateById() throws PlateNotFoundException {
+        PlateDTO plateDTO = plateService.getPlateById(1000L);
+
+        assertThat(plateDTO).isNotNull();
+        assertThat(plateDTO.getId()).isEqualTo(1000L);
+        assertThat(plateDTO.getExperiment()).isNotNull();
+        assertThat(plateDTO.getProject()).isNotNull();
     }
 }

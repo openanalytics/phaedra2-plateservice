@@ -72,7 +72,6 @@ public class WellService {
       this.modelMapper = new ModelMapper();
       this.modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-      // Custom mapping to resolve the ambiguity
       this.modelMapper.typeMap(Well.class, WellDTO.class).addMappings(mapper -> {
         mapper.map(src -> src.getPlateId(), WellDTO::setPlateId);
         mapper.map(src -> src.getPlate(), WellDTO::setPlate);
