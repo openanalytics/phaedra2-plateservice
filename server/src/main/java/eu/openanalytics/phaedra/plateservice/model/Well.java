@@ -21,6 +21,9 @@
 package eu.openanalytics.phaedra.plateservice.model;
 
 import eu.openanalytics.phaedra.plateservice.enumeration.WellStatus;
+import eu.openanalytics.phaedra.plateservice.record.ExperimentProjection;
+import eu.openanalytics.phaedra.plateservice.record.PlateProjection;
+import eu.openanalytics.phaedra.plateservice.record.ProjectProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;

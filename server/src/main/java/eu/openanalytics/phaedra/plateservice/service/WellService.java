@@ -240,7 +240,7 @@ public class WellService {
     }
 
     private Integer calculateWellNumber(Well well) {
-      return WellNumberUtils.getWellNr(well.getRow(), well.getColumn(), well.getPlate().getColumns());
+      return WellNumberUtils.getWellNr(well.getRow(), well.getColumn(), well.getPlate().columns());
     }
 
     private Well mapToWell(WellDTO wellDTO) {

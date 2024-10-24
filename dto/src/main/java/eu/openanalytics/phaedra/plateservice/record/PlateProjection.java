@@ -1,6 +1,6 @@
 package eu.openanalytics.phaedra.plateservice.record;
 
-public record PlateProjectionRecord(
+public record PlateProjection(
     Long id,
     String barcode,
     String description,
@@ -8,4 +8,5 @@ public record PlateProjectionRecord(
     Integer rows,
     Integer columns
 ) {
+
 }
