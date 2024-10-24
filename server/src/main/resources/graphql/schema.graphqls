@@ -68,6 +68,12 @@ type ProjectDTO {
     access: [ProjectAccessDTO]
 }
 
+type ProjectProjection {
+    id: ID
+    name: String
+    description: String
+}
+
 type ProjectAccessDTO {
     id: ID
     projectId: ID
@@ -80,7 +86,6 @@ type ExperimentDTO {
     name: String
     description: String
     status: String
-    projectId: Int
     multiploMethod: String
     multiploParameter: String
     createdOn: Date
@@ -91,6 +96,9 @@ type ExperimentDTO {
     tags: [String]
     properties: [PropertyDTO]
     summary: ExperimentSummaryDTO
+
+    projectId: Int
+    project: ProjectProjection
 }
 
 type ExperimentSummaryDTO {
@@ -102,12 +110,17 @@ type ExperimentSummaryDTO {
     nrPlatesApproved: Int
 }
 
+type ExperimentProjection {
+    id: ID
+    name: String
+    description: String
+    projectId: ID
+}
+
 type PlateDTO {
     id: ID
     barcode: String
     description: String
-    experimentId: Int
-
     rows: Int
     columns: Int
     sequence: Int
@@ -144,6 +157,18 @@ type PlateDTO {
 
     tags: [String]
     properties: [PropertyDTO]
+
+    experimentId: Int
+    experiment: ExperimentProjection
+}
+
+type PlateProjection {
+    id: ID
+    barcode: String
+    description: String
+    experimentId: ID
+    rows: Int
+    columns: Int
 }
 
 type WellSubstanceDTO {
@@ -156,7 +181,6 @@ type WellSubstanceDTO {
 
 type WellDTO {
     id: ID
-    plateId: ID
     row: Int
     column: Int
     wellNr: Int
@@ -164,8 +188,12 @@ type WellDTO {
     status: WellStatus
     description: String
     wellSubstance: WellSubstanceDTO
+
     tags: [String]
     properties: [PropertyDTO]
+
+    plateId: ID
+    plate: PlateProjection
 }
 
 type PlateMeasurementDTO {
