@@ -43,14 +43,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IteratorUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WellService {
 
-    private static final ModelMapper modelMapper = new ModelMapper();
+    private ModelMapper modelMapper;
 
     private static final Comparator<WellDTO> WELL_COMPARATOR = Comparator.comparing(WellDTO::getRow).thenComparing(WellDTO::getColumn);
 
@@ -66,6 +68,17 @@ public class WellService {
         this.projectAccessService = projectAccessService;
         this.wellSubstanceService = wellSubstanceService;
         this.metadataServiceClient = metadataServiceClient;
+
+      this.modelMapper = new ModelMapper();
+      this.modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+      // Custom mapping to resolve the ambiguity
+      this.modelMapper.typeMap(Well.class, WellDTO.class).addMappings(mapper -> {
+        mapper.map(src -> src.getPlateId(), WellDTO::setPlateId);
+        mapper.map(src -> src.getPlate(), WellDTO::setPlate);
+        mapper.map(src -> src.getExperiment(), WellDTO::setExperiment);
+        mapper.map(src -> src.getProject(), WellDTO::setProject);
+      });
     }
 
     public WellDTO createWell(WellDTO wellDTO) {
@@ -92,8 +105,11 @@ public class WellService {
                 wells.add(well);
             }
         }
-        wellRepository.saveAll(wells);
-        return wells.stream().map(well -> modelMapper.map(well, WellDTO.class)).collect(Collectors.toList());
+        Iterable<Well> savedWells = wellRepository.saveAll(wells);
+        List<Well> result = IteratorUtils.toList(savedWells.iterator());
+        return result.stream()
+            .map(well -> modelMapper.map(well, WellDTO.class))
+            .collect(Collectors.toList());
     }
 
     public WellDTO updateWell(WellDTO wellDTO) {
