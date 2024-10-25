@@ -372,10 +372,10 @@ public class PlateService {
 	}
 
 	public PlateDTO getPlateById(long plateId) throws PlateNotFoundException {
-		Plate plate = Optional.ofNullable(plateRepository.findById(plateId))
+		PlateDTO plateDTO = Optional.ofNullable(plateRepository.findById(plateId))
+				.filter(p -> projectAccessService.hasAccessLevel(p.getProject().id(), ProjectAccessLevel.Read))
+				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.orElseThrow(() -> new PlateNotFoundException(plateId));
-		projectAccessService.hasAccessLevel(plate.getProject().id(), ProjectAccessLevel.Read);
-		PlateDTO plateDTO = modelMapper.map(plate, PlateDTO.class);
 		enrichWithMetadata(List.of(plateDTO));
 		return plateDTO;
 	}
