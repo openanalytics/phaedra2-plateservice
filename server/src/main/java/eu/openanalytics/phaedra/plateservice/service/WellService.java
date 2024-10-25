@@ -136,8 +136,8 @@ public class WellService {
     }
   }
 
-  public WellDTO getWellById(Long wellId) throws WellNotFoundException, PlateNotFoundException {
-    Well well = wellRepository.findById(wellId).orElseThrow(
+  public WellDTO getWellById(long wellId) throws WellNotFoundException, PlateNotFoundException {
+    Well well = Optional.ofNullable(wellRepository.findById(wellId)).orElseThrow(
         () -> new WellNotFoundException(String.format("Well with id %d not found!", wellId)));
 
     List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(well.getPlateId());
