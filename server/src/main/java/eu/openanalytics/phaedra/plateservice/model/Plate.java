@@ -21,9 +21,12 @@
 package eu.openanalytics.phaedra.plateservice.model;
 
 import eu.openanalytics.phaedra.plateservice.enumeration.*;
+import eu.openanalytics.phaedra.plateservice.record.ExperimentProjection;
+import eu.openanalytics.phaedra.plateservice.record.ProjectProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -103,4 +106,8 @@ public class Plate {
 	@Column("updated_by")
 	private String updatedBy;
 
+	@Transient
+	private ExperimentProjection experiment;
+	@Transient
+	private ProjectProjection project;
 }

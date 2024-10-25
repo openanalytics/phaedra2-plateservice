@@ -33,14 +33,14 @@ insert into plates.hca_plate (id,barcode,description,experiment_id,rows,columns,
                             link_source,linked_on,calculation_status,calculation_error,calculated_by,calculated_on,
                             validation_status,validated_by,validated_on,invalidated_reason,approval_status,approved_by,approved_on,disapproved_reason,
                             upload_status,uploaded_by,uploaded_on,created_on,created_by,updated_on,updated_by)
-values (1000,'barcode1','description1',1000,16,24,0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-        null,null,null,null,null,null,null);
+values (1000,'barcode1','description1',1000,16,24,0,'NOT_LINKED',null,null,null,'CALCULATION_NEEDED',null,null,null,'VALIDATION_NOT_SET',null,null,null,'APPROVAL_NOT_SET',null,null,null,
+        'UPLOAD_NOT_SET',null,null,null,null,null,null);
 insert into plates.hca_plate (id,barcode,description,experiment_id,rows,columns,sequence,link_status,link_template_id,
                               link_source,linked_on,calculation_status,calculation_error,calculated_by,calculated_on,
                               validation_status,validated_by,validated_on,invalidated_reason,approval_status,approved_by,approved_on,disapproved_reason,
                               upload_status,uploaded_by,uploaded_on,created_on,created_by,updated_on,updated_by)
-values (2000,'barcode2','description2',1000,16,24,0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-        null,null,null,null,null,null,null);
+values (2000,'barcode2','description2',1000,16,24,0,'NOT_LINKED',null,null,null,'CALCULATION_NEEDED',null,null,null,'VALIDATION_NOT_SET',null,null,null,'APPROVAL_NOT_SET',null,null,null,
+        'UPLOAD_NOT_SET',null,null,null,null,null,null);
 
 insert into plates.hca_well(id, plate_id, row, "column", status, compound_id, description, welltype)
 values(9494, 1000,  1, 5, 'ACCEPTED_DEFAULT', null, null, 'EMPTY');

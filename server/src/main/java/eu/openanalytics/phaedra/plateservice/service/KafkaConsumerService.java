@@ -25,6 +25,7 @@ import eu.openanalytics.phaedra.plateservice.dto.PlateCalculationStatusDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.repository.CustomPlateRepository;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import lombok.Data;
@@ -60,12 +61,11 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = TOPIC_PLATES, groupId = GROUP_ID + "_reqPlateCalculationStatusUpdate", filter = "reqPlateCalculationStatusUpdateFilter")
     public void reqPlateCalculationStatusUpdate(PlateCalculationStatusDTO plateCalcStatusDTO) {
-        Optional<Plate> result = plateRepository.findById(plateCalcStatusDTO.getPlateId());
-        if (result.isPresent()) {
+      Plate plate = ((CustomPlateRepository) plateRepository).findById(plateCalcStatusDTO.getPlateId());
+        if (plate != null) {
         	logger.debug(String.format("Setting plate calculation status to %s for plateId %d",
         			plateCalcStatusDTO.getCalculationStatus().name(), plateCalcStatusDTO.getPlateId()));
 
-            Plate plate = result.get();
             plate.setCalculationStatus(plateCalcStatusDTO.getCalculationStatus());
             if (plateCalcStatusDTO.getDetails() != null) {
             	plate.setCalculationError(plateCalcStatusDTO.getDetails());

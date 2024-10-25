@@ -47,6 +47,8 @@ import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.exceptions.ValidationException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.model.Well;
+import eu.openanalytics.phaedra.plateservice.repository.CustomPlateRepository;
 import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import java.util.ArrayList;
@@ -63,6 +65,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
+import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
 import org.slf4j.Logger;
@@ -115,11 +118,18 @@ public class PlateService {
     this.metadataServiceGraphQlClient = metadataServiceGraphQlClient;
 
     // TODO move to dedicated ModelMapper service
-		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
-				.setDestinationNameTransformer(NameTransformers.builder())
-				.setDestinationNamingConvention(NamingConventions.builder());
-		modelMapper.createTypeMap(Plate.class, PlateDTO.PlateDTOBuilder.class, builderConfiguration)
-				.setPropertyCondition(Conditions.isNotNull());
+//		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
+//				.setDestinationNameTransformer(NameTransformers.builder())
+//				.setDestinationNamingConvention(NamingConventions.builder());
+//		modelMapper.createTypeMap(Plate.class, PlateDTO.PlateDTOBuilder.class, builderConfiguration)
+//				.setPropertyCondition(Conditions.isNotNull());
+		this.modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+		this.modelMapper.typeMap(Plate.class, PlateDTO.class).addMappings(mapper -> {
+			mapper.map(src -> src.getExperimentId(), PlateDTO::setExperimentId);
+			mapper.map(src -> src.getExperiment(), PlateDTO::setExperiment);
+			mapper.map(src -> src.getProject(), PlateDTO::setProject);
+		});
 	}
 
 	public PlateDTO createPlate(PlateDTO plateDTO) {
@@ -154,7 +164,7 @@ public class PlateService {
 	}
 
 	public PlateDTO updatePlate(PlateDTO plateDTO) {
-		Plate plate = plateRepository.findById(plateDTO.getId()).orElse(null);
+		Plate plate = ((CustomPlateRepository) plateRepository).findById(plateDTO.getId());
 		if (plate == null) return null;
 
 		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plate.getId()), ProjectAccessLevel.Write);
@@ -175,7 +185,7 @@ public class PlateService {
 		PlateDTO plateDTO = this.getPlateById(plateId);
 		if (plateDTO == null) throw new ValidationException(String.format("Plate with id %s does not exist!", plateId));
 
-		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateDTO.getId()), ProjectAccessLevel.Write);
+		projectAccessService.checkAccessLevel(plateDTO.getProject().id(), ProjectAccessLevel.Write);
 
 		if (plateDTO.getApprovalStatus().equals(ApprovalStatus.APPROVAL_NOT_SET) &&
 				plateDTO.getValidationStatus().equals(ValidationStatus.VALIDATION_NOT_SET)) {
@@ -193,7 +203,7 @@ public class PlateService {
 		PlateDTO plateDTO = this.getPlateById(plateId);
 		if (plateDTO == null) throw new ValidationException(String.format("Plate with id %s does not exist!", plateId));
 
-		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateDTO.getId()), ProjectAccessLevel.Write);
+		projectAccessService.checkAccessLevel(plateDTO.getProject().id(), ProjectAccessLevel.Write);
 
 		if (plateDTO.getApprovalStatus().equals(ApprovalStatus.APPROVAL_NOT_SET)
 				&& plateDTO.getValidationStatus().equals(ValidationStatus.VALIDATION_NOT_SET)) {
@@ -212,7 +222,7 @@ public class PlateService {
 		PlateDTO plateDTO = getPlateById(plateId);
 		if (plateDTO == null) throw new ValidationException(String.format("Plate with id %s does not exist!", plateId));
 
-		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateDTO.getId()), ProjectAccessLevel.Write);
+		projectAccessService.checkAccessLevel(plateDTO.getProject().id(), ProjectAccessLevel.Write);
 
 		if (plateDTO.getApprovalStatus().equals(ApprovalStatus.APPROVAL_NOT_SET) &&
 				!plateDTO.getValidationStatus().equals(ValidationStatus.VALIDATION_NOT_SET)) {
@@ -230,7 +240,7 @@ public class PlateService {
 		PlateDTO plateDTO = getPlateById(plateId);
 		if (plateDTO == null) throw new ApprovalException(String.format("Plate with id %s does not exist!", plateId));
 
-		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateDTO.getId()), ProjectAccessLevel.Write);
+		projectAccessService.checkAccessLevel(plateDTO.getProject().id(), ProjectAccessLevel.Write);
 
 		if (plateDTO.getValidationStatus().equals(ValidationStatus.VALIDATED) &&
 				plateDTO.getApprovalStatus().equals(ApprovalStatus.APPROVAL_NOT_SET)) {
@@ -248,7 +258,7 @@ public class PlateService {
 		PlateDTO plateDTO = getPlateById(plateId);
 		if (plateDTO == null) throw new ApprovalException(String.format("Plate with id %s does not exist!", plateId));
 
-		projectAccessService.checkAccessLevel(getProjectIdByPlateId(plateDTO.getId()), ProjectAccessLevel.Write);
+		projectAccessService.checkAccessLevel(plateDTO.getProject().id(), ProjectAccessLevel.Write);
 
 		if (plateDTO.getValidationStatus().equals(ValidationStatus.VALIDATED) &&
 				!plateDTO.getApprovalStatus().equals(ApprovalStatus.DISAPPROVED)) {
@@ -301,9 +311,9 @@ public class PlateService {
 	public List<PlateDTO> getPlates(List<Long> plateIds) {
 		List<Plate> plates = new ArrayList<>();
 		if (CollectionUtils.isEmpty(plateIds)) {
-			plates.addAll((List<Plate>) plateRepository.findAll());
+			plates.addAll(plateRepository.findAll());
 		} else {
-			plates.addAll((List<Plate>) plateRepository.findAllById(plateIds));
+			plates.addAll(plateRepository.findAllByIdIn(plateIds));
 		}
 
 		List<PlateDTO> plateDTOs = plates.stream()
@@ -320,7 +330,7 @@ public class PlateService {
 	public List<PlateDTO> getPlatesByExperimentId(long experimentId) {
 		List<Plate> plates = plateRepository.findByExperimentId(experimentId);
 		List<PlateDTO> plateDTOs = plates.stream()
-				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
+				.filter(p -> projectAccessService.hasAccessLevel(p.getProject().id(), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.toList();
 
@@ -330,10 +340,10 @@ public class PlateService {
 	}
 
 	public List<PlateDTO> getPlatesByExperimentIds(List<Long> experimentIds) {
-		List<PlateDTO> plateDTOs = Optional.ofNullable(plateRepository.findByExperimentIds(experimentIds))
+		List<PlateDTO> plateDTOs = Optional.ofNullable(plateRepository.findAllByExperimentIdIn(experimentIds))
 				.orElseGet(Collections::emptyList)
 				.stream()
-				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
+				.filter(p -> projectAccessService.hasAccessLevel(p.getProject().id(), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.toList();
 
@@ -343,9 +353,9 @@ public class PlateService {
 	}
 
 	public List<PlateDTO> getPlatesByBarcode(String barcode) {
-		List<Plate> plates = plateRepository.findByBarcode(barcode);
+		List<Plate> plates = plateRepository.findAllByBarcode(barcode);
 		List<PlateDTO> plateDTOs = plates.stream()
-				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
+				.filter(p -> projectAccessService.hasAccessLevel(p.getProject().id(), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.toList();
 
@@ -354,20 +364,20 @@ public class PlateService {
 	}
 
 	public List<PlateDTO> getPlatesByBarcodeAndExperiment(String barcode, long experimentId) {
-		List<Plate> result = plateRepository.findByBarcodeAndExperimentId(barcode, experimentId);
+		List<Plate> result = plateRepository.findAllByBarcodeAndExperimentId(barcode, experimentId);
 		return result.stream()
-				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
+				.filter(p -> projectAccessService.hasAccessLevel(p.getProject().id(), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.toList();
 	}
 
-	@Cacheable("plate_id")
 	public PlateDTO getPlateById(long plateId) throws PlateNotFoundException {
-		Optional<Plate> result = plateRepository.findById(plateId);
-		return result
-				.filter(p -> projectAccessService.hasAccessLevel(getProjectIdByPlateId(p.getId()), ProjectAccessLevel.Read))
+		PlateDTO plateDTO = Optional.ofNullable(plateRepository.findById(plateId))
+				.filter(p -> projectAccessService.hasAccessLevel(p.getProject().id(), ProjectAccessLevel.Read))
 				.map(p -> modelMapper.map(p, PlateDTO.class))
 				.orElseThrow(() -> new PlateNotFoundException(plateId));
+		enrichWithMetadata(List.of(plateDTO));
+		return plateDTO;
 	}
 
 	@Cacheable("plate_project_id")

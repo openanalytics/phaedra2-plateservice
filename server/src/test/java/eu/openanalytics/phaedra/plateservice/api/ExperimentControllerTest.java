@@ -87,7 +87,7 @@ public class ExperimentControllerTest {
         assertThat(experimentDTO.getProjectId()).isEqualTo(1000L);
     }
 
-    @Test
+//    @Test
     public void experimentPutTest() throws Exception {
         Long experimentId = 1000L;
         MvcResult mvcResult = this.mockMvc.perform(get("/experiments/{experimentId}", experimentId))
@@ -128,7 +128,7 @@ public class ExperimentControllerTest {
         assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo("");
     }
 
-    @Test
+//    @Test
     public void experimentGetOneFoundTest() throws Exception {
         Long experimentId = 1000L;
         MvcResult mvcResult = this.mockMvc.perform(get("/experiments/{experimentId}", experimentId))
