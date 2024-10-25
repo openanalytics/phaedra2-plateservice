@@ -194,6 +194,8 @@ type WellDTO {
 
     plateId: ID
     plate: PlateProjection
+    experiment: ExperimentProjection
+    project: ProjectProjection
 }
 
 type PlateMeasurementDTO {
