@@ -376,7 +376,9 @@ public class PlateService {
 		Plate plate = ((CustomPlateRepository) plateRepository).findById(plateId);
 		if (plate == null) throw new PlateNotFoundException(plateId);
 		projectAccessService.hasAccessLevel(plate.getProject().id(), ProjectAccessLevel.Read);
-		return modelMapper.map(plate, PlateDTO.class);
+		PlateDTO plateDTO = modelMapper.map(plate, PlateDTO.class);
+		enrichWithMetadata(List.of(plateDTO));
+		return plateDTO;
 	}
 
 	@Cacheable("plate_project_id")

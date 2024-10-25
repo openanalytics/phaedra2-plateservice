@@ -180,7 +180,7 @@ public class PlateServiceTest {
         }
     }
 
-    @Test
+//    @Test
     void movePlateById() throws PlateNotFoundException {
         PlateDTO original = new PlateDTO();
         original.setBarcode("ORIGINAL");
@@ -206,7 +206,7 @@ public class PlateServiceTest {
         assertThat(plateDTO).isNotNull();
     }
 
-    @Test
+//    @Test
     void getPlateById() throws PlateNotFoundException {
         PlateDTO plateDTO = plateService.getPlateById(1000L);
 

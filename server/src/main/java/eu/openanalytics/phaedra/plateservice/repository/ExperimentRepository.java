@@ -29,18 +29,18 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
+public interface ExperimentRepository extends CustomExperimentRepository, CrudRepository<Experiment, Long> {
 
-	@Query("select * from hca_experiment order by id desc")
-	List<Experiment> findAll();
-
-	@Query("select * from hca_experiment order by id desc limit :n")
-	List<Experiment> findNMostRecentExperiments(int n);
-
-	List<Experiment> findByProjectId(long projectId);
-
-	@Query("select * from hca_experiment e where e.project_id in (:projectIds)")
-	List<Experiment> findByProjectIds(Collection<Long> projectIds);
+//	@Query("select * from hca_experiment order by id desc")
+//	List<Experiment> findAll();
+//
+//	@Query("select * from hca_experiment order by id desc limit :n")
+//	List<Experiment> findNMostRecentExperiments(int n);
+//
+//	List<Experiment> findByProjectId(long projectId);
+//
+//	@Query("select * from hca_experiment e where e.project_id in (:projectIds)")
+//	List<Experiment> findByProjectIds(Collection<Long> projectIds);
 
 	@Query("delete from hca_experiment e where e.project_id = :projectId")
 	void deleteByProjectId(@Param("projectId") long projectId);

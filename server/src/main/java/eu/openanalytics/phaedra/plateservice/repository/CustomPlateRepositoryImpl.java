@@ -22,7 +22,7 @@ public class CustomPlateRepositoryImpl implements CustomPlateRepository {
 
   @Override
   public Plate findById(long id) {
-    StringBuilder sql = new StringBuilder(CustomPlateRepositoryImpl.BASE_QUERY);
+    StringBuilder sql = new StringBuilder(BASE_QUERY);
     sql.append("WHERE p.id = :id");
 
     return queryForObject(sql.toString(), buildParams("id", id));
@@ -30,20 +30,20 @@ public class CustomPlateRepositoryImpl implements CustomPlateRepository {
 
   @Override
   public List<Plate> findAll() {
-    StringBuilder sql = new StringBuilder(CustomPlateRepositoryImpl.BASE_QUERY);
+    StringBuilder sql = new StringBuilder(BASE_QUERY);
     return queryForList(sql.toString(), Map.of());
   }
 
   @Override
   public List<Plate> findAllByBarcode(String barcode) {
-    StringBuilder sql = new StringBuilder(CustomPlateRepositoryImpl.BASE_QUERY);
+    StringBuilder sql = new StringBuilder(BASE_QUERY);
     sql.append("WHERE p.barcode = :barcode");
     return queryForList(sql.toString(), buildParams("barcode", barcode));
   }
 
   @Override
   public List<Plate> findAllByIdIn(List<Long> ids) {
-    StringBuilder sql = new StringBuilder(CustomPlateRepositoryImpl.BASE_QUERY);
+    StringBuilder sql = new StringBuilder(BASE_QUERY);
     sql.append("WHERE p.id in (:ids)");
     return queryForList(sql.toString(), buildParams("ids", ids));
   }
