@@ -4,6 +4,7 @@ import eu.openanalytics.phaedra.plateservice.model.Plate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public class CustomPlateRepositoryImpl implements CustomPlateRepository {
@@ -97,7 +98,11 @@ public class CustomPlateRepositoryImpl implements CustomPlateRepository {
   }
 
   private Plate queryForObject(String sql, Map<String, Object> params) {
-    return jdbcTemplate.queryForObject(sql, params, new PlateRowMapper());
+    try {
+      return jdbcTemplate.queryForObject(sql, params, new PlateRowMapper());
+    } catch (EmptyResultDataAccessException e) {
+      return null;
+    }
   }
 
   private List<Plate> queryForList(String sql, Map<String, Object> params) {
