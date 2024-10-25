@@ -160,6 +160,7 @@ type PlateDTO {
 
     experimentId: Int
     experiment: ExperimentProjection
+    project: ProjectProjection
 }
 
 type PlateProjection {
