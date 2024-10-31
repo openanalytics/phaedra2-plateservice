@@ -1,11 +1,13 @@
 package eu.openanalytics.phaedra.plateservice.repository;
 
-import eu.openanalytics.phaedra.plateservice.model.Experiment;
-import eu.openanalytics.phaedra.plateservice.record.ExperimentProjection;
-import eu.openanalytics.phaedra.plateservice.record.ProjectProjection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import org.springframework.jdbc.core.RowMapper;
+
+import eu.openanalytics.phaedra.plateservice.enumeration.ExperimentStatus;
+import eu.openanalytics.phaedra.plateservice.model.Experiment;
+import eu.openanalytics.phaedra.plateservice.record.ProjectProjection;
 
 public class ExperimentRowMapper implements RowMapper<Experiment> {
 
@@ -23,6 +25,7 @@ public class ExperimentRowMapper implements RowMapper<Experiment> {
     experiment.setMultiploMethod(rs.getString("multiplo_method"));
     experiment.setMultiploParameter(rs.getString("multiplo_parameter"));
 
+    experiment.setStatus(ExperimentStatus.valueOf(rs.getString("status")));
 
     ProjectProjection project = new ProjectProjection(
         rs.getLong("project_id"),
