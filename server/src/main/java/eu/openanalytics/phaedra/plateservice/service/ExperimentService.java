@@ -128,9 +128,8 @@ public class ExperimentService {
 
 	public ExperimentDTO getExperimentById(long experimentId) {
 		Experiment experiment = experimentRepository.findById(experimentId);
-		if (experiment != null) {
-			projectAccessService.hasAccessLevel(experiment.getProjectId(), ProjectAccessLevel.Read);
-			ExperimentDTO experimentDTO =  mapToExperimentDTO(experiment);
+		if (experiment != null && projectAccessService.hasAccessLevel(experiment.getProjectId(), ProjectAccessLevel.Read)) {
+			ExperimentDTO experimentDTO = mapToExperimentDTO(experiment);
 			enrichWithMetadata(List.of(experimentDTO));
 			return experimentDTO;
 		}
