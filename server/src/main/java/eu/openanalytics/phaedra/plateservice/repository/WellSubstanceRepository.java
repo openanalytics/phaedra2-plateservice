@@ -43,6 +43,8 @@ public interface WellSubstanceRepository extends CrudRepository<WellSubstance, L
 
     @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId order by s.id desc")
     List<WellSubstance> findByPlateId(long plateId);
+    @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id in (:plateIds) order by s.id desc")
+    List<WellSubstance> findByPlateIds(List<Long> plateIds);
     @Query("select s.* from hca_well_substance s inner join hca_well w on s.well_id = w.id where w.plate_id = :plateId and w.welltype in (:wellTypes) order by s.id desc")
     List<WellSubstance> findByPlateIdAndWellType(long plateId, Collection<String> wellTypes);
 

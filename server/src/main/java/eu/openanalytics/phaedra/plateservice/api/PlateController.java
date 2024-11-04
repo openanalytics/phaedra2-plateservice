@@ -138,8 +138,14 @@ public class PlateController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/delete")
+    @DeleteMapping()
     public ResponseEntity<Void> deletePlates(@RequestBody List<Long> plateIds) {
+        plateService.deletePlates(plateIds);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/delete")
+    public ResponseEntity<Void> deletePlates_Deprecated(@RequestBody List<Long> plateIds) {
         try {
             for (Long plateId: plateIds) {
                 plateService.deletePlate(plateId);

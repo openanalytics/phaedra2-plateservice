@@ -1,6 +1,7 @@
 package eu.openanalytics.phaedra.plateservice.client.impl;
 
 import eu.openanalytics.phaedra.plateservice.client.PlateServiceGraphQLClient;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import java.util.List;
@@ -36,7 +37,7 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
            %s
          }
        }
-       """.formatted(wellId, buildGraphQLDocumentBody());
+       """.formatted(wellId, buildWellGraphQLDocumentBody());
 
     return httpGraphQlClient()
         .document(document)
@@ -52,7 +53,7 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
            %s
          }
        }
-       """.formatted(wellIds, buildGraphQLDocumentBody());
+       """.formatted(wellIds, buildWellGraphQLDocumentBody());
 
     WellDTO[] results = httpGraphQlClient()
         .document(document)
@@ -70,7 +71,7 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
            %s
          }
        }
-       """.formatted(plateId, buildGraphQLDocumentBody());
+       """.formatted(plateId, buildWellGraphQLDocumentBody());
 
     WellDTO[] results = httpGraphQlClient()
         .document(document)
@@ -88,7 +89,7 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
               %s
             }
           }
-       """.formatted(plateIds, buildGraphQLDocumentBody());
+       """.formatted(plateIds, buildWellGraphQLDocumentBody());
 
     WellDTO[] results = httpGraphQlClient()
         .document(document)
@@ -106,7 +107,7 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
             %s
           }
         }
-       """.formatted(experimentId, buildGraphQLDocumentBody());
+       """.formatted(experimentId, buildWellGraphQLDocumentBody());
 
     WellDTO[] results = httpGraphQlClient()
         .document(document)
@@ -124,7 +125,7 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
            %s
          }
        }
-       """.formatted(experimentIds, buildGraphQLDocumentBody());
+       """.formatted(experimentIds, buildWellGraphQLDocumentBody());
 
     WellDTO[] results = httpGraphQlClient()
         .document(document)
@@ -134,7 +135,24 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
     return List.of(results);
   }
 
-  private String buildGraphQLDocumentBody() {
+  @Override
+  public List<PlateMeasurementDTO> getActivePlateMeasurements(List<Long> plateIds) {
+    String document = """
+          query($plateIds: [ID]) {
+            getActiveMeasurementByPlateIds(plateIds: $plateIds)  {
+              %s
+            }
+          }
+        """.formatted(buildPlateMeasurementGraphQLDocumentBody());
+    PlateMeasurementDTO[] results = httpGraphQlClient()
+        .document(document)
+        .variable("plateIds", plateIds)
+        .retrieveSync("getActiveMeasurementByPlateIds")
+        .toEntity(PlateMeasurementDTO[].class);
+    return List.of(results);
+  }
+
+  private String buildWellGraphQLDocumentBody() {
     return """
             id
             plateId
@@ -154,6 +172,17 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
               propertyValue
             }
             """;
+  }
+
+  private String buildPlateMeasurementGraphQLDocumentBody() {
+    return """
+        id
+        measurementId
+        plateId
+        active
+        linkedBy
+        linkedOn
+        """;
   }
 
   private HttpGraphQlClient httpGraphQlClient() {

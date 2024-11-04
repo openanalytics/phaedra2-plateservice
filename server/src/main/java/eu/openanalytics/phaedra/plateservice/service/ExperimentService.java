@@ -20,12 +20,15 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import static java.util.Optional.ofNullable;
+
 import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
 import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
 import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.ExperimentStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.model.Experiment;
@@ -44,12 +47,13 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ExperimentService {
-	private static final ModelMapper modelMapper = new ModelMapper();
+	private final ModelMapper modelMapper = new ModelMapper();
 
 	private final ExperimentRepository experimentRepository;
 	private final PlateService plateService;
@@ -71,6 +75,12 @@ public class ExperimentService {
 		this.projectAccessService = projectAccessService;
 		this.authService = authService;
     this.metadataServiceGraphQlClient = metadataServiceGraphQlClient;
+
+		this.modelMapper.typeMap(Experiment.class, ExperimentDTO.class)
+				.addMappings(mapper -> {
+					mapper.map(src -> src.getProjectId(), ExperimentDTO::setProjectId);
+					mapper.map(src -> src.getProject(), ExperimentDTO::setProject);
+				});
   }
 
 	public ExperimentDTO createExperiment(ExperimentDTO experimentDTO) {
@@ -100,17 +110,30 @@ public class ExperimentService {
 	}
 
 	public void deleteExperiment(long experimentId) {
-		experimentRepository.findById(experimentId).ifPresent(e -> {
-			projectAccessService.checkAccessLevel(e.getProjectId(), ProjectAccessLevel.Write);
+		Experiment experiment = experimentRepository.findById(experimentId);
+		if (experiment != null) {
+			projectAccessService.checkAccessLevel(experiment.getProjectId(), ProjectAccessLevel.Write);
 			experimentRepository.deleteById(experimentId);
-		});
+		}
+	}
+
+	public void deleteExperiments(List<Long> experimentIds) {
+		for (Long experimentId : experimentIds) {
+			experimentRepository.findById(experimentId).ifPresent(e -> {
+				projectAccessService.checkAccessLevel(e.getProjectId(), ProjectAccessLevel.Write);
+			});
+		}
+		experimentRepository.deleteAllById(experimentIds);
 	}
 
 	public ExperimentDTO getExperimentById(long experimentId) {
-		return experimentRepository.findById(experimentId)
-				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
-				.map(this::mapToExperimentDTO)
-				.orElse(null);
+		Experiment experiment = experimentRepository.findById(experimentId);
+		if (experiment != null && projectAccessService.hasAccessLevel(experiment.getProjectId(), ProjectAccessLevel.Read)) {
+			ExperimentDTO experimentDTO = mapToExperimentDTO(experiment);
+			enrichWithMetadata(List.of(experimentDTO));
+			return experimentDTO;
+		}
+		return null;
 	}
 
 	public List<ExperimentDTO> getExperiments(List<Long> experimentIds) {
@@ -118,7 +141,7 @@ public class ExperimentService {
 		if (CollectionUtils.isEmpty(experimentIds)) {
 			experiments.addAll(experimentRepository.findAll());
 		} else {
-			experiments.addAll((List<Experiment>) experimentRepository.findAllById(experimentIds));
+			experiments.addAll(experimentRepository.findAllByIdIn(experimentIds));
 		}
 
 		List<ExperimentDTO> experimentDTOs = experiments.stream()
@@ -137,35 +160,35 @@ public class ExperimentService {
 	 * @return n most recently created experiments
 	 */
 	public List<ExperimentDTO> getNMostRecentExperiments(int n) {
-		List<Experiment> result = experimentRepository.findNMostRecentExperiments(n);
-		return result.stream()
-				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
-				.map(this::mapToExperimentDTO)
-				.toList();
-	}
-
-	public List<ExperimentDTO> getExperimentByProjectId(long projectId) {
-		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
-		List<Experiment> experiments = experimentRepository.findByProjectId(projectId);
-		List<ExperimentDTO> experimentDTOs = experiments.stream()
-				.map(this::mapToExperimentDTO)
-				.toList();
-
-		enrichWithMetadata(experimentDTOs);
-
-		return experimentDTOs;
-	}
-
-	public List<ExperimentDTO> getExperimentByProjectIds(List<Long> projectIds) {
-		List<ExperimentDTO> experimentDTOs = Optional.ofNullable(experimentRepository.findByProjectIds(projectIds))
+		List<ExperimentDTO> experimentDTOs = ofNullable(experimentRepository.findNMostRecentExperiments(n))
 				.orElseGet(Collections::emptyList)
 				.stream()
 				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
 				.map(this::mapToExperimentDTO)
 				.toList();
-
 		enrichWithMetadata(experimentDTOs);
-		
+		return experimentDTOs;
+	}
+
+
+	public List<ExperimentDTO> getExperimentByProjectId(long projectId) {
+		projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Read);
+		List<Experiment> experiments = experimentRepository.findAllByProjectId(projectId);
+		List<ExperimentDTO> experimentDTOs = experiments.stream()
+				.map(this::mapToExperimentDTO)
+				.toList();
+		enrichWithMetadata(experimentDTOs);
+		return experimentDTOs;
+	}
+
+	public List<ExperimentDTO> getExperimentByProjectIds(List<Long> projectIds) {
+		List<ExperimentDTO> experimentDTOs = ofNullable(experimentRepository.findAllByProjectIdIn(projectIds))
+				.orElseGet(Collections::emptyList)
+				.stream()
+				.filter(e -> projectAccessService.hasAccessLevel(e.getProjectId(), ProjectAccessLevel.Read))
+				.map(this::mapToExperimentDTO)
+				.toList();
+		enrichWithMetadata(experimentDTOs);
 		return experimentDTOs;
 	}
 
@@ -193,8 +216,7 @@ public class ExperimentService {
 
 	private ExperimentDTO mapToExperimentDTO(Experiment experiment) {
 		ExperimentDTO experimentDTO = new ExperimentDTO();
-		modelMapper.typeMap(Experiment.class, ExperimentDTO.class)
-				.map(experiment, experimentDTO);
+		modelMapper.map(experiment, experimentDTO);
 		return experimentDTO;
 	}
 

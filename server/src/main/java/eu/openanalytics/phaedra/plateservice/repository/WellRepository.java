@@ -28,17 +28,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface WellRepository extends CrudRepository<Well, Long> {
-
-	List<Well> findByPlateId(long plateId);
-
-	@Query("select * from hca_well w where w.plate_id in (:plateIds)")
-	List<Well> findByPlateIds(List<Long> plateIds);
-
-	@Query("select * from hca_well w where w.plate_id in (select p.id from hca_plate p where p.experiment_id = :experimentId)")
-	List<Well> findByExperimentId(Long experimentId);
-
-	@Query("select * from hca_well w where w.plate_id in (select p.id from hca_plate p where p.experiment_id in (:experimentIds))")
-	List<Well> findByExperimentIds(List<Long> experimentIds);
+public interface WellRepository extends CustomWellRepository, CrudRepository<Well, Long> {
 
 }
+
+

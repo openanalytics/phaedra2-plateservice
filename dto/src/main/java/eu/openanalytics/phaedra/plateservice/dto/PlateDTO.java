@@ -22,6 +22,8 @@ package eu.openanalytics.phaedra.plateservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eu.openanalytics.phaedra.plateservice.enumeration.*;
+import eu.openanalytics.phaedra.plateservice.record.ExperimentProjection;
+import eu.openanalytics.phaedra.plateservice.record.ProjectProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,7 +42,6 @@ public class PlateDTO {
 	private Long id;
 	private String barcode;
 	private String description;
-	private Long experimentId;
 
 	private Integer rows;
 	private Integer columns;
@@ -80,4 +81,8 @@ public class PlateDTO {
 
 	private List<String> tags;
 	private List<PropertyDTO> properties;
+
+	private Long experimentId;
+	private ExperimentProjection experiment;
+	private ProjectProjection project;
 }
