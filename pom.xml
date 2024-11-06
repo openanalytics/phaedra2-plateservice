@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
 
     <artifactId>phaedra2-plateservice</artifactId>
-    <name>phaedra2-plateservice</name>
+    <name>Phaedra2 Plate Service</name>
 	<version>2.4.0-SNAPSHOT</version>
 
     <modules>
