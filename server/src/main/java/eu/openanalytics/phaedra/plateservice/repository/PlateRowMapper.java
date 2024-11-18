@@ -1,5 +1,7 @@
 package eu.openanalytics.phaedra.plateservice.repository;
 
+import static eu.openanalytics.phaedra.plateservice.util.StatusUtils.getStatus;
+
 import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
@@ -13,6 +15,7 @@ import eu.openanalytics.phaedra.plateservice.record.PlateProjection;
 import eu.openanalytics.phaedra.plateservice.record.ProjectProjection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 public class PlateRowMapper implements RowMapper<Plate> {
@@ -26,29 +29,21 @@ public class PlateRowMapper implements RowMapper<Plate> {
     plate.setRows(rs.getInt("rows"));
     plate.setColumns(rs.getInt("columns"));
     plate.setSequence(rs.getInt("sequence"));
-    plate.setLinkStatus(LinkStatus.valueOf(rs.getString("link_status")));
+    plate.setLinkStatus(getStatus(rs.getString("link_status"), LinkStatus.class, LinkStatus.NOT_LINKED));
     plate.setLinkTemplateId(rs.getString("link_template_id"));
     plate.setLinkSource(rs.getString("link_source"));
     plate.setLinkedOn(rs.getDate("linked_on"));
-    plate.setLinkStatus(LinkStatus.valueOf(rs.getString("link_status")));
-    plate.setLinkTemplateId(rs.getString("link_template_id"));
-    plate.setLinkSource(rs.getString("link_source"));
-    plate.setLinkedOn(rs.getDate("linked_on"));
-    plate.setLinkStatus(LinkStatus.valueOf(rs.getString("link_status")));
-    plate.setLinkTemplateId(rs.getString("link_template_id"));
-    plate.setLinkSource(rs.getString("link_source"));
-    plate.setLinkedOn(rs.getDate("linked_on"));
-    plate.setCalculationStatus(CalculationStatus.valueOf(rs.getString("calculation_status")));
+    plate.setCalculationStatus(getStatus(rs.getString("calculation_status"), CalculationStatus.class, CalculationStatus.CALCULATION_NEEDED));
     plate.setCalculationError(rs.getString("calculation_error"));
     plate.setCalculatedBy(rs.getString("calculated_by"));
     plate.setCalculatedOn(rs.getDate("calculated_on"));
-    plate.setValidationStatus(ValidationStatus.valueOf(rs.getString("validation_status")));
+    plate.setValidationStatus(getStatus(rs.getString("validation_status"), ValidationStatus.class, ValidationStatus.VALIDATION_NOT_SET));
     plate.setValidatedBy(rs.getString("validated_by"));
     plate.setValidatedOn(rs.getDate("validated_on"));
-    plate.setApprovalStatus(ApprovalStatus.valueOf(rs.getString("approval_status")));
+    plate.setApprovalStatus(getStatus(rs.getString("approval_status"), ApprovalStatus.class, ApprovalStatus.APPROVAL_NOT_SET));
     plate.setApprovedBy(rs.getString("approved_by"));
     plate.setApprovedOn(rs.getDate("approved_on"));
-    plate.setUploadStatus(UploadStatus.valueOf(rs.getString("upload_status")));
+    plate.setUploadStatus(getStatus(rs.getString("upload_status"), UploadStatus.class, UploadStatus.UPLOAD_NOT_SET));
     plate.setUploadedBy(rs.getString("uploaded_by"));
     plate.setUploadedOn(rs.getDate("uploaded_on"));
     plate.setCreatedOn(rs.getDate("created_on"));
