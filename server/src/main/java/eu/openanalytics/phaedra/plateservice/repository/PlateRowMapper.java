@@ -7,15 +7,11 @@ import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.WellStatus;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.model.Well;
 import eu.openanalytics.phaedra.plateservice.record.ExperimentProjection;
-import eu.openanalytics.phaedra.plateservice.record.PlateProjection;
 import eu.openanalytics.phaedra.plateservice.record.ProjectProjection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 public class PlateRowMapper implements RowMapper<Plate> {

@@ -69,7 +69,7 @@ public class PlateTemplateController {
 
     @PutMapping(value = "/{plateTemplateId}")
     public ResponseEntity<Void> updatePlate(@PathVariable long plateTemplateId, @RequestBody PlateTemplateDTO plateTemplateDTO) {
-    	plateTemplateDTO.setId(plateTemplateId);
+        plateTemplateDTO.setId(plateTemplateId);
         plateTemplateService.updatePlateTemplate(plateTemplateDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
