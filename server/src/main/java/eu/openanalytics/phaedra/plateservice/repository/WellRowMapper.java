@@ -1,5 +1,8 @@
 package eu.openanalytics.phaedra.plateservice.repository;
 
+import static eu.openanalytics.phaedra.plateservice.enumeration.WellStatus.*;
+import static eu.openanalytics.phaedra.plateservice.util.StatusUtils.getStatus;
+
 import eu.openanalytics.phaedra.plateservice.enumeration.WellStatus;
 import eu.openanalytics.phaedra.plateservice.record.ExperimentProjection;
 import eu.openanalytics.phaedra.plateservice.record.PlateProjection;
@@ -17,7 +20,7 @@ public class WellRowMapper implements RowMapper<Well> {
     well.setPlateId(rs.getLong("plate_id"));
     well.setRow(rs.getInt("row"));
     well.setColumn(rs.getInt("column"));
-    well.setStatus(WellStatus.valueOf(rs.getString("status")));
+    well.setStatus(getStatus(rs.getString("status"), WellStatus.class, ACCEPTED_DEFAULT));
     well.setCompoundId(rs.getLong("compound_id"));
     well.setDescription(rs.getString("description"));
     well.setWellType(rs.getString("welltype"));

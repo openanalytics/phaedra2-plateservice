@@ -28,7 +28,6 @@ import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
 import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentSummaryDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.ExperimentStatus;
 import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
 import eu.openanalytics.phaedra.plateservice.model.Experiment;
@@ -47,7 +46,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -216,7 +214,7 @@ public class ExperimentService {
 
 	private ExperimentDTO mapToExperimentDTO(Experiment experiment) {
 		ExperimentDTO experimentDTO = new ExperimentDTO();
-		modelMapper.map(experiment, experimentDTO);
+		modelMapper.typeMap(Experiment.class, ExperimentDTO.class).map(experiment, experimentDTO);
 		return experimentDTO;
 	}
 

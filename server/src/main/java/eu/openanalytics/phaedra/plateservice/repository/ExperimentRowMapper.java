@@ -1,5 +1,7 @@
 package eu.openanalytics.phaedra.plateservice.repository;
 
+import static eu.openanalytics.phaedra.plateservice.util.StatusUtils.getStatus;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -25,7 +27,7 @@ public class ExperimentRowMapper implements RowMapper<Experiment> {
     experiment.setMultiploMethod(rs.getString("multiplo_method"));
     experiment.setMultiploParameter(rs.getString("multiplo_parameter"));
 
-    experiment.setStatus(ExperimentStatus.valueOf(rs.getString("status")));
+    experiment.setStatus(getStatus(rs.getString("status"), ExperimentStatus.class, ExperimentStatus.OPEN));
 
     ProjectProjection project = new ProjectProjection(
         rs.getLong("project_id"),

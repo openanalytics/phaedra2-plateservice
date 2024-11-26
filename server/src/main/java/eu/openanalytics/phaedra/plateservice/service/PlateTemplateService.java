@@ -30,6 +30,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,7 @@ public class PlateTemplateService {
         return mapToPlateTemplateDTO(plateTemplate);
     }
 
+    @CacheEvict(value = "plate_plate_template_id", key = "#plateTemplateDTO.id" )
     public void updatePlateTemplate(PlateTemplateDTO plateTemplateDTO) {
     	authService.performOwnershipCheck(plateTemplateDTO.getCreatedBy());
     	plateTemplateDTO.setUpdatedBy(authService.getCurrentPrincipalName());
@@ -122,7 +124,7 @@ public class PlateTemplateService {
                 .collect(Collectors.toList());
     }
 
-    @Cacheable("plate_plate_template_id")
+    @Cacheable(value = "plate_plate_template_id", key = "#plateTemplateId")
     public PlateTemplateDTO getPlateTemplateById(long plateTemplateId) {
       authService.performAccessCheck(p -> authService.hasUserAccess());
 
