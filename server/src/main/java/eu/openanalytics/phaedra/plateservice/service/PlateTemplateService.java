@@ -20,6 +20,8 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import static org.apache.commons.collections4.CollectionUtils.*;
+
 import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
@@ -75,7 +77,7 @@ public class PlateTemplateService {
         wellTemplateService.createEmptyWellTemplates(plateTemplate);
 
         //Add wellTemplates
-        if (CollectionUtils.isNotEmpty(plateTemplateDTO.getWells()))
+        if (isNotEmpty(plateTemplateDTO.getWells()))
             wellTemplateService.updateWellTemplates(plateTemplate, plateTemplateDTO.getWells());
 
         return mapToPlateTemplateDTO(plateTemplate);
@@ -94,7 +96,9 @@ public class PlateTemplateService {
                     .map(plateTemplateDTO, p);
             plateTemplateRepository.save(p);
 
-            wellTemplateService.updateWellTemplates(plateTemplateDTO.getWells());
+            if (isNotEmpty(plateTemplateDTO.getWells())) {
+                wellTemplateService.updateWellTemplates(plateTemplateDTO.getWells());
+            }
         });
     }
 
