@@ -20,6 +20,8 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import static org.apache.commons.collections4.CollectionUtils.*;
+
 import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
 import eu.openanalytics.phaedra.plateservice.model.PlateTemplate;
 import eu.openanalytics.phaedra.plateservice.repository.PlateTemplateRepository;
@@ -30,6 +32,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.NameTransformers;
 import org.modelmapper.convention.NamingConventions;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -74,12 +77,13 @@ public class PlateTemplateService {
         wellTemplateService.createEmptyWellTemplates(plateTemplate);
 
         //Add wellTemplates
-        if (CollectionUtils.isNotEmpty(plateTemplateDTO.getWells()))
+        if (isNotEmpty(plateTemplateDTO.getWells()))
             wellTemplateService.updateWellTemplates(plateTemplate, plateTemplateDTO.getWells());
 
         return mapToPlateTemplateDTO(plateTemplate);
     }
 
+    @CacheEvict(value = "plate_plate_template_id", key = "#plateTemplateDTO.id" )
     public void updatePlateTemplate(PlateTemplateDTO plateTemplateDTO) {
     	authService.performOwnershipCheck(plateTemplateDTO.getCreatedBy());
     	plateTemplateDTO.setUpdatedBy(authService.getCurrentPrincipalName());
@@ -92,7 +96,9 @@ public class PlateTemplateService {
                     .map(plateTemplateDTO, p);
             plateTemplateRepository.save(p);
 
-            wellTemplateService.updateWellTemplates(plateTemplateDTO.getWells());
+            if (isNotEmpty(plateTemplateDTO.getWells())) {
+                wellTemplateService.updateWellTemplates(plateTemplateDTO.getWells());
+            }
         });
     }
 
@@ -122,7 +128,7 @@ public class PlateTemplateService {
                 .collect(Collectors.toList());
     }
 
-    @Cacheable("plate_plate_template_id")
+    @Cacheable(value = "plate_plate_template_id", key = "#plateTemplateId")
     public PlateTemplateDTO getPlateTemplateById(long plateTemplateId) {
       authService.performAccessCheck(p -> authService.hasUserAccess());
 

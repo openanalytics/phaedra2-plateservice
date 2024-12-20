@@ -436,7 +436,7 @@ public class PlateService {
 		List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
 		List<WellTemplateDTO> wellTemplates  = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
 
-		for (int i = 0; i < wells.size(); i++) {
+		for (int i = 0, size = wells.size(); i < size; i++) {
 			// Update wellType
 			if (!wellTemplates.get(i).isSkipped())
 				wells.get(i).setWellType(wellTemplates.get(i).getWellType());

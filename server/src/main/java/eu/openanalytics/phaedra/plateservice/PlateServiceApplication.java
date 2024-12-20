@@ -20,6 +20,7 @@
  */
 package eu.openanalytics.phaedra.plateservice;
 
+import eu.openanalytics.phaedra.util.auth.ClientCredentialsTokenGenerator;
 import javax.sql.DataSource;
 
 import org.springframework.boot.SpringApplication;
@@ -34,6 +35,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 
 import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
@@ -84,12 +86,18 @@ public class PlateServiceApplication {
 	}
 
 	@Bean
-	public IAuthorizationService authService() {
-		return AuthorizationServiceFactory.create();
+	public IAuthorizationService authService(ClientCredentialsTokenGenerator ccTokenGenerator) {
+		return AuthorizationServiceFactory.create(ccTokenGenerator);
 	}
 
 	@Bean
 	public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
 		return AuthenticationConfigHelper.configure(http);
+	}
+
+	@Bean
+	public ClientCredentialsTokenGenerator ccTokenGenerator(
+			ClientRegistrationRepository clientRegistrationRepository) {
+		return new ClientCredentialsTokenGenerator("keycloak", clientRegistrationRepository);
 	}
 }
