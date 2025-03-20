@@ -11,7 +11,7 @@ public class CustomWellRepositoryImpl implements CustomWellRepository {
   private final NamedParameterJdbcTemplate jdbcTemplate;
   private static final String BASE_QUERY = "SELECT w.id, w.plate_id, w.row, w.column, w.welltype, w.status, w.compound_id, w.description, " +
       "p.id as plate_id, p.barcode as plate_barcode, p.description as plate_description, p.experiment_id as plate_experiment_id, p.rows as plate_rows, p.columns as plate_columns, " +
-      "e.id as experiment_id, e.name as experiment_name, e.description as experiment_description, e.project_id as experiment_project_id, " +
+      "e.id as experiment_id, e.name as experiment_name, e.description as experiment_description, e.project_id as experiment_project_id, e.status as experiment_status, " +
       "pr.id as project_id, pr.name as project_name, pr.description as project_description " +
       "FROM hca_well w " +
       "JOIN hca_plate p ON w.plate_id = p.id " +

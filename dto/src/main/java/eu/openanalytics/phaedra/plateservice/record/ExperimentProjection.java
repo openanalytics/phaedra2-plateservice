@@ -4,6 +4,7 @@ public record ExperimentProjection(
     Long id,
     String name,
     String description,
-    Long projectId
+    Long projectId,
+    String status
 ) {
 }
