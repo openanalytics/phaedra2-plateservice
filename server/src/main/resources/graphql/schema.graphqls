@@ -115,6 +115,7 @@ type ExperimentProjection {
     name: String
     description: String
     projectId: ID
+    status: String
 }
 
 type PlateDTO {

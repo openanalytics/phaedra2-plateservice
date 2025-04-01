@@ -53,7 +53,8 @@ public class PlateRowMapper implements RowMapper<Plate> {
         rs.getLong("experiment_id"),
         rs.getString("experiment_name"),
         rs.getString("experiment_description"),
-        rs.getLong("experiment_project_id")
+        rs.getLong("experiment_project_id"),
+        rs.getString("experiment_status")
     );
     plate.setExperiment(experiment);
 

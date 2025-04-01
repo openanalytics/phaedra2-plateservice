@@ -39,7 +39,8 @@ public class WellRowMapper implements RowMapper<Well> {
         rs.getLong("experiment_id"),
         rs.getString("experiment_name"),
         rs.getString("experiment_description"),
-        rs.getLong("experiment_project_id")
+        rs.getLong("experiment_project_id"),
+        rs.getString("experiment_status")
     );
     well.setExperiment(experiment);
 

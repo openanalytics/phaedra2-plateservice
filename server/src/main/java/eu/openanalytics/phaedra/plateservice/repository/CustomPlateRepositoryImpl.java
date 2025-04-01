@@ -10,7 +10,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 public class CustomPlateRepositoryImpl implements CustomPlateRepository {
 
   private final NamedParameterJdbcTemplate jdbcTemplate;
-  private static final String BASE_QUERY = "SELECT p.*, e.id as experiment_id, e.name as experiment_name, e.description as experiment_description, e.project_id as experiment_project_id, " +
+  private static final String BASE_QUERY = "SELECT p.*, " +
+      "e.id as experiment_id, e.name as experiment_name, e.description as experiment_description, e.project_id as experiment_project_id, e.status as experiment_status, " +
       "pr.id as project_id, pr.name as project_name, pr.description as project_description " +
       "FROM hca_plate p " +
       "JOIN hca_experiment e ON p.experiment_id = e.id " +
