@@ -42,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
@@ -54,7 +53,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class WellService {
 
-  private ModelMapper modelMapper;
+  private final ModelMapper modelMapper;
 
   private static final Comparator<WellDTO> WELL_COMPARATOR = Comparator.comparing(WellDTO::getRow)
       .thenComparing(WellDTO::getColumn);
@@ -79,7 +78,6 @@ public class WellService {
 
     this.modelMapper = new ModelMapper();
     this.modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
     this.modelMapper.typeMap(Well.class, WellDTO.class).addMappings(mapper -> {
       mapper.map(src -> src.getPlateId(), WellDTO::setPlateId);
       mapper.map(src -> src.getPlate(), WellDTO::setPlate);
@@ -150,18 +148,9 @@ public class WellService {
 
     List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(
         well.getPlateId());
-
     Map<Long, MetadataDTO> wellMetadata = retrieveWellMetadata(Collections.singletonList(wellId));
 
-    WellDTO wellDTO = modelMapper.map(well, WellDTO.class)
-        .withWellNr(calculateWellNumber(well))
-        .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
-        .withTags(wellMetadata.get(wellId).getTags().stream().map(TagDTO::getTag).toList())
-        .withProperties(wellMetadata.get(wellId).getProperties().stream()
-            .map(propertyDTO -> new PropertyDTO(propertyDTO.getPropertyName(),
-                propertyDTO.getPropertyValue()))
-            .toList());
-    return wellDTO;
+    return enrichWellDTO(well, wellSubstances, wellMetadata);
   }
 
   public List<WellDTO> getWellsByPlateId(long plateId) throws PlateNotFoundException {
@@ -173,82 +162,34 @@ public class WellService {
       return Collections.emptyList();
     }
 
-    List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
-
-    List<Long> wellIds = wells.stream().map(Well::getId).toList();
-    Map<Long, MetadataDTO> wellMetadata = retrieveWellMetadata(wellIds);
-
-    List<WellDTO> result = new ArrayList<>(wells.size());
-    for (Well well : wells) {
-      WellDTO wellDTO = modelMapper.map(well, WellDTO.class)
-          .withWellNr(calculateWellNumber(well))
-          .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
-          .withTags(wellMetadata.get(well.getId()).getTags().stream().map(TagDTO::getTag).toList())
-          .withProperties(wellMetadata.get(well.getId()).getProperties().stream()
-              .map(propertyDTO -> new PropertyDTO(propertyDTO.getPropertyName(),
-                  propertyDTO.getPropertyValue()))
-              .toList());
-      result.add(wellDTO);
-    }
-
-    result.sort(WELL_COMPARATOR);
-    return result;
+    return wellToWellDTO(wells,
+        wellSubstanceService.getWellSubstancesByPlateId(plateId));
   }
 
-
   public List<WellDTO> getWellsByPlateIds(List<Long> plateIds) {
-    List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateIds(
-        plateIds);
-
     List<Well> wells = wellRepository.findAllByPlateIdIn(plateIds);
     if (wells.isEmpty()) {
       return Collections.emptyList();
     }
 
-    List<Long> wellIds = wells.stream().map(Well::getId).toList();
-    Map<Long, MetadataDTO> wellMetadata = retrieveWellMetadata(wellIds);
-
-    List<WellDTO> result = new ArrayList<>(wells.size());
-    for (Well well : wells) {
-      WellDTO wellDTO = modelMapper.map(well, WellDTO.class)
-          .withWellNr(calculateWellNumber(well))
-          .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
-          .withTags(wellMetadata.get(well.getId()).getTags().stream().map(TagDTO::getTag).toList())
-          .withProperties(wellMetadata.get(well.getId()).getProperties().stream()
-              .map(propertyDTO -> new PropertyDTO(propertyDTO.getPropertyName(),
-                  propertyDTO.getPropertyValue()))
-              .toList());
-      result.add(wellDTO);
-    }
-
-    result.sort(WELL_COMPARATOR);
-    return result;
+    return wellToWellDTO(wells,
+        wellSubstanceService.getWellSubstancesByPlateIds(plateIds));
   }
 
   public List<WellDTO> getWellsbyExperimentId(Long experimentId) {
     List<Long> plateIds = plateService.getPlatesByExperimentId(experimentId).stream()
         .map(plate -> plate.getId())
         .toList();
-    List<WellSubstanceDTO> wellSubstances = wellSubstanceService
-        .getWellSubstancesByPlateIds(plateIds);
-    return wellRepository.findAllByExperimentId(experimentId).stream()
-        .map(well -> modelMapper.map(well, WellDTO.class)
-            .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
-            .withWellNr(calculateWellNumber(well)))
-        .toList();
+
+    return getWellsByPlateIds(plateIds);
   }
 
   public List<WellDTO> getWellsbyExperimentIds(List<Long> experimentIds) {
     List<Long> plateIds = plateService.getPlatesByExperimentIds(experimentIds).stream()
         .map(plate -> plate.getId())
         .toList();
-    List<WellSubstanceDTO> wellSubstances = wellSubstanceService
-        .getWellSubstancesByPlateIds(plateIds);
-    return wellRepository.findAllByExperimentIdIn(experimentIds).stream()
-        .map(well -> modelMapper.map(well, WellDTO.class)
-            .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
-            .withWellNr(calculateWellNumber(well)))
-        .toList();
+
+    return getWellsByPlateIds(plateIds);
   }
 
   public List<WellDTO> updateWells(List<WellDTO> wellDTOS) {
@@ -273,13 +214,40 @@ public class WellService {
     wellIds.forEach(wellId -> acceptWell(plateId, wellId));
   }
 
+  private List<WellDTO> wellToWellDTO(List<Well> wells,
+      List<WellSubstanceDTO> wellSubstances) {
+    List<Long> wellIds = wells.stream().map(Well::getId).toList();
+    Map<Long, MetadataDTO> wellMetadata = retrieveWellMetadata(wellIds);
+
+    List<WellDTO> result = new ArrayList<>(wells.size());
+    for (Well well : wells) {
+      result.add(enrichWellDTO(well, wellSubstances, wellMetadata));
+    }
+
+    result.sort(WELL_COMPARATOR);
+    return result;
+  }
+
+  private WellDTO enrichWellDTO(Well well, List<WellSubstanceDTO> wellSubstances,
+      Map<Long, MetadataDTO> wellMetadata) {
+    MetadataDTO metadata = wellMetadata.get(well.getId());
+    return modelMapper.map(well, WellDTO.class)
+        .withWellNr(calculateWellNumber(well))
+        .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
+        .withTags(metadata.getTags().stream().map(TagDTO::getTag).toList())
+        .withProperties(metadata.getProperties().stream()
+            .map(propertyDTO -> new PropertyDTO(propertyDTO.getPropertyName(),
+                propertyDTO.getPropertyValue()))
+            .toList());
+  }
+
   private Map<Long, MetadataDTO> retrieveWellMetadata(List<Long> wellIds) {
     if (wellIds.isEmpty()) {
       return Collections.emptyMap();
     }
 
-    List<MetadataDTO> allMetadata = metadataServiceGraphQlClient.getMetadata(wellIds, ObjectClass.WELL);
-
+    List<MetadataDTO> allMetadata = metadataServiceGraphQlClient.getMetadata(wellIds,
+        ObjectClass.WELL);
     Map<Long, MetadataDTO> metadataByObjectId = new HashMap<>(allMetadata.size());
     for (MetadataDTO metadata : allMetadata) {
       metadataByObjectId.put(metadata.getObjectId(), metadata);
@@ -287,7 +255,6 @@ public class WellService {
 
     return metadataByObjectId;
   }
-
 
   private WellSubstanceDTO findWellSubstanceForWell(Well well, List<WellSubstanceDTO> substances) {
     return substances.stream()
