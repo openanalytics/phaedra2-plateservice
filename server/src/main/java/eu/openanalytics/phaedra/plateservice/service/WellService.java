@@ -175,25 +175,23 @@ public class WellService {
 
     List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
 
-    Map<Long, WellSubstanceDTO> substanceMap = wellSubstances.stream()
-        .collect(Collectors.toMap(WellSubstanceDTO::getWellId, Function.identity(), (a, b) -> a));
-
     List<Long> wellIds = wells.stream().map(Well::getId).toList();
     Map<Long, MetadataDTO> wellMetadata = retrieveWellMetadata(wellIds);
 
     List<WellDTO> result = new ArrayList<>(wells.size());
     for (Well well : wells) {
-      WellDTO wellDTO = modelMapper.map(well, WellDTO.class);
-      wellDTO.setWellSubstance(substanceMap.get(well.getId()));
-      wellDTO.setWellNr(calculateWellNumber(well));
-      wellDTO.setTags(wellMetadata.get(wellDTO.getId()).getTags().stream().map(TagDTO::getTag).toList());
-      wellDTO.setProperties(wellMetadata.get(wellDTO.getId()).getProperties().stream()
-          .map(propertyDTO -> new PropertyDTO(propertyDTO.getPropertyName(), propertyDTO.getPropertyValue())).toList());
+      WellDTO wellDTO = modelMapper.map(well, WellDTO.class)
+          .withWellNr(calculateWellNumber(well))
+          .withWellSubstance(findWellSubstanceForWell(well, wellSubstances))
+          .withTags(wellMetadata.get(well.getId()).getTags().stream().map(TagDTO::getTag).toList())
+          .withProperties(wellMetadata.get(well.getId()).getProperties().stream()
+              .map(propertyDTO -> new PropertyDTO(propertyDTO.getPropertyName(),
+                  propertyDTO.getPropertyValue()))
+              .toList());
       result.add(wellDTO);
     }
 
     result.sort(WELL_COMPARATOR);
-
     return result;
   }
 
