@@ -40,6 +40,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import eu.openanalytics.phaedra.measurementservice.client.config.MeasurementServiceClientAutoConfiguration;
 import eu.openanalytics.phaedra.metadataservice.client.config.MetadataServiceClientAutoConfiguration;
+import eu.openanalytics.phaedra.platedef.client.PlateDefinitionServiceClientAutoConfig;
 import eu.openanalytics.phaedra.util.PhaedraRestTemplate;
 import eu.openanalytics.phaedra.util.auth.AuthenticationConfigHelper;
 import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
@@ -55,7 +56,8 @@ import io.swagger.v3.oas.models.servers.Server;
 @SpringBootApplication
 @EnableKafka
 @Import({MeasurementServiceClientAutoConfiguration.class,
-		MetadataServiceClientAutoConfiguration.class,})
+		MetadataServiceClientAutoConfiguration.class,
+		PlateDefinitionServiceClientAutoConfig.class})
 public class PlateServiceApplication {
 
 	private final Environment environment;

@@ -30,21 +30,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
-import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
-import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,6 +56,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
+import eu.openanalytics.phaedra.platedef.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.model.PlateMeasurement;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
 
 @Testcontainers
 @SpringBootTest
@@ -289,10 +293,10 @@ public class PlateControllerTest {
     public void linkPlateWrongDimensionsTest() throws Exception {
         String createdOn = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SS");
 
-        PlateTemplateDTO newPlateTemplate = new PlateTemplateDTO();
+        PlateTemplate newPlateTemplate = new PlateTemplate();
         newPlateTemplate.setRows(2);
         newPlateTemplate.setColumns(3);
-        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS"));
+        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS").toInstant());
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
@@ -312,10 +316,10 @@ public class PlateControllerTest {
         //Add template
         String createdOn = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SS");
 
-        PlateTemplateDTO newPlateTemplate = new PlateTemplateDTO();
+        PlateTemplate newPlateTemplate = new PlateTemplate();
         newPlateTemplate.setRows(2);
         newPlateTemplate.setColumns(3);
-        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS"));
+        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS").toInstant());
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
@@ -358,10 +362,10 @@ public class PlateControllerTest {
         //Add template
         String createdOn = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss.SS");
 
-        PlateTemplateDTO newPlateTemplate = new PlateTemplateDTO();
+        PlateTemplate newPlateTemplate = new PlateTemplate();
         newPlateTemplate.setRows(2);
         newPlateTemplate.setColumns(3);
-        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS"));
+        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS").toInstant());
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
@@ -370,7 +374,7 @@ public class PlateControllerTest {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        PlateTemplateDTO plateTemplateDTOResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
+        PlateTemplate PlateTemplateResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
 
         //Add Plate
         Plate plate = new Plate();

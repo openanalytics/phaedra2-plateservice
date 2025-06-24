@@ -20,9 +20,16 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.io.File;
+import java.util.List;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +44,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import eu.openanalytics.phaedra.platedef.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
 
 
 @Testcontainers
@@ -71,19 +75,19 @@ public class PlateTemplateControllerTest {
         String path = "src/test/resources/json/new_plate_template.json";
         File file = new File(path);
 
-        PlateTemplateDTO newPlateTemplateDTO = this.objectMapper.readValue(file, PlateTemplateDTO.class);
-        assertThat(newPlateTemplateDTO).isNotNull();
+        PlateTemplate newPlateTemplate = this.objectMapper.readValue(file, PlateTemplate.class);
+        assertThat(newPlateTemplate).isNotNull();
 
-        String requestBody = objectMapper.writeValueAsString(newPlateTemplateDTO);
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
         MvcResult mvcResult = this.mockMvc.perform(post("/platetemplates").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        PlateTemplateDTO plateTemplateDTOResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
-        assertThat(plateTemplateDTOResult).isNotNull();
-        assertThat(plateTemplateDTOResult.getId()).isNotNull();
-//        assertThat(plateTemplateDTOResult.getWells().size()).isEqualTo(384);
+        PlateTemplate PlateTemplateResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
+        assertThat(PlateTemplateResult).isNotNull();
+        assertThat(PlateTemplateResult.getId()).isNotNull();
+//        assertThat(PlateTemplateResult.getWells().size()).isEqualTo(384);
     }
 
     @Test
@@ -91,19 +95,19 @@ public class PlateTemplateControllerTest {
         String path = "src/test/resources/json/new_plate_template2.json";
         File file = new File(path);
 
-        PlateTemplateDTO newPlateTemplateDTO = this.objectMapper.readValue(file, PlateTemplateDTO.class);
-        assertThat(newPlateTemplateDTO).isNotNull();
+        PlateTemplate newPlateTemplate = this.objectMapper.readValue(file, PlateTemplate.class);
+        assertThat(newPlateTemplate).isNotNull();
 
-        String requestBody = objectMapper.writeValueAsString(newPlateTemplateDTO);
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
         MvcResult mvcResult = this.mockMvc.perform(post("/platetemplates").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        PlateTemplateDTO plateTemplateDTOResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
-        assertThat(plateTemplateDTOResult).isNotNull();
-        assertThat(plateTemplateDTOResult.getId()).isNotNull();
-//        assertThat(plateTemplateDTOResult.getWells().size()).isEqualTo(384);
+        PlateTemplate PlateTemplateResult = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
+        assertThat(PlateTemplateResult).isNotNull();
+        assertThat(PlateTemplateResult.getId()).isNotNull();
+//        assertThat(PlateTemplateResult.getWells().size()).isEqualTo(384);
     }
 
     @Test
@@ -111,10 +115,10 @@ public class PlateTemplateControllerTest {
         String path = "src/test/resources/json/new_plate_template.json";
         File file = new File(path);
 
-        PlateTemplateDTO newPlateTemplateDTO = this.objectMapper.readValue(file, PlateTemplateDTO.class);
-        assertThat(newPlateTemplateDTO).isNotNull();
+        PlateTemplate newPlateTemplate = this.objectMapper.readValue(file, PlateTemplate.class);
+        assertThat(newPlateTemplate).isNotNull();
 
-        String requestBody = objectMapper.writeValueAsString(newPlateTemplateDTO);
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
         MvcResult mvcResult = this.mockMvc.perform(post("/platetemplates").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -129,14 +133,14 @@ public class PlateTemplateControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        PlateTemplateDTO plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
+        PlateTemplate plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
         assertThat(plateTemplate).isNotNull();
         assertThat(plateTemplate.getId()).isEqualTo(plateTemplateId);
 
         String updatedBy = "testuser";
         String updatedOn = "2023-08-24 07:42:49.46";
         plateTemplate.setUpdatedBy(updatedBy);
-        plateTemplate.setUpdatedOn(DateUtils.parseDate(updatedOn, "yyyy-MM-dd HH:mm:ss.SS"));
+        plateTemplate.setUpdatedOn(DateUtils.parseDate(updatedOn, "yyyy-MM-dd HH:mm:ss.SS").toInstant());
 
 //        String requestBody = objectMapper.writeValueAsString(plateTemplate);
 //        this.mockMvc.perform(put("/platetemplates/{plateTemplateId}", plateTemplateId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -147,7 +151,7 @@ public class PlateTemplateControllerTest {
 //                .andDo(print())
 //                .andExpect(status().isOk())
 //                .andReturn();
-//        PlateTemplateDTO updatedPlateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
+//        PlateTemplate updatedPlateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
 //        assertThat(updatedPlateTemplate.getUpdatedBy()).isEqualTo(updatedBy);
     }
 
@@ -168,7 +172,7 @@ public class PlateTemplateControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        PlateTemplateDTO plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplateDTO.class);
+        PlateTemplate plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), PlateTemplate.class);
         assertThat(plateTemplate).isNotNull();
         assertThat(plateTemplate.getId()).isEqualTo(plateTemplateId);
     }
@@ -191,17 +195,17 @@ public class PlateTemplateControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        List<PlateTemplateDTO> plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        List<PlateTemplate> plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         assertThat(plateTemplate).isNotNull();
         assertThat(plateTemplate.size()).isGreaterThan(0);
 
         String path = "src/test/resources/json/new_plate_template.json";
         File file = new File(path);
 
-        PlateTemplateDTO newPlateTemplateDTO = this.objectMapper.readValue(file, PlateTemplateDTO.class);
-        assertThat(newPlateTemplateDTO).isNotNull();
+        PlateTemplate newPlateTemplate = this.objectMapper.readValue(file, PlateTemplate.class);
+        assertThat(newPlateTemplate).isNotNull();
 
-        String requestBody = objectMapper.writeValueAsString(newPlateTemplateDTO);
+        String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
         this.mockMvc.perform(post("/platetemplates").contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -211,7 +215,7 @@ public class PlateTemplateControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        List<PlateTemplateDTO> plateTemplate2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
+        List<PlateTemplate> plateTemplate2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
         assertThat(plateTemplate2).isNotNull();
         assertThat(plateTemplate2.size()).isGreaterThan(0);
     }
@@ -223,7 +227,7 @@ public class PlateTemplateControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        List<PlateTemplateDTO> plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        List<PlateTemplate> plateTemplate = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
         assertThat(plateTemplate).isNotNull();
         assertThat(plateTemplate.size()).isGreaterThan(0);
 
@@ -238,7 +242,7 @@ public class PlateTemplateControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
-        List<PlateTemplateDTO> plateTemplate2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
+        List<PlateTemplate> plateTemplate2 = objectMapper.readValue(mvcResult2.getResponse().getContentAsString(), List.class);
         assertThat(plateTemplate2).isNotNull();
         assertThat(plateTemplate2.size()).isGreaterThan(0);
     }

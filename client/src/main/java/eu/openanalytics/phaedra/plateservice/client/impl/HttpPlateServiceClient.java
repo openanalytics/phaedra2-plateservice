@@ -20,7 +20,6 @@
  */
 package eu.openanalytics.phaedra.plateservice.client.impl;
 
-import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +37,7 @@ import eu.openanalytics.phaedra.plateservice.client.exception.UnresolvableObject
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
 import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
 import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
@@ -184,12 +183,6 @@ public class HttpPlateServiceClient implements PlateServiceClient {
     public List<PlateDTO> getPlatesByExperiment(long experimentId) {
         var response = restTemplate.exchange(urlFactory.experimentPlates(experimentId), HttpMethod.GET, new HttpEntity<>(makeHttpHeaders()), PlateDTO[].class);
         return Arrays.stream(response.getBody()).toList();
-    }
-
-    @Override
-    public List<PlateTemplateDTO> getPlateTemplatesByName(String name) {
-    	var response = restTemplate.exchange(urlFactory.plateTemplatesByName(name), HttpMethod.GET, new HttpEntity<String>(makeHttpHeaders()), PlateTemplateDTO[].class);
-    	return Arrays.stream(response.getBody()).toList();
     }
 
     @Override

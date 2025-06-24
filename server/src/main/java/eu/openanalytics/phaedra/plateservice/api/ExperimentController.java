@@ -25,6 +25,7 @@ import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
 import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkType;
 import eu.openanalytics.phaedra.plateservice.service.ExperimentService;
 import eu.openanalytics.phaedra.plateservice.service.PlateService;
 import java.util.Collections;
@@ -125,7 +126,7 @@ public class ExperimentController {
 		ExperimentDTO experiment = experimentService.getExperimentById(experimentId);
 		if (experiment == null) return ResponseEntity.notFound().build();
 
-		List<PlateDTO> plates = plateService.linkPlates(experimentId, plateTemplateId);
+		List<PlateDTO> plates = plateService.linkPlates(experimentId, LinkType.Template, plateTemplateId);
 		return ResponseEntity.ok(plates);
 	}
 }

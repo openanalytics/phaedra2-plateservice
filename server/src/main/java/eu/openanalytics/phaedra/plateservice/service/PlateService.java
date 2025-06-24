@@ -20,36 +20,6 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
-import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
-import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
-import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
-import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PropertyDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
-import eu.openanalytics.phaedra.plateservice.dto.event.PlateDefinitionLinkEvent;
-import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEvent;
-import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEventType;
-import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
-import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
-import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
-import eu.openanalytics.phaedra.plateservice.exceptions.ApprovalException;
-import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
-import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
-import eu.openanalytics.phaedra.plateservice.exceptions.ValidationException;
-import eu.openanalytics.phaedra.plateservice.model.Plate;
-import eu.openanalytics.phaedra.plateservice.repository.CustomPlateRepository;
-import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -59,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.Conditions;
@@ -72,6 +43,39 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
+import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
+import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
+import eu.openanalytics.phaedra.platedef.client.PlateDefinitionServiceClient;
+import eu.openanalytics.phaedra.platedef.model.PlateTemplate;
+import eu.openanalytics.phaedra.platedef.model.WellTemplate;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.dto.event.LinkOutcome;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateDefinitionLinkEvent;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEvent;
+import eu.openanalytics.phaedra.plateservice.dto.event.PlateModificationEventType;
+import eu.openanalytics.phaedra.plateservice.enumeration.ApprovalStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkType;
+import eu.openanalytics.phaedra.plateservice.enumeration.ProjectAccessLevel;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.enumeration.UploadStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.ValidationStatus;
+import eu.openanalytics.phaedra.plateservice.exceptions.ApprovalException;
+import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
+import eu.openanalytics.phaedra.plateservice.exceptions.ValidationException;
+import eu.openanalytics.phaedra.plateservice.model.Plate;
+import eu.openanalytics.phaedra.plateservice.repository.CustomPlateRepository;
+import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+
 @Service
 public class PlateService {
 
@@ -81,14 +85,13 @@ public class PlateService {
 	private final ProjectAccessService projectAccessService;
 	private final IAuthorizationService authService;
 
-	private final PlateTemplateService plateTemplateService;
-	private final WellTemplateService wellTemplateService;
 	private final WellSubstanceService wellSubstanceService;
 
 	private final KafkaProducerService kafkaProducerService;
 
 	private final MetadataServiceGraphQlClient metadataServiceGraphQlClient;
-
+	private final PlateDefinitionServiceClient plateDefinitionServiceClient;
+	
 	private final ModelMapper modelMapper = new ModelMapper();
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -96,22 +99,20 @@ public class PlateService {
 			ExperimentService experimentService,
 			ProjectAccessService projectAccessService,
 			IAuthorizationService authService,
-			PlateTemplateService plateTemplateService,
-			WellTemplateService wellTemplateService,
 			WellSubstanceService wellSubstanceService,
 			KafkaProducerService kafkaProducerService,
-			MetadataServiceGraphQlClient metadataServiceGraphQlClient) {
+			MetadataServiceGraphQlClient metadataServiceGraphQlClient,
+			PlateDefinitionServiceClient plateDefinitionServiceClient) {
 
 		this.plateRepository = plateRepository;
 		this.wellService = wellService;
 		this.experimentService = experimentService;
 		this.projectAccessService = projectAccessService;
 		this.authService = authService;
-		this.plateTemplateService = plateTemplateService;
-		this.wellTemplateService = wellTemplateService;
 		this.wellSubstanceService = wellSubstanceService;
 		this.kafkaProducerService = kafkaProducerService;
-    this.metadataServiceGraphQlClient = metadataServiceGraphQlClient;
+		this.metadataServiceGraphQlClient = metadataServiceGraphQlClient;
+		this.plateDefinitionServiceClient = plateDefinitionServiceClient;
 
     // TODO move to dedicated ModelMapper service
 //		Configuration builderConfiguration = modelMapper.getConfiguration().copy()
@@ -386,87 +387,85 @@ public class PlateService {
 		return plateRepository.findProjectIdByExperimentId(experimentId);
 	}
 
-	public PlateDTO linkPlateTemplate(long plateId, long plateTemplateId) throws PlateNotFoundException {
+	public PlateDTO linkPlate(long plateId, LinkType linkType, long targetId) throws PlateNotFoundException {
 		Long projectId = getProjectIdByPlateId(plateId);
 		if (projectId != null) projectAccessService.checkAccessLevel(projectId, ProjectAccessLevel.Write);
 
-		PlateDTO plateDTO = getPlateById(plateId);
-		PlateTemplateDTO plateTemplateDTO = plateTemplateService.getPlateTemplateById(plateTemplateId);
-
+		PlateDTO plate = getPlateById(plateId);
+		
+		PlateTemplate plateTemplate = null;
+		if (linkType == LinkType.Template) {
+			plateTemplate = plateDefinitionServiceClient.getPlateTemplate(targetId, true);
+		} else if (linkType == LinkType.PlateDefinition) {
+			plateTemplate = plateDefinitionServiceClient.loadPlateDefinition(targetId, plate.getBarcode());
+		}
+		
 		// Validate the plate and template objects.
-		if (plateDTO == null || plateTemplateDTO == null)
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Plate or template can not be found for these ids.");
-		if (plateDTO.getRows() != plateTemplateDTO.getRows() || plateDTO.getColumns() != plateTemplateDTO.getColumns())
+		if (plateTemplate == null)
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "PlateTemplate can not be found for id " + targetId);
+		if (plate.getRows() != plateTemplate.getRows() || plate.getColumns() != plateTemplate.getColumns())
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Plate or template have different dimensions.");
 
 		// Perform the actual link by copying template information into the wells.
-		linkWithPlateTemplate(plateId, plateTemplateId);
+		
+		List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
+		
+		List<WellSubstanceDTO> existingSubstances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
+		List<WellSubstanceDTO> newSubstances = new ArrayList<>();
+		List<WellSubstanceDTO> removedSubstances = new ArrayList<>();
+
+		for (WellTemplate wt: plateTemplate.getWells()) {
+			if (wt.isSkipped()) continue;
+			
+			WellDTO targetWell = wells.stream().filter(w -> w.getRow() == wt.getRow() && w.getColumn() == wt.getColumn()).findAny().orElse(null);
+			if (targetWell == null) continue;
+			
+			targetWell.setWellType(wt.getWellType());
+
+			WellSubstanceDTO targetSubstance = existingSubstances.stream().filter(s -> s.getWellId() == targetWell.getId()).findAny().orElse(null);
+			if (wt.getSubstanceName() == null) {
+				// Delete existing substance, if any
+				if (targetSubstance != null) removedSubstances.add(targetSubstance);
+			} else {
+				// Create new substance or update existing substance
+				if (targetSubstance == null) {
+					targetSubstance = new WellSubstanceDTO();
+					targetSubstance.setWellId(targetWell.getId());
+					newSubstances.add(targetSubstance);
+				}
+				targetSubstance.setType(StringUtils.isBlank(wt.getSubstanceType()) ? SubstanceType.COMPOUND.name() : wt.getSubstanceType());
+				targetSubstance.setName(wt.getSubstanceName());
+				targetSubstance.setConcentration(wt.getConcentration());
+			}
+		}
+		
+		wellSubstanceService.saveWellSubstances(existingSubstances);
+		wellSubstanceService.saveWellSubstances(newSubstances);
+		wellSubstanceService.deleteWellSubstances(removedSubstances);
+		logger.debug(String.format("linkPlate: well substances: %d updated, %d new, %d removed", existingSubstances.size(), newSubstances.size(), removedSubstances.size()));
+		wellService.updateWells(wells);
 
 		// Update the linkage information of plate
-		plateDTO.setLinkTemplateId(plateTemplateDTO.getId().toString());
-		plateDTO.setLinkSource("layout-template");
-		plateDTO.setLinkStatus(LinkStatus.LINKED);
-		plateDTO.setLinkedOn(new Date());
+		plate.setLinkTemplateId(plateTemplate.getId().toString());
+		plate.setLinkSource(String.format("%s#%d", linkType.name(), targetId));
+		plate.setLinkStatus(LinkStatus.LINKED);
+		plate.setLinkedOn(new Date());
 
-		PlateDTO updatedPlate = updatePlate(plateDTO);
-		kafkaProducerService.notifyPlateDefinitionLinked(new PlateDefinitionLinkEvent(plateId, plateTemplateId, LinkOutcome.OK));
+		PlateDTO updatedPlate = updatePlate(plate);
+		kafkaProducerService.notifyPlateDefinitionLinked(new PlateDefinitionLinkEvent(plateId, linkType, targetId, LinkOutcome.OK));
 		return updatedPlate;
 	}
 
-	public List<PlateDTO> linkPlates(long experimentId, long plateTemplateId) {
+	public List<PlateDTO> linkPlates(long experimentId, LinkType linkType, long targetId) {
 		List<PlateDTO> plates = getPlatesByExperimentId(experimentId);
-		return plates.stream().map(plate -> tryLinkingPlate(plate, plateTemplateId))
-				.collect(Collectors.toList());
-	}
-
-	private PlateDTO tryLinkingPlate(PlateDTO plate, long plateTemplateId) {
-		try {
-			return linkPlateTemplate(plate.getId(), plateTemplateId);
-		} catch (PlateNotFoundException e) {
-			throw new IllegalStateException("Plate could not be linked", e);
-		}
-	}
-
-	private void linkWithPlateTemplate(long plateId, long plateTemplateId) throws PlateNotFoundException {
-		List<WellDTO> wells = wellService.getWellsByPlateId(plateId);
-		List<WellSubstanceDTO> wellSubstances = wellSubstanceService.getWellSubstancesByPlateId(plateId);
-		List<WellTemplateDTO> wellTemplates  = wellTemplateService.getWellTemplatesByPlateTemplateId(plateTemplateId);
-
-		for (int i = 0, size = wells.size(); i < size; i++) {
-			// Update wellType
-			if (!wellTemplates.get(i).isSkipped())
-				wells.get(i).setWellType(wellTemplates.get(i).getWellType());
-			else
-				wells.get(i).setWellType("EMPTY");
-
-			List<WellSubstanceDTO> existing = wellSubstanceService.getWellSubstancesByWellId(wells.get(i).getId());
-			if (CollectionUtils.isEmpty(existing)) {
-				createNewWellSubstance(wells.get(i), wellTemplates.get(i));
-			} else {
-				//ToDO: Check if there are calculations available with previous template, if so handle this issue correctly?
-				updateExistingWellSubstance(existing.get(0), wellTemplates.get(i));
+		return plates.stream().map(plate -> {
+			try {
+				return linkPlate(plate.getId(), linkType, targetId);
+			} catch (PlateNotFoundException e) {
+				// Impossible: plate has already been fetched at this point.
+				return null;
 			}
-		}
-
-		wellService.updateWells(wells);
-	}
-
-	private void createNewWellSubstance(WellDTO wellDTO, WellTemplateDTO wellTemplateDTO) {
-		logger.info("Create new well substance %s", wellTemplateDTO.getSubstanceName());
-		WellSubstanceDTO wellSubstanceDTO = new WellSubstanceDTO();
-		wellSubstanceDTO.setWellId(wellDTO.getId());
-		wellSubstanceDTO.setType(StringUtils.isBlank(wellTemplateDTO.getSubstanceType()) ? SubstanceType.COMPOUND.name() : wellTemplateDTO.getSubstanceType());
-		wellSubstanceDTO.setName(wellTemplateDTO.getSubstanceName());
-		wellSubstanceDTO.setConcentration(wellTemplateDTO.getConcentration());
-		wellSubstanceService.createWellSubstance(wellSubstanceDTO);
-	}
-
-	private void updateExistingWellSubstance(WellSubstanceDTO wellSubstanceDTO, WellTemplateDTO wellTemplateDTO) {
-		logger.info("Update existing well substance %s to %s", wellSubstanceDTO.getName(), wellTemplateDTO.getSubstanceName());
-		wellSubstanceDTO.setType(wellTemplateDTO.getSubstanceType());
-		wellSubstanceDTO.setName(wellTemplateDTO.getSubstanceName());
-		wellSubstanceDTO.setConcentration(wellTemplateDTO.getConcentration());
-		wellSubstanceService.updateWellSubstance(wellSubstanceDTO);
+		}).collect(Collectors.toList());
 	}
 
 	private PlateDTO createClonedPlate(PlateDTO plateDTO) {
