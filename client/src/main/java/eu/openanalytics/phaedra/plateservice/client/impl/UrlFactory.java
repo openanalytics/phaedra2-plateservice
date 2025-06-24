@@ -84,7 +84,4 @@ public class UrlFactory {
     return String.format("%s/experiments/%s/plates", baseURL, experimentId);
   }
 
-  public String plateTemplatesByName(String name) {
-    return String.format("%s/platetemplates?name=%s", baseURL, name);
-  }
 }

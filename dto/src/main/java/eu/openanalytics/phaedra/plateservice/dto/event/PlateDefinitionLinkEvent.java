@@ -21,6 +21,8 @@
 package eu.openanalytics.phaedra.plateservice.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +36,8 @@ import lombok.NoArgsConstructor;
 public class PlateDefinitionLinkEvent {
 
 	private Long plateId;
-	private Long plateTemplateId;
+	private LinkType linkType;
+	private Long targetId;
 	private LinkOutcome outcome;
 
 }

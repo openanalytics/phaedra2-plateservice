@@ -54,7 +54,7 @@ public class WellDTO {
 	private List<PropertyDTO> properties;
 
 	private WellSubstanceDTO wellSubstance;
-	private Map<Long, Float> featureValues;
+	private Map<Long, Float> featureValues; //FIXME: remove this, PlateService must not have any reference to resultdata 
 
 	private PlateProjection plate;
 	private ExperimentProjection experiment;

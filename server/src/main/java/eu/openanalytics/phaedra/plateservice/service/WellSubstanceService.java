@@ -20,20 +20,20 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
-import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
-import eu.openanalytics.phaedra.plateservice.repository.WellSubstanceRepository;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.SubstanceType;
+import eu.openanalytics.phaedra.plateservice.model.WellSubstance;
+import eu.openanalytics.phaedra.plateservice.repository.WellSubstanceRepository;
 
 @Service
 public class WellSubstanceService {
@@ -99,6 +99,14 @@ public class WellSubstanceService {
                 .toList();
     }
 
+    public void saveWellSubstances(List<WellSubstanceDTO> substances) {
+    	wellSubstanceRepository.saveAll(substances.stream().map(this::mapToWellSubstance).toList());
+    }
+    
+    public void deleteWellSubstances(List<WellSubstanceDTO> substances) {
+    	wellSubstanceRepository.deleteAllById(substances.stream().map(WellSubstanceDTO::getId).toList());
+    }
+    
     public void updateWellSubstance(WellSubstanceDTO wellSubstanceDTO) {
         Optional<WellSubstance> wellSubstance = wellSubstanceRepository.findById(wellSubstanceDTO.getId());
         wellSubstance.ifPresent(e -> {
@@ -132,5 +140,13 @@ public class WellSubstanceService {
         wellSubstanceDTO.setConcentration(wellSubstance.getConcentration());
         wellSubstanceDTO.setWellId(wellSubstance.getWellId());
         return wellSubstanceDTO;
+    }
+    
+    private WellSubstance mapToWellSubstance(WellSubstanceDTO wellSubstanceDTO) {
+    	WellSubstance wellSubstance = new WellSubstance();
+    	modelMapper.typeMap(WellSubstanceDTO.class, WellSubstance.class)
+                    .setPropertyCondition(Conditions.isNotNull())
+                    .map(wellSubstanceDTO, wellSubstance);
+    	return wellSubstance;
     }
 }
