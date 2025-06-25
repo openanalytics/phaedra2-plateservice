@@ -296,7 +296,7 @@ public class PlateControllerTest {
         PlateTemplate newPlateTemplate = new PlateTemplate();
         newPlateTemplate.setRows(2);
         newPlateTemplate.setColumns(3);
-        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS").toInstant());
+        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS"));
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
@@ -319,7 +319,7 @@ public class PlateControllerTest {
         PlateTemplate newPlateTemplate = new PlateTemplate();
         newPlateTemplate.setRows(2);
         newPlateTemplate.setColumns(3);
-        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS").toInstant());
+        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS"));
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);
@@ -365,7 +365,7 @@ public class PlateControllerTest {
         PlateTemplate newPlateTemplate = new PlateTemplate();
         newPlateTemplate.setRows(2);
         newPlateTemplate.setColumns(3);
-        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS").toInstant());
+        newPlateTemplate.setCreatedOn(DateUtils.parseDate(createdOn, "yyyy-MM-dd HH:mm:ss.SS"));
         newPlateTemplate.setCreatedBy("smarien");
 
         String requestBody = objectMapper.writeValueAsString(newPlateTemplate);

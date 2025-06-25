@@ -140,7 +140,7 @@ public class PlateTemplateControllerTest {
         String updatedBy = "testuser";
         String updatedOn = "2023-08-24 07:42:49.46";
         plateTemplate.setUpdatedBy(updatedBy);
-        plateTemplate.setUpdatedOn(DateUtils.parseDate(updatedOn, "yyyy-MM-dd HH:mm:ss.SS").toInstant());
+        plateTemplate.setUpdatedOn(DateUtils.parseDate(updatedOn, "yyyy-MM-dd HH:mm:ss.SS"));
 
 //        String requestBody = objectMapper.writeValueAsString(plateTemplate);
 //        this.mockMvc.perform(put("/platetemplates/{plateTemplateId}", plateTemplateId).contentType(MediaType.APPLICATION_JSON).content(requestBody))
