@@ -446,8 +446,8 @@ public class PlateService {
 		wellService.updateWells(wells);
 
 		// Update the linkage information of plate
-		plate.setLinkTemplateId(plateTemplate.getId().toString());
-		plate.setLinkSource(String.format("%s#%d", linkType.name(), targetId));
+		plate.setLinkTemplateId(String.valueOf(targetId));
+		plate.setLinkSource(linkType.name());
 		plate.setLinkStatus(LinkStatus.LINKED);
 		plate.setLinkedOn(new Date());
 
