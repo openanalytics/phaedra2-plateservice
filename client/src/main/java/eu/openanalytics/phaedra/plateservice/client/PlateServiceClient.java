@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2024 Open Analytics
+ * Copyright (C) 2016-2025 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,11 +20,16 @@
  */
 package eu.openanalytics.phaedra.plateservice.client;
 
-import eu.openanalytics.phaedra.plateservice.client.exception.UnresolvableObjectException;
-import eu.openanalytics.phaedra.plateservice.dto.*;
-import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
-
 import java.util.List;
+
+import eu.openanalytics.phaedra.plateservice.client.exception.UnresolvableObjectException;
+import eu.openanalytics.phaedra.plateservice.dto.ExperimentDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.ProjectDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
 
 public interface PlateServiceClient {
 
@@ -51,8 +56,6 @@ public interface PlateServiceClient {
     List<PlateDTO> getPlatesByExperiment(long experimentId);
 
     List<PlateMeasurementDTO> getPlateMeasurements(long plateId, String... authToken) throws UnresolvableObjectException;
-
-    List<PlateTemplateDTO> getPlateTemplatesByName(String name);
 
     List<WellDTO> getWells(long plateId) throws UnresolvableObjectException;
 

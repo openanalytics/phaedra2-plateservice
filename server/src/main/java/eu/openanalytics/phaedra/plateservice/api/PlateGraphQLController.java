@@ -1,37 +1,29 @@
 /**
  * Phaedra II
- * <p>
- * Copyright (C) 2016-2024 Open Analytics
- * <p>
+ *
+ * Copyright (C) 2016-2025 Open Analytics
+ *
  * ===========================================================================
- * <p>
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * Apache License as published by The Apache Software Foundation, either version 2 of the License,
- * or (at your option) any later version.
- * <p>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the Apache
- * License for more details.
- * <p>
- * You should have received a copy of the Apache License along with this program.  If not, see
- * <http://www.apache.org/licenses/>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Apache License as published by
+ * The Apache Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Apache License for more details.
+ *
+ * You should have received a copy of the Apache License
+ * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
-import eu.openanalytics.phaedra.plateservice.exceptions.WellNotFoundException;
-import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
-import eu.openanalytics.phaedra.plateservice.service.PlateService;
-import eu.openanalytics.phaedra.plateservice.service.PlateTemplateService;
-import eu.openanalytics.phaedra.plateservice.service.WellService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,24 +32,36 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
+import eu.openanalytics.phaedra.platedef.client.PlateDefinitionServiceClient;
+import eu.openanalytics.phaedra.platedef.model.PlateTemplate;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
+import eu.openanalytics.phaedra.plateservice.exceptions.WellNotFoundException;
+import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
+import eu.openanalytics.phaedra.plateservice.service.PlateService;
+import eu.openanalytics.phaedra.plateservice.service.WellService;
+
 @Controller
 public class PlateGraphQLController {
 
   private final PlateService plateService;
   private final WellService wellService;
   private final PlateMeasurementService plateMeasurementService;
-  private final PlateTemplateService plateTemplateService;
-
+  private final PlateDefinitionServiceClient plateDefinitionServiceClient;
+  
   public PlateGraphQLController(
       PlateService plateService,
       WellService wellService,
       PlateMeasurementService plateMeasurementService,
-      PlateTemplateService plateTemplateService
+      PlateDefinitionServiceClient plateDefinitionServiceClient
   ) {
     this.plateService = plateService;
     this.wellService = wellService;
     this.plateMeasurementService = plateMeasurementService;
-    this.plateTemplateService = plateTemplateService;
+    this.plateDefinitionServiceClient = plateDefinitionServiceClient;
   }
 
   @QueryMapping
@@ -152,7 +156,6 @@ public class PlateGraphQLController {
     return plateMeasurementService.getPlateMeasurementsByExperimentId(experimentId, true);
   }
 
-
   @QueryMapping
   public List<WellDTO> getWells(@Argument List<Long> wellIds) {
     return wellService.getWells(wellIds);
@@ -184,8 +187,8 @@ public class PlateGraphQLController {
 
   private void enrichLinkedPlateDTOInfo(PlateDTO plateDTO) {
     if (LinkStatus.LINKED.equals(plateDTO.getLinkStatus())) {
-      PlateTemplateDTO plateTemplate = plateTemplateService.getPlateTemplateById(
-          Long.parseLong(plateDTO.getLinkTemplateId()));
+      long templateId = Long.parseLong(plateDTO.getLinkTemplateId());
+      PlateTemplate plateTemplate = plateDefinitionServiceClient.getPlateTemplate(templateId, false);
       if (plateTemplate != null) {
         plateDTO.setLinkTemplateName(plateTemplate.getName());
       }

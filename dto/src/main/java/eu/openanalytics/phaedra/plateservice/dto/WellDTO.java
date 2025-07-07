@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2024 Open Analytics
+ * Copyright (C) 2016-2025 Open Analytics
  *
  * ===========================================================================
  *
@@ -54,7 +54,7 @@ public class WellDTO {
 	private List<PropertyDTO> properties;
 
 	private WellSubstanceDTO wellSubstance;
-	private Map<Long, Float> featureValues;
+	private Map<Long, Float> featureValues; //FIXME: remove this, PlateService must not have any reference to resultdata 
 
 	private PlateProjection plate;
 	private ExperimentProjection experiment;

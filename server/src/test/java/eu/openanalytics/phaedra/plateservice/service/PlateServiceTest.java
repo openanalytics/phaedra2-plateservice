@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2024 Open Analytics
+ * Copyright (C) 2016-2025 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,21 +20,10 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
-import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
-import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
-import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
-import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
-import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
-import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
-import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
-import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
-import eu.openanalytics.phaedra.plateservice.support.Containers;
-import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
-import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
-import java.util.Arrays;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,12 +45,18 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellSubstanceDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.CalculationStatus;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkStatus;
+import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
+import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
+import eu.openanalytics.phaedra.plateservice.support.Containers;
+import eu.openanalytics.phaedra.util.auth.AuthorizationServiceFactory;
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 @Testcontainers
 @SpringBootTest
@@ -81,12 +76,9 @@ public class PlateServiceTest {
     private ExperimentService experimentService;
     @Autowired
     private ProjectAccessService projectAccessService;
+    
     private IAuthorizationService authService = AuthorizationServiceFactory.create();
 
-    @Autowired
-    private PlateTemplateService plateTemplateService;
-    @Autowired
-    private WellTemplateService wellTemplateService;
     @Autowired
     private WellSubstanceService wellSubstanceService;
     @Autowired
@@ -125,8 +117,6 @@ public class PlateServiceTest {
         assertThat(wellService).isNotNull();
         assertThat(experimentService).isNotNull();
         assertThat(projectAccessService).isNotNull();
-        assertThat(plateTemplateService).isNotNull();
-        assertThat(wellTemplateService).isNotNull();
         assertThat(wellSubstanceService).isNotNull();
         assertThat(plateMeasurementService).isNotNull();
         assertThat(modelMapper).isNotNull();
@@ -198,12 +188,6 @@ public class PlateServiceTest {
         assertThat(created.getId()).isEqualTo(moved.getId());
         assertThat(created.getBarcode()).isEqualTo(moved.getBarcode());
         assertThat(created.getExperimentId()).isNotEqualTo(moved.getExperimentId());
-    }
-
-//    @Test
-    void linkPlate() throws PlateNotFoundException {
-        PlateDTO plateDTO = plateService.linkPlateTemplate(1000L, 56L);
-        assertThat(plateDTO).isNotNull();
     }
 
 //    @Test

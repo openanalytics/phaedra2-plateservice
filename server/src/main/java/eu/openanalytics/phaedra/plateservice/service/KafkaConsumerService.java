@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2024 Open Analytics
+ * Copyright (C) 2016-2025 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,9 +20,21 @@
  */
 package eu.openanalytics.phaedra.plateservice.service;
 
+import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.GROUP_ID;
+import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.TOPIC_PLATES;
+
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import eu.openanalytics.phaedra.plateservice.dto.PlateCalculationStatusDTO;
 import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkType;
 import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
 import eu.openanalytics.phaedra.plateservice.model.Plate;
 import eu.openanalytics.phaedra.plateservice.repository.CustomPlateRepository;
@@ -30,16 +42,6 @@ import eu.openanalytics.phaedra.plateservice.repository.PlateRepository;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.Optional;
-
-import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.GROUP_ID;
-import static eu.openanalytics.phaedra.plateservice.config.KafkaConfig.TOPIC_PLATES;
 
 @Service
 public class KafkaConsumerService {
@@ -91,7 +93,7 @@ public class KafkaConsumerService {
     public void reqPlateDefLink(ReqPlateDefLinkDTO req) {
     	authService.runInKafkaContext(() -> {
             try {
-                plateService.linkPlateTemplate(req.getPlateId(), req.getTemplateId());
+                plateService.linkPlate(req.getPlateId(), LinkType.findByName(req.getLinkType(), false), req.getTargetId());
             } catch (PlateNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -111,6 +113,7 @@ public class KafkaConsumerService {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ReqPlateDefLinkDTO {
     	private Long plateId;
-    	private Long templateId;
+    	private String linkType;
+    	private Long targetId;
     }
 }

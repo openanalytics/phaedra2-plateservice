@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2024 Open Analytics
+ * Copyright (C) 2016-2025 Open Analytics
  *
  * ===========================================================================
  *
@@ -20,33 +20,11 @@
  */
 package eu.openanalytics.phaedra.plateservice.api;
 
-import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
-import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceGraphQlClient;
-import eu.openanalytics.phaedra.metadataservice.dto.MetadataDTO;
-import eu.openanalytics.phaedra.metadataservice.dto.TagDTO;
-import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
-import eu.openanalytics.phaedra.plateservice.dto.AcceptWellsDTO;
-import eu.openanalytics.phaedra.plateservice.dto.DisapprovePlatesDTO;
-import eu.openanalytics.phaedra.plateservice.dto.InvalidatePlatesDTO;
-import eu.openanalytics.phaedra.plateservice.dto.LinkPlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.LinkPlateTemplateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.MovePlatesDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
-import eu.openanalytics.phaedra.plateservice.dto.PropertyDTO;
-import eu.openanalytics.phaedra.plateservice.dto.RejectWellsDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
-import eu.openanalytics.phaedra.plateservice.dto.WellStatusDTO;
-import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
-import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
-import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
-import eu.openanalytics.phaedra.plateservice.service.PlateService;
-import eu.openanalytics.phaedra.plateservice.service.WellService;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,6 +40,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import eu.openanalytics.phaedra.metadataservice.client.MetadataServiceClient;
+import eu.openanalytics.phaedra.metadataservice.enumeration.ObjectClass;
+import eu.openanalytics.phaedra.plateservice.dto.AcceptWellsDTO;
+import eu.openanalytics.phaedra.plateservice.dto.DisapprovePlatesDTO;
+import eu.openanalytics.phaedra.plateservice.dto.InvalidatePlatesDTO;
+import eu.openanalytics.phaedra.plateservice.dto.LinkPlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.LinkPlateTemplateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.MovePlatesDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PlateMeasurementDTO;
+import eu.openanalytics.phaedra.plateservice.dto.PropertyDTO;
+import eu.openanalytics.phaedra.plateservice.dto.RejectWellsDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellDTO;
+import eu.openanalytics.phaedra.plateservice.dto.WellStatusDTO;
+import eu.openanalytics.phaedra.plateservice.enumeration.LinkType;
+import eu.openanalytics.phaedra.plateservice.exceptions.ClonePlateException;
+import eu.openanalytics.phaedra.plateservice.exceptions.PlateNotFoundException;
+import eu.openanalytics.phaedra.plateservice.service.PlateMeasurementService;
+import eu.openanalytics.phaedra.plateservice.service.PlateService;
+import eu.openanalytics.phaedra.plateservice.service.WellService;
 
 @RestController
 @RequestMapping("/plates")
@@ -337,7 +336,7 @@ public class PlateController {
     @PutMapping(value = "/{plateId}/link/{plateTemplateId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PlateDTO> setPlateTemplate(@PathVariable long plateId, @PathVariable long plateTemplateId) {
         try {
-            PlateDTO plateDTO = plateService.linkPlateTemplate(plateId, plateTemplateId);
+            PlateDTO plateDTO = plateService.linkPlate(plateId, LinkType.Template, plateTemplateId);
             return ResponseEntity.ok(plateDTO);
         } catch (PlateNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -348,7 +347,7 @@ public class PlateController {
     public ResponseEntity<Void> linkPlateTemplate(@RequestBody LinkPlateTemplateDTO linkPlateTemplateDTO) {
         try {
             for (Long plateId : linkPlateTemplateDTO.getPlateIds()) {
-                plateService.linkPlateTemplate(plateId, linkPlateTemplateDTO.getPlateTemplateId());
+                plateService.linkPlate(plateId, LinkType.Template, linkPlateTemplateDTO.getPlateTemplateId());
             }
             return ResponseEntity.ok().build();
         } catch (PlateNotFoundException e) {
