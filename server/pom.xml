@@ -14,9 +14,9 @@
 
 	<properties>
         <docker.imageName>openanalytics/${project.parent.artifactId}</docker.imageName>
-        <phaedra2-measurementservice-client.version>2.9.0</phaedra2-measurementservice-client.version>
-        <phaedra2-metadataservice-client.version>2.9.0</phaedra2-metadataservice-client.version>
-        <phaedra2-platedefinitionservice-client.version>2.9.0</phaedra2-platedefinitionservice-client.version>
+        <phaedra2-measurementservice-client.version>2.10.0-SNAPSHOT</phaedra2-measurementservice-client.version>
+        <phaedra2-metadataservice-client.version>2.10.0-SNAPSHOT</phaedra2-metadataservice-client.version>
+        <phaedra2-platedefinitionservice-client.version>2.10.0-SNAPSHOT</phaedra2-platedefinitionservice-client.version>
 	</properties>
 
 	<dependencies>
