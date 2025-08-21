@@ -191,6 +191,14 @@ public class PlateServiceGraphQLClientImpl implements PlateServiceGraphQLClient 
               propertyName
               propertyValue
             }
+            plate {
+              id
+              barcode
+            }
+            experiment {
+              id
+              name
+            }
             """;
   }
 
