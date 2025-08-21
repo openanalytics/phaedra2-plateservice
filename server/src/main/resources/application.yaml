@@ -37,6 +37,7 @@ spring:
   graphql:
     graphiql:
       enabled: true
+      path: /graphiql
 
 
 logging:
