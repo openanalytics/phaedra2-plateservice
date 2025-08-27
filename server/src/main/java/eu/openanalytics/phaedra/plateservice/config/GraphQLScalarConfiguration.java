@@ -21,6 +21,7 @@
 package eu.openanalytics.phaedra.plateservice.config;
 
 import eu.openanalytics.phaedra.util.scalars.Scalars;
+import graphql.schema.Coercing;
 import graphql.schema.GraphQLScalarType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,4 +37,53 @@ public class GraphQLScalarConfiguration {
     public GraphQLScalarType floatNaNScalar() {
         return Scalars.floatNaNType();
     }
+
+    @Bean
+    public GraphQLScalarType anyScalar() {
+        return GraphQLScalarType.newScalar()
+            .name("_Any")
+            .description("Federation _Any scalar")
+            .coercing(new Coercing<Object, Object>() {
+                @Override
+                public Object serialize(Object dataFetcherResult) {
+                    return dataFetcherResult;
+                }
+
+                @Override
+                public Object parseValue(Object input) {
+                    return input;
+                }
+
+                @Override
+                public Object parseLiteral(Object input) {
+                    return input;
+                }
+            })
+            .build();
+    }
+
+    @Bean
+    public GraphQLScalarType fieldSetScalar() {
+        return GraphQLScalarType.newScalar()
+            .name("_FieldSet")
+            .description("Federation _FieldSet scalar")
+            .coercing(new Coercing<String, String>() {
+                @Override
+                public String serialize(Object dataFetcherResult) {
+                    return dataFetcherResult != null ? dataFetcherResult.toString() : null;
+                }
+
+                @Override
+                public String parseValue(Object input) {
+                    return input != null ? input.toString() : null;
+                }
+
+                @Override
+                public String parseLiteral(Object input) {
+                    return input != null ? input.toString() : null;
+                }
+            })
+            .build();
+    }
+
 }
