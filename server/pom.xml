@@ -1,133 +1,142 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>eu.openanalytics.phaedra</groupId>
-		<artifactId>phaedra2-plateservice</artifactId>
-		<version>2.10.0-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <groupId>eu.openanalytics.phaedra</groupId>
+    <artifactId>phaedra2-plateservice</artifactId>
+    <version>2.10.0-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>phaedra2-plateservice-server</artifactId>
-	<name>phaedra2-plateservice-server</name>
+  <artifactId>phaedra2-plateservice-server</artifactId>
+  <name>phaedra2-plateservice-server</name>
 
-	<properties>
-        <docker.imageName>openanalytics/${project.parent.artifactId}</docker.imageName>
-        <phaedra2-measurementservice-client.version>2.10.0-SNAPSHOT</phaedra2-measurementservice-client.version>
-        <phaedra2-metadataservice-client.version>2.10.0-SNAPSHOT</phaedra2-metadataservice-client.version>
-        <phaedra2-platedefinitionservice-client.version>2.10.0-SNAPSHOT</phaedra2-platedefinitionservice-client.version>
-	</properties>
+  <properties>
+    <docker.imageName>openanalytics/${project.parent.artifactId}</docker.imageName>
+    <phaedra2-measurementservice-client.version>2.10.0-SNAPSHOT
+    </phaedra2-measurementservice-client.version>
+    <phaedra2-metadataservice-client.version>2.10.0-SNAPSHOT
+    </phaedra2-metadataservice-client.version>
+    <phaedra2-platedefinitionservice-client.version>2.10.0-SNAPSHOT
+    </phaedra2-platedefinitionservice-client.version>
+  </properties>
 
-	<dependencies>
-		<!-- Phaedra dependencies -->
-		<dependency>
-			<groupId>eu.openanalytics.phaedra</groupId>
-			<artifactId>phaedra2-plateservice-dto</artifactId>
-			<version>2.10.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.openanalytics.phaedra</groupId>
-			<artifactId>phaedra2-measurementservice-client</artifactId>
-			<version>${phaedra2-measurementservice-client.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.openanalytics.phaedra</groupId>
-			<artifactId>phaedra2-metadataservice-client</artifactId>
-			<version>${phaedra2-metadataservice-client.version}</version>
-		</dependency>
-		<dependency>
-            <groupId>eu.openanalytics.phaedra</groupId>
-            <artifactId>phaedra2-platedefinitionservice-client</artifactId>
-            <version>${phaedra2-platedefinitionservice-client.version}</version>
-        </dependency>
+  <dependencies>
+    <!-- Phaedra dependencies -->
+    <dependency>
+      <groupId>eu.openanalytics.phaedra</groupId>
+      <artifactId>phaedra2-plateservice-dto</artifactId>
+      <version>2.10.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>eu.openanalytics.phaedra</groupId>
+      <artifactId>phaedra2-measurementservice-client</artifactId>
+      <version>${phaedra2-measurementservice-client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>eu.openanalytics.phaedra</groupId>
+      <artifactId>phaedra2-metadataservice-client</artifactId>
+      <version>${phaedra2-metadataservice-client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>eu.openanalytics.phaedra</groupId>
+      <artifactId>phaedra2-platedefinitionservice-client</artifactId>
+      <version>${phaedra2-platedefinitionservice-client.version}</version>
+    </dependency>
 
-		<!-- Spring Cloud dependencies -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-kubernetes-fabric8</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
-		</dependency>
+    <!-- Spring Cloud dependencies -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-kubernetes-fabric8</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
 
-		<!-- Apache kafka dependencies-->
+    <!-- Apache kafka dependencies-->
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-streams</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka</artifactId>
+    </dependency>
+
 		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-streams</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka</artifactId>
+			<groupId>com.apollographql.federation</groupId>
+			<artifactId>federation-graphql-java-support</artifactId>
+			<version>5.4.0</version>
 		</dependency>
 
 		<!-- Test dependencies -->
-		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>junit-jupiter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>postgresql</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>kafka</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>junit-jupiter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>kafka</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
   </dependencies>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
-	<profiles>
-		<profile>
-			<id>build.docker.images</id>
-			<build>
-				<plugins>
-					<plugin>
-					    <groupId>org.codehaus.mojo</groupId>
-					    <artifactId>build-helper-maven-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>io.fabric8</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+  <profiles>
+    <profile>
+      <id>build.docker.images</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
